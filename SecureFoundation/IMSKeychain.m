@@ -91,7 +91,6 @@
         NSURL *URL = [self URLForKeychainFile];
         lock = [[NSRecursiveLock alloc] init];
         dictionary = [NSDictionary dictionaryWithContentsOfURL:URL];
-        dictionary = [[NSMutableDictionary alloc] init];
     });
     
     // perform block
@@ -109,7 +108,7 @@
     
     // create queue and lock
     dispatch_once(&token, ^{
-        queue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL);
+        queue = dispatch_queue_create("org.mitre.imas.keychain.file-output-queue", DISPATCH_QUEUE_SERIAL);
         lock = [[NSLock alloc] init];
     });
     
