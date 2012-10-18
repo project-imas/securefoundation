@@ -16,24 +16,48 @@
 }
 
 + (NSArray *)accountsForService:(NSString *)service error:(NSError **)error {
-    NSURL *URL = [self URLForService:service account:nil];
-    return [self accountsInDirectory:URL error:error];
+    __block NSArray *keys = nil;
+    [self accessKeychainInLock:^(NSMutableDictionary *keychain) {
+        if (service == nil) {
+            NSMutableArray *accounts = [NSMutableArray array];
+            [keychain enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+                [accounts addObjectsFromArray:[obj allKeys]];
+            }];
+            keys = accounts;
+        }
+        else {
+            NSMutableDictionary *accounts = [keychain objectForKey:service];
+            keys = [accounts allKeys];
+        }
+    }];
+    return keys;
 }
 
 + (NSString *)passwordForService:(NSString *)service account:(NSString *)account error:(NSError **)error {
     NSData *data = [self passwordDataForService:service account:account error:error];
-    return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    if ([data length]) {
+        return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    }
+    return nil;
 }
 
 + (NSData *)passwordDataForService:(NSString *)service account:(NSString *)account error:(NSError **)error {
-    NSURL *URL = [self URLForService:service account:account];
-    return [NSData dataWithContentsOfURL:URL options:0 error:error];
+    __block NSData *password = nil;
+    [self accessKeychainInLock:^(NSMutableDictionary *keychain) {
+        NSMutableDictionary *accounts = [keychain objectForKey:service];
+        password = [accounts objectForKey:account];
+    }];
+    [self setKeychainIsDirty];
+    return password;
 }
 
 + (BOOL)deletePasswordForService:(NSString *)service account:(NSString *)account error:(NSError **)error {
-    NSURL *URL = [self URLForService:service account:account];
-    NSFileManager *manager = [NSFileManager defaultManager];
-    if ([manager fileExistsAtPath:[URL path]]) { return [manager removeItemAtURL:URL error:error]; }
+    [self accessKeychainInLock:^(NSMutableDictionary *keychain) {
+        NSMutableDictionary *accounts = [keychain objectForKey:service];
+        if ([accounts count] == 1) { [keychain removeObjectForKey:service]; }
+        else { [accounts removeObjectForKey:account]; }
+    }];
+    [self setKeychainIsDirty];
     return YES;
 }
 
@@ -43,73 +67,97 @@
 }
 
 + (BOOL)setPasswordData:(NSData *)password forService:(NSString *)service account:(NSString *)account error:(NSError **)error {
-    if ([self deletePasswordForService:service account:account error:error]) {
-        NSURL *URL = [self URLForService:service account:account];
-        return [password writeToURL:URL options:0 error:error];
-    }
-    return NO;
+    [self accessKeychainInLock:^(NSMutableDictionary *keychain) {
+        NSMutableDictionary *accounts = [keychain objectForKey:service];
+        if (accounts == nil) {
+            accounts = [NSMutableDictionary dictionary];
+            [keychain setObject:accounts forKey:service];
+        }
+        [accounts setObject:password forKey:account];
+    }];
+    [self setKeychainIsDirty];
+    return YES;
 }
 
 #pragma mark - private methods
 
-+ (NSURL *)URLForService:(NSString *)service account:(NSString *)account {
-    NSFileManager *manager = [NSFileManager defaultManager];
-    NSURL *URL = nil;
++ (void)accessKeychainInLock:(void (^) (NSMutableDictionary *keychain))block {
     
-    // get root directory
-    static NSURL *root;
+    // create variables
+    static NSMutableDictionary *dictionary = nil;
+    static NSRecursiveLock *lock = nil;
     static dispatch_once_t token;
     dispatch_once(&token, ^{
-        root = [[manager
-                 URLsForDirectory:NSLibraryDirectory
-                 inDomains:NSUserDomainMask]
-                objectAtIndex:0];
-        root = [root URLByAppendingPathComponent:@"IMSKeychain"];
+        NSURL *URL = [self URLForKeychainFile];
+        lock = [[NSRecursiveLock alloc] init];
+        dictionary = [NSDictionary dictionaryWithContentsOfURL:URL];
+        dictionary = [[NSMutableDictionary alloc] init];
     });
-    URL = root;
     
-    // add service
-    if (service) {
-        URL = [URL URLByAppendingPathComponent:service];
+    // perform block
+    [lock lock];
+    if (block) { block(dictionary); }
+    [lock unlock];
+    
+}
+
++ (void)setKeychainIsDirty {
+    static NSLock *lock;
+    static dispatch_queue_t queue;
+    static dispatch_once_t token;
+    static dispatch_source_t timer;
+    
+    // create queue and lock
+    dispatch_once(&token, ^{
+        queue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL);
+        lock = [[NSLock alloc] init];
+    });
+    
+    // lock
+    [lock lock];
+    
+    // reset timer
+    if (timer == NULL) {
+        timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
+        dispatch_source_set_event_handler(timer, ^{
+            
+            // cancel timer
+            [lock lock];
+            dispatch_source_cancel(timer);
+            timer = NULL;
+            [lock unlock];
+            
+            // perform write
+            [self accessKeychainInLock:^(NSMutableDictionary *keychain) {
+                NSURL *URL = [self URLForKeychainFile];
+                NSFileManager *manager = [NSFileManager defaultManager];
+                [manager removeItemAtURL:URL error:nil];
+                [keychain writeToURL:URL atomically:NO];
+            }];
+            
+        });
+        dispatch_resume(timer);
     }
+    dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, 1.0 * NSEC_PER_SEC);
+    dispatch_source_set_timer(timer, time, 1000.0 * NSEC_PER_SEC, 0.0);
     
-    // create directories
-    [manager createDirectoryAtURL:URL withIntermediateDirectories:YES attributes:nil error:nil];
+    // unlock
+    [lock unlock];
     
-    // add account
-    if (account) {
-        URL = [URL URLByAppendingPathComponent:account];
-    }
-    
+}
+
++ (NSURL *)URLForKeychainFile {
+    static NSURL *URL;
+    static dispatch_once_t token;
+    dispatch_once(&token, ^{
+        NSFileManager *manager = [NSFileManager defaultManager];
+        URL = [[manager
+                URLsForDirectory:NSLibraryDirectory
+                inDomains:NSUserDomainMask]
+               objectAtIndex:0];
+        URL = [URL URLByAppendingPathComponent:@".imskeychain"];
+    });
     return URL;
-}
-
-+ (NSArray *)accountsInDirectory:(NSURL *)directory error:(NSError **)error {
-    
-    // get enumerator
-    NSFileManager *manager = [NSFileManager defaultManager];
-    NSDirectoryEnumerator *enumerator = [manager
-                                         enumeratorAtURL:directory
-                                         includingPropertiesForKeys:nil
-                                         options:NSDirectoryEnumerationSkipsHiddenFiles
-                                         errorHandler:nil];
-    
-    // get contents
-    NSURL *URL = nil;
-    NSMutableArray *contents = [NSMutableArray array];
-    while ((URL = [enumerator nextObject])) {
-        NSString *account = [URL lastPathComponent];
-        account = [self transformedStringWithString:account];
-        [contents addObject:account];
-    }
-    
-    // return
-    return contents;
-    
-}
-
-+ (NSString *)transformedStringWithString:(NSString *)string {
-    return string;
 }
 
 @end
