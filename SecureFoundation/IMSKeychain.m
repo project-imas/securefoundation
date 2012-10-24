@@ -47,7 +47,6 @@
         NSMutableDictionary *accounts = [keychain objectForKey:service];
         password = [accounts objectForKey:account];
     }];
-    [self setKeychainIsDirty];
     return password;
 }
 
