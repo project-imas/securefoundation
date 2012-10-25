@@ -28,7 +28,7 @@ int8_t IMSChecksum(NSData *data) {
     return IMSTwosComplement(sum);
 }
 
-NSData *IMSPseudoRandomData(size_t length) {
+NSData *IMSCryptoUtilsPseudoRandomData(size_t length) {
     if (length) {
         uint8_t *bytes = malloc(length);
         arc4random_buf(bytes, length);
@@ -64,7 +64,7 @@ NSData *IMSCryptoUtilsEncryptData(NSData *data, NSData *key) {
     if (data && key) {
         
         // get initialization vector
-        NSData *iv_data = IMSPseudoRandomData(kCCBlockSizeAES128);
+        NSData *iv_data = IMSCryptoUtilsPseudoRandomData(kCCBlockSizeAES128);
         
         // get a cryptor instance
         CCCryptorRef cryptor;
@@ -175,15 +175,13 @@ NSData *IMSCryptoUtilsDecryptData(NSData *data, NSData *key) {
     return nil;
 }
 
-NSData *IMSEncryptPlistObjectWithKey(id object, NSData *key, NSData *salt) {
+NSData *IMSCryptoUtilsEncryptPlistObject(id object, NSData *key) {
     NSData *data = IMSConvertPlistObjectToData(object);
-    NSData *derivedKey = IMSCryptoUtilsDeriveKey(key, kCCKeySizeAES256, salt);
-    return IMSCryptoUtilsEncryptData(data, derivedKey);
+    return IMSCryptoUtilsEncryptData(data, key);
 }
 
-id IMSDecryptPlistObjectWithKey(NSData *data, NSData *key, NSData *salt) {
-    NSData *derivedKey = IMSCryptoUtilsDeriveKey(key, kCCKeySizeAES256, salt);
-    NSData *decrypted = IMSCryptoUtilsDecryptData(data, derivedKey);
+id IMSCryptoUtilsDecryptPlistObject(NSData *data, NSData *key) {
+    NSData *decrypted = IMSCryptoUtilsDecryptData(data, key);
     return IMSConvertDataToPlistObject(decrypted);
 }
 

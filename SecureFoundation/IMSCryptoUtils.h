@@ -76,17 +76,17 @@ NSData *IMSCryptoUtilsDecryptData(NSData *data, NSData *key);
 
 /*
  
- Convert the given plist object then encrypt using `IMSEncryptData`.
+ Convert the given plist object then encrypt using `IMSCryptoUtilsEncryptData`.
  
  */
-NSData *IMSCryptoUtilsEncryptPlistObjectWithKey(id object, NSData *key, NSData *salt);
+NSData *IMSCryptoUtilsEncryptPlistObject(id object, NSData *key);
 
 /*
  
- Decrypt the given plist object then encrypt using `IMSDecryptData`.
+ Decrypt the given plist object then encrypt using `IMSCryptoUtilsDecryptData`.
  
  */
-id IMSCryptoUtilsDecryptPlistObjectWithKey(NSData *data, NSData *key, NSData *salt);
+id IMSCryptoUtilsDecryptPlistObject(NSData *data, NSData *key);
 
 /*
  
