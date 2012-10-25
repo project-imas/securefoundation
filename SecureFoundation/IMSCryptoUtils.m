@@ -37,13 +37,12 @@ NSData *IMSPseudoRandomData(size_t length) {
     return nil;
 }
 
-NSData *IMSDeriveKey(NSString *key, size_t length, NSData *salt) {
+NSData *IMSCryptoUtilsDeriveKey(NSData *key, size_t length, NSData *salt) {
     if (key && length && salt) {
-        NSData *key_data = [key dataUsingEncoding:NSUTF8StringEncoding];
         uint8_t *derived_key = malloc(length);
         int status = CCKeyDerivationPBKDF(kCCPBKDF2,
-                                          [key_data bytes],
-                                          [key_data length],
+                                          [key bytes],
+                                          [key length],
                                           [salt bytes],
                                           [salt length],
                                           kCCPRFHmacAlgSHA256, // pseudo random algorithm
@@ -61,11 +60,8 @@ NSData *IMSDeriveKey(NSString *key, size_t length, NSData *salt) {
     return nil;
 }
 
-NSData *IMSEncryptData(NSData *data, NSString *key, NSData *salt) {
+NSData *IMSCryptoUtilsEncryptData(NSData *data, NSData *key) {
     if (data && key) {
-                
-        // get key data
-        NSData *key_data = IMSDeriveKey(key, kCCKeySizeAES256, salt);
         
         // get initialization vector
         NSData *iv_data = IMSPseudoRandomData(kCCBlockSizeAES128);
@@ -75,7 +71,7 @@ NSData *IMSEncryptData(NSData *data, NSString *key, NSData *salt) {
         CCCryptorStatus status = CCCryptorCreate(kCCEncrypt, // operation
                                                  kCCAlgorithmAES128, // algorithm
                                                  kCCOptionPKCS7Padding, // options
-                                                 [key_data bytes], [key_data length], // key bytes and length
+                                                 [key bytes], [key length], // key bytes and length
                                                  [iv_data bytes], // initialization vector
                                                  &cryptor);
         if (status != kCCSuccess) { return nil; }
@@ -133,17 +129,14 @@ NSData *IMSEncryptData(NSData *data, NSString *key, NSData *salt) {
     return nil;
 }
 
-NSData *IMSDecryptData(NSData *data, NSString *key, NSData *salt) {
+NSData *IMSCryptoUtilsDecryptData(NSData *data, NSData *key) {
     if (data && key) {
-        
-        // get key data
-        NSData *key_data = IMSDeriveKey(key, kCCKeySizeAES256, salt);
         
         // determine total needed space
         size_t length;
         CCCryptorStatus status;
         CCCrypt(kCCDecrypt, kCCAlgorithmAES128, kCCOptionPKCS7Padding,
-                [key_data bytes], [key_data length],
+                [key bytes], [key length],
                 [data bytes],
                 [data bytes] + kCCBlockSizeAES128, [data length] - kCCBlockSizeAES128,
                 NULL, 0,
@@ -155,7 +148,7 @@ NSData *IMSDecryptData(NSData *data, NSString *key, NSData *salt) {
         
         // perform decryption
         status = CCCrypt(kCCDecrypt, kCCAlgorithmAES128, kCCOptionPKCS7Padding,
-                         [key_data bytes], [key_data length],
+                         [key bytes], [key length],
                          [data bytes],
                          [data bytes] + kCCBlockSizeAES128, [data length] - kCCBlockSizeAES128,
                          buffer, length,
@@ -182,13 +175,15 @@ NSData *IMSDecryptData(NSData *data, NSString *key, NSData *salt) {
     return nil;
 }
 
-NSData *IMSEncryptPlistObjectWithKey(id object, NSString *key, NSData *salt) {
+NSData *IMSEncryptPlistObjectWithKey(id object, NSData *key, NSData *salt) {
     NSData *data = IMSConvertPlistObjectToData(object);
-    return IMSEncryptData(data, key, salt);
+    NSData *derivedKey = IMSCryptoUtilsDeriveKey(key, kCCKeySizeAES256, salt);
+    return IMSCryptoUtilsEncryptData(data, derivedKey);
 }
 
-id IMSDecryptPlistObjectWithKey(NSData *data, NSString *key, NSData *salt) {
-    NSData *decrypted = IMSDecryptData(data, key, salt);
+id IMSDecryptPlistObjectWithKey(NSData *data, NSData *key, NSData *salt) {
+    NSData *derivedKey = IMSCryptoUtilsDeriveKey(key, kCCKeySizeAES256, salt);
+    NSData *decrypted = IMSCryptoUtilsDecryptData(data, derivedKey);
     return IMSConvertDataToPlistObject(decrypted);
 }
 

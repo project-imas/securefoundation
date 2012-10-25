@@ -10,6 +10,13 @@
 
 /*
  
+ Perform an in-place XOR on each byte in the input.
+ 
+ */
+#define IMSXOR(_key, _input, _length) for (size_t _i = 0; _i < _length; _i++) { _input[_i] ^= _key; }
+
+/*
+ 
  Perform a sum of the given bytes interpreted as eight-bit signed integers.
  This addition ignores overflow.
  
@@ -37,7 +44,7 @@ int8_t IMSChecksum(NSData *data);
  wrapper to arc4random_buf.
  
  */
-NSData *IMSPseudoRandomData(size_t length);
+NSData *IMSCryptoUtilsPseudoRandomData(size_t length);
 
 /*
  
@@ -47,37 +54,39 @@ NSData *IMSPseudoRandomData(size_t length);
  and `salt` parameters respectively.
  
  */
-NSData *IMSDeriveKey(NSString *key, size_t length, NSData *salt);
+NSData *IMSCryptoUtilsDeriveKey(NSData *key, size_t length, NSData *salt);
 
 /*
  
- Run AES-128 encryption on the given data with the given key. The actual key
- used during encryption is derived from the provided key.
+ Run AES-128 encryption on the given data with the given key. The key length
+ must be suitable for use in AES encryption. It is preferred that the key is 
+ generated using `IMSCryptoUtilsDeriveKey`.
  
  */
-NSData *IMSEncryptData(NSData *data, NSString *key, NSData *salt);
+NSData *IMSCryptoUtilsEncryptData(NSData *data, NSData *key);
 
 /*
  
- Run AES-128 decryption on the given data with the given key. The actual key
- used during decryption is derived from the provided key.
+ Run AES-128 decryption on the given data with the given key. Given the nature
+ of symetric-key encryption, the key must meet all requirements stated in
+ `IMSCryptoUtilsEncryptData` and must be generated in the same fashion.
  
  */
-NSData *IMSDecryptData(NSData *data, NSString *key, NSData *salt);
+NSData *IMSCryptoUtilsDecryptData(NSData *data, NSData *key);
 
 /*
  
  Convert the given plist object then encrypt using `IMSEncryptData`.
  
  */
-NSData *IMSEncryptPlistObjectWithKey(id object, NSString *key, NSData *salt);
+NSData *IMSCryptoUtilsEncryptPlistObjectWithKey(id object, NSData *key, NSData *salt);
 
 /*
  
  Decrypt the given plist object then encrypt using `IMSDecryptData`.
  
  */
-id IMSDecryptPlistObjectWithKey(NSData *data, NSString *key, NSData *salt);
+id IMSCryptoUtilsDecryptPlistObjectWithKey(NSData *data, NSData *key, NSData *salt);
 
 /*
  
