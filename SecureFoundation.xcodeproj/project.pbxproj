@@ -21,6 +21,8 @@
 		3B8935F2162F2034003750B6 /* IMSKeychainTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B8935F1162F2034003750B6 /* IMSKeychainTests.m */; };
 		3B8935F5162F206E003750B6 /* IMSCryptoUtilsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B8935F4162F206E003750B6 /* IMSCryptoUtilsTests.m */; };
 		3B98C7A7163092760070BD54 /* IMSCryptoManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B98C7A6163092760070BD54 /* IMSCryptoManager.m */; };
+		3BAABBEE1639B555009D3543 /* IMSCryptoUtils.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3B8935AB162CA792003750B6 /* IMSCryptoUtils.h */; };
+		3BAABBEF1639B555009D3543 /* IMSCryptoManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3B98C7A5163092760070BD54 /* IMSCryptoManager.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +42,8 @@
 			dstPath = "include/${PRODUCT_NAME}";
 			dstSubfolderSpec = 16;
 			files = (
+				3BAABBEE1639B555009D3543 /* IMSCryptoUtils.h in CopyFiles */,
+				3BAABBEF1639B555009D3543 /* IMSCryptoManager.h in CopyFiles */,
 				3B8935AA162C93E1003750B6 /* IMSKeychain.h in CopyFiles */,
 				3B893585162C92F1003750B6 /* SecureFoundation.h in CopyFiles */,
 			);

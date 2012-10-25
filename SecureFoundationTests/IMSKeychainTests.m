@@ -31,7 +31,7 @@
     BOOL success;
     NSError *error;
     
-    NSData *one = IMSPseudoRandomData(54);
+    NSData *one = IMSCryptoUtilsPseudoRandomData(54);
     success = [IMSKeychain setPasswordData:one forService:service account:account error:&error];
     STAssertTrue(success, @"Password was not saved.\n%@", error);
     
@@ -46,7 +46,7 @@
     BOOL success;
     NSError *error;
     
-    NSData *one = IMSPseudoRandomData(54);
+    NSData *one = IMSCryptoUtilsPseudoRandomData(54);
     success = [IMSKeychain setPasswordData:one forService:service account:account error:&error];
     STAssertTrue(success, @"Password was not saved.\n%@", error);
     
@@ -80,14 +80,14 @@
     NSData *one;
     NSData *two;
     
-    one = IMSPseudoRandomData(54);
+    one = IMSCryptoUtilsPseudoRandomData(54);
     success = [IMSKeychain setPasswordData:one forService:service account:account error:&error];
     STAssertTrue(success, @"Password was not saved.\n%@", error);
     
     two = [IMSKeychain passwordDataForService:service account:account error:&error];
     STAssertTrue([two isEqualToData:one], @"Passwords were not equal.");
     
-    one = IMSPseudoRandomData(54);
+    one = IMSCryptoUtilsPseudoRandomData(54);
     success = [IMSKeychain setPasswordData:one forService:service account:account error:&error];
     STAssertTrue(success, @"Password was not saved.\n%@", error);
     

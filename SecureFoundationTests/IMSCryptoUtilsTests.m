@@ -7,8 +7,9 @@
 //
 
 #import <SenTestingKit/SenTestingKit.h>
+#import <CommonCrypto/CommonCrypto.h>
 
-#import "IMSCryptoUtils.h"
+#import "SecureFoundation.h"
 
 @interface IMSCryptoUtilsTests : SenTestCase
 
@@ -27,7 +28,7 @@
 - (void)testPseudoRandomDataLength {
     [@[ @0, @128, @256, @512 ] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         NSUInteger length = [obj unsignedIntegerValue];
-        NSData *data = IMSPseudoRandomData(length);
+        NSData *data = IMSCryptoUtilsPseudoRandomData(length);
         if (length) { STAssertNotNil(data, @"Resulting data is nil"); }
         else { STAssertNil(data, @"Resulting data is not nil"); }
         STAssertEquals([data length], length, @"Resulting data is the wrong length");
@@ -38,8 +39,8 @@
     static NSUInteger length = 1024;
     
     // get two sets of data
-    NSData *one = IMSPseudoRandomData(length);
-    NSData *two = IMSPseudoRandomData(length);
+    NSData *one = IMSCryptoUtilsPseudoRandomData(length);
+    NSData *two = IMSCryptoUtilsPseudoRandomData(length);
     
     // they should not be nil
     STAssertNotNil(one, @"Resulting data is nil");
@@ -51,11 +52,11 @@
 }
 
 - (void)testGeneratedKeyLength {
-    static NSString *key = @"key";
-    NSData *salt = IMSPseudoRandomData(256);
+    NSData *salt = IMSCryptoUtilsPseudoRandomData(8);
+    NSData *key = IMSCryptoUtilsPseudoRandomData(8);
     [@[ @0, @128, @256, @512 ] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         NSUInteger length = [obj unsignedIntegerValue];
-        NSData *data = IMSDeriveKey(key, length, salt);
+        NSData *data = IMSCryptoUtilsDeriveKey(key, length, salt);
         if (length) { STAssertNotNil(data, @"Resulting data is nil"); }
         else { STAssertNil(data, @"Resulting data is not nil"); }
         STAssertEquals([data length], length, @"Resulting data is the wrong length");
@@ -63,13 +64,12 @@
 }
 
 - (void)testGeneratedKeyContentsWithSameSalt {
-    static NSString *key = @"key";
-    static NSUInteger length = 1024;
-    NSData *salt = IMSPseudoRandomData(256);
+    NSData *salt = IMSCryptoUtilsPseudoRandomData(8);
+    NSData *key = IMSCryptoUtilsPseudoRandomData(8);
     
     // get two generated keys
-    NSData *one = IMSDeriveKey(key, length, salt);
-    NSData *two = IMSDeriveKey(key, length, salt);
+    NSData *one = IMSCryptoUtilsDeriveKey(key, kCCKeySizeAES256, salt);
+    NSData *two = IMSCryptoUtilsDeriveKey(key, kCCKeySizeAES256, salt);
     
     // they should not be nil
     STAssertNotNil(one, @"Resulting data is nil");
@@ -81,16 +81,15 @@
 }
 
 - (void)testGeneratedKeyContentsWithDifferentSalt {
-    static NSString *key = @"key";
-    static NSUInteger length = 1024;
+    NSData *key = IMSCryptoUtilsPseudoRandomData(8);
     
     // get key one
-    NSData *saltOne = IMSPseudoRandomData(256);
-    NSData *keyOne = IMSDeriveKey(key, length, saltOne);
+    NSData *saltOne = IMSCryptoUtilsPseudoRandomData(8);
+    NSData *keyOne = IMSCryptoUtilsDeriveKey(key, kCCKeySizeAES256, saltOne);
     
     // get key two
-    NSData *saltTwo = IMSPseudoRandomData(256);
-    NSData *keyTwo = IMSDeriveKey(key, length, saltTwo);
+    NSData *saltTwo = IMSCryptoUtilsPseudoRandomData(8);
+    NSData *keyTwo = IMSCryptoUtilsDeriveKey(key, kCCKeySizeAES256, saltTwo);
     
     // they should not be equal
     STAssertFalse([keyOne isEqualToData:keyTwo], @"Two keys with different salts are equal");
@@ -98,15 +97,16 @@
 }
 
 - (void)testEncryptedDataContents {
-    static NSString *key = @"key";
-    NSData *salt = IMSPseudoRandomData(256);
+    NSData *salt = IMSCryptoUtilsPseudoRandomData(8);
+    NSData *key = IMSCryptoUtilsPseudoRandomData(8);
+    key = IMSCryptoUtilsDeriveKey(key, kCCKeySizeAES256, salt);
     
     // get some plain data
-    NSData *plain = IMSPseudoRandomData(5);
+    NSData *plain = IMSCryptoUtilsPseudoRandomData(14);
     
     // encrypt then decrypt
-    NSData *cipher = IMSEncryptData(plain, key, salt);
-    NSData *plainPrime = IMSDecryptData(cipher, key, salt);
+    NSData *cipher = IMSCryptoUtilsEncryptData(plain, key);
+    NSData *plainPrime = IMSCryptoUtilsDecryptData(cipher, key);
     
     // tests
     STAssertTrue([plain isEqualToData:plainPrime], @"The data should be equal");
@@ -122,7 +122,7 @@
 
 - (void)testBinarySum {
     for (NSUInteger i = 0; i < 100; i++) {
-        NSData *data = IMSPseudoRandomData(102);
+        NSData *data = IMSCryptoUtilsPseudoRandomData(102);
         int8_t one = IMSSum([data bytes], [data length]);
         int8_t two = IMSSum([data bytes], [data length]);
         STAssertEquals(one, two, @"The sums are not equal");
@@ -131,7 +131,7 @@
 
 - (void)testBinaryChecksum {
     for (NSUInteger i = 0; i < 100; i++) {
-        NSData *data = IMSPseudoRandomData(102);
+        NSData *data = IMSCryptoUtilsPseudoRandomData(102);
         int8_t one = IMSChecksum(data);
         int8_t two = IMSChecksum(data);
         STAssertEquals(one, two, @"The checksums are not equal");
@@ -139,11 +139,12 @@
 }
 
 - (void)testEncrtypedPlistDataContents {
-    static NSString *key = @"key";
+    NSData *salt = IMSCryptoUtilsPseudoRandomData(8);
+    NSData *key = IMSCryptoUtilsPseudoRandomData(8);
+    key = IMSCryptoUtilsDeriveKey(key, kCCKeySizeAES256, salt);
     NSArray *names = @[ @"Bob", @"Lauren", @"Dave" ];
-    NSData *salt = IMSPseudoRandomData(128);
-    NSData *encrypted = IMSEncryptPlistObjectWithKey(names, key, salt);
-    NSArray *namesPrime = IMSDecryptPlistObjectWithKey(encrypted, key, salt);
+    NSData *encrypted = IMSCryptoUtilsEncryptPlistObject(names, key);
+    NSArray *namesPrime = IMSCryptoUtilsDecryptPlistObject(encrypted, key);
     STAssertTrue([names isEqualToArray:namesPrime], @"The arrays are not equal");
 }
 
