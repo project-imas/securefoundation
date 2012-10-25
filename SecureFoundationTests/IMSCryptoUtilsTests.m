@@ -7,7 +7,6 @@
 //
 
 #import <SenTestingKit/SenTestingKit.h>
-#import <CommonCrypto/CommonCrypto.h>
 
 #import "SecureFoundation.h"
 

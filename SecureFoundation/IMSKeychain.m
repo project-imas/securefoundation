@@ -6,8 +6,7 @@
 //  Copyright (c) 2012 The MITRE Corporation. All rights reserved.
 //
 
-#import "IMSKeychain.h"
-#import "IMSCryptoUtils.h"
+#import "SecureFoundation.h"
 
 @implementation IMSKeychain
 

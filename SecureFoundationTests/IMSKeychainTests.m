@@ -8,8 +8,7 @@
 
 #import <SenTestingKit/SenTestingKit.h>
 
-#import "IMSKeychain.h"
-#import "IMSCryptoUtils.h"
+#import "SecureFoundation.h"
 
 @interface IMSKeychainTests : SenTestCase
 

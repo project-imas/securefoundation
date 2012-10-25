@@ -6,9 +6,7 @@
 //  Copyright (c) 2012 The MITRE Corporation. All rights reserved.
 //
 
-#import <CommonCrypto/CommonCrypto.h>
-
-#import "IMSCryptoUtils.h"
+#import "SecureFoundation.h"
 
 int8_t IMSSum(const void *bytes, size_t length) {
     int8_t sum = 0;

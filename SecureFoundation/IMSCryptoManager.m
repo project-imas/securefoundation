@@ -6,11 +6,7 @@
 //  Copyright (c) 2012 The MITRE Corporation. All rights reserved.
 //
 
-#import <CommonCrypto/CommonCrypto.h>
-
-#import "IMSCryptoManager.h"
-#import "IMSCryptoUtils.h"
-#import "IMSKeychain.h"
+#import "SecureFoundation.h"
 
 // constants
 static NSString * const IMSCryptoManagerKeychainService = @"org.mitre.imas.crypt-manager";
