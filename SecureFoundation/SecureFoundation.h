@@ -8,6 +8,3 @@
 
 #import <Foundation/Foundation.h>
 
-@interface SecureFoundation : NSObject
-
-@end

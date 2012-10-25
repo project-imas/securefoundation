@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		3B893580162C92F1003750B6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B89357F162C92F1003750B6 /* Foundation.framework */; };
 		3B893585162C92F1003750B6 /* SecureFoundation.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3B893584162C92F1003750B6 /* SecureFoundation.h */; };
-		3B893587162C92F1003750B6 /* SecureFoundation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B893586162C92F1003750B6 /* SecureFoundation.m */; };
 		3B89358F162C92F1003750B6 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B89358E162C92F1003750B6 /* SenTestingKit.framework */; };
 		3B893591162C92F1003750B6 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B893590162C92F1003750B6 /* UIKit.framework */; };
 		3B893592162C92F1003750B6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B89357F162C92F1003750B6 /* Foundation.framework */; };
@@ -21,6 +20,7 @@
 		3B8935AE162CA792003750B6 /* IMSCryptoUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B8935AC162CA792003750B6 /* IMSCryptoUtils.m */; };
 		3B8935F2162F2034003750B6 /* IMSKeychainTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B8935F1162F2034003750B6 /* IMSKeychainTests.m */; };
 		3B8935F5162F206E003750B6 /* IMSCryptoUtilsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B8935F4162F206E003750B6 /* IMSCryptoUtilsTests.m */; };
+		3B98C7A7163092760070BD54 /* IMSCryptoManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B98C7A6163092760070BD54 /* IMSCryptoManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,7 +52,6 @@
 		3B89357F162C92F1003750B6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		3B893583162C92F1003750B6 /* SecureFoundation-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SecureFoundation-Prefix.pch"; sourceTree = "<group>"; };
 		3B893584162C92F1003750B6 /* SecureFoundation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SecureFoundation.h; sourceTree = "<group>"; };
-		3B893586162C92F1003750B6 /* SecureFoundation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SecureFoundation.m; sourceTree = "<group>"; };
 		3B89358D162C92F1003750B6 /* SecureFoundationTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SecureFoundationTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B89358E162C92F1003750B6 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		3B893590162C92F1003750B6 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
@@ -64,6 +63,8 @@
 		3B8935AC162CA792003750B6 /* IMSCryptoUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMSCryptoUtils.m; sourceTree = "<group>"; };
 		3B8935F1162F2034003750B6 /* IMSKeychainTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMSKeychainTests.m; sourceTree = "<group>"; };
 		3B8935F4162F206E003750B6 /* IMSCryptoUtilsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMSCryptoUtilsTests.m; sourceTree = "<group>"; };
+		3B98C7A5163092760070BD54 /* IMSCryptoManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMSCryptoManager.h; sourceTree = "<group>"; };
+		3B98C7A6163092760070BD54 /* IMSCryptoManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMSCryptoManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,11 +124,12 @@
 			children = (
 				3B893583162C92F1003750B6 /* SecureFoundation-Prefix.pch */,
 				3B893584162C92F1003750B6 /* SecureFoundation.h */,
-				3B893586162C92F1003750B6 /* SecureFoundation.m */,
 				3B8935A7162C93C6003750B6 /* IMSKeychain.h */,
 				3B8935A8162C93C6003750B6 /* IMSKeychain.m */,
 				3B8935AB162CA792003750B6 /* IMSCryptoUtils.h */,
 				3B8935AC162CA792003750B6 /* IMSCryptoUtils.m */,
+				3B98C7A5163092760070BD54 /* IMSCryptoManager.h */,
+				3B98C7A6163092760070BD54 /* IMSCryptoManager.m */,
 			);
 			path = SecureFoundation;
 			sourceTree = "<group>";
@@ -249,9 +251,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3B893587162C92F1003750B6 /* SecureFoundation.m in Sources */,
 				3B8935A9162C93C6003750B6 /* IMSKeychain.m in Sources */,
 				3B8935AD162CA792003750B6 /* IMSCryptoUtils.m in Sources */,
+				3B98C7A7163092760070BD54 /* IMSCryptoManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
