@@ -41,15 +41,30 @@
 }
 
 + (NSData *)passwordDataForService:(NSString *)service account:(NSString *)account error:(NSError **)error {
+    
+    // check parameters
+    NSParameterAssert(service != nil);
+    NSParameterAssert(account != nil);
+    if (service == nil || account == nil) { return nil; }
+    
+    // access keychain
     __block NSData *password = nil;
     [self accessKeychainInLock:^(NSMutableDictionary *keychain) {
         NSMutableDictionary *accounts = [keychain objectForKey:service];
         password = [accounts objectForKey:account];
     }];
     return password;
+    
 }
 
 + (BOOL)deletePasswordForService:(NSString *)service account:(NSString *)account error:(NSError **)error {
+    
+    // check parameters
+    NSParameterAssert(service != nil);
+    NSParameterAssert(account != nil);
+    if (service == nil || account == nil) { return NO; }
+    
+    // access keychain
     [self accessKeychainInLock:^(NSMutableDictionary *keychain) {
         NSMutableDictionary *accounts = [keychain objectForKey:service];
         if ([accounts count] == 1) { [keychain removeObjectForKey:service]; }
@@ -57,6 +72,7 @@
     }];
     [self setKeychainIsDirty];
     return YES;
+    
 }
 
 + (BOOL)setPassword:(NSString *)password forService:(NSString *)service account:(NSString *)account error:(NSError **)error {
@@ -65,6 +81,14 @@
 }
 
 + (BOOL)setPasswordData:(NSData *)password forService:(NSString *)service account:(NSString *)account error:(NSError **)error {
+    
+    // check parameters
+    NSParameterAssert(service != nil);
+    NSParameterAssert(account != nil);
+    NSParameterAssert(password != nil);
+    if (service == nil || account == nil || password == nil) { return NO; }
+    
+    // access keychain
     [self accessKeychainInLock:^(NSMutableDictionary *keychain) {
         NSMutableDictionary *accounts = [keychain objectForKey:service];
         if (accounts == nil) {
@@ -75,6 +99,50 @@
     }];
     [self setKeychainIsDirty];
     return YES;
+    
+}
+
++ (BOOL)setSecurePassword:(NSString *)password forService:(NSString *)service account:(NSString *)account {
+    NSData *data = [password dataUsingEncoding:NSUTF8StringEncoding];
+    return [self setSecurePasswordData:data forService:service account:account];
+}
+
++ (BOOL)setSecurePasswordData:(NSData *)password forService:(NSString *)service account:(NSString *)account {
+    
+    // check parameters
+    NSParameterAssert(service != nil);
+    NSParameterAssert(account != nil);
+    NSParameterAssert(password != nil);
+    if (service == nil || account == nil || password == nil) { return NO; }
+    
+    // access keychain
+    NSData *encrypted = IMSCryptoManagerEncryptData(password);
+    if (encrypted) {
+        return [self setPasswordData:encrypted forService:service account:account error:nil];
+    }
+    return NO;
+    
+}
+
++ (NSString *)securePasswordForService:(NSString *)service account:(NSString *)account {
+    NSData *data = [self securePasswordDataForService:service account:account];
+    if ([data length]) {
+        return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    }
+    return nil;
+}
+
++ (NSData *)securePasswordDataForService:(NSString *)service account:(NSString *)account {
+    
+    // check parameters
+    NSParameterAssert(service != nil);
+    NSParameterAssert(account != nil);
+    if (service == nil || account == nil) { return NO; }
+    
+    // access keychain
+    NSData *data = [self passwordDataForService:service account:account error:nil];
+    return IMSCryptoManagerDecryptData(data);
+    
 }
 
 #pragma mark - private methods
@@ -93,12 +161,11 @@
         // read data
         NSURL *URL = [self URLForKeychainFile];
         NSData *data = [NSData dataWithContentsOfURL:URL];
-        CFPropertyListRef plist = CFPropertyListCreateWithData(kCFAllocatorDefault,
-                                                               (__bridge CFDataRef)data,
-                                                               kCFPropertyListMutableContainers,
-                                                               NULL,
-                                                               NULL);
-        dictionary = (__bridge_transfer NSMutableDictionary *)plist;
+        dictionary = [NSPropertyListSerialization
+                      propertyListWithData:data
+                      options:NSPropertyListMutableContainers
+                      format:NULL
+                      error:NULL];
         if (dictionary == nil) {
             dictionary = [NSMutableDictionary dictionary];
         }
