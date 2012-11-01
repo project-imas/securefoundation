@@ -9,7 +9,7 @@
 #import "SecureFoundation.h"
 
 // constants
-static NSString * const IMSCryptoManagerKeychainService = @"org.mitre.imas.crypt-manager";
+static NSString * const IMSCryptoManagerKeychainService = @"org.mitre.imas.crypto-manager";
 static NSString * const IMSCryptoManagerSharedKeyPasscodeAccount = @"shared-key.passcode";
 static NSString * const IMSCryptoManagerSharedKeySecurityAnswersAccount = @"shared-key.security-answers";
 static NSString * const IMSCryptoManagerSecurityQuestionsAccount = @"security-questions";
@@ -43,11 +43,11 @@ NSData *IMSCryptoManagerSalt(void) {
 }
 
 NSData *IMSCryptoManagerDecryptData(NSData *data) {
-    return IMSCryptoUtilsEncryptData(data, IMSCryptoManagerSharedKey);
+    return IMSCryptoUtilsDecryptData(data, IMSCryptoManagerSharedKey);
 }
 
 NSData *IMSCryptoManagerEncryptData(NSData *data) {
-    return IMSCryptoUtilsDecryptData(data, IMSCryptoManagerSharedKey);
+    return IMSCryptoUtilsEncryptData(data, IMSCryptoManagerSharedKey);
 }
 
 void IMSCryptoManagerPurge(void) {
@@ -113,7 +113,7 @@ void IMSCryptoManagerUpdateSecurityQuestionsAndAnswers(NSArray *questions, NSArr
         [IMSKeychain
          setPasswordData:encryptedKey
          forService:IMSCryptoManagerKeychainService
-         account:IMSCryptoManagerSharedKeyPasscodeAccount
+         account:IMSCryptoManagerSharedKeySecurityAnswersAccount
          error:nil];
         
         // questions
