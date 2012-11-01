@@ -86,15 +86,31 @@
     static NSRecursiveLock *lock = nil;
     static dispatch_once_t token;
     dispatch_once(&token, ^{
-        NSURL *URL = [self URLForKeychainFile];
+        
+        // lock
         lock = [[NSRecursiveLock alloc] init];
-        dictionary = [NSDictionary dictionaryWithContentsOfURL:URL];
+        
+        // read data
+        NSURL *URL = [self URLForKeychainFile];
+        NSData *data = [NSData dataWithContentsOfURL:URL];
+        CFPropertyListRef plist = CFPropertyListCreateWithData(kCFAllocatorDefault,
+                                                               (__bridge CFDataRef)data,
+                                                               kCFPropertyListMutableContainers,
+                                                               NULL,
+                                                               NULL);
+        dictionary = (__bridge_transfer NSMutableDictionary *)plist;
+        if (dictionary == nil) {
+            dictionary = [NSMutableDictionary dictionary];
+        }
+        
     });
     
     // perform block
-    [lock lock];
-    if (block) { block(dictionary); }
-    [lock unlock];
+    if (block) {
+        [lock lock];
+        block(dictionary);
+        [lock unlock];
+    }
     
 }
 
