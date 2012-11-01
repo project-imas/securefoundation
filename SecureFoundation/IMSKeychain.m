@@ -161,11 +161,13 @@
         // read data
         NSURL *URL = [self URLForKeychainFile];
         NSData *data = [NSData dataWithContentsOfURL:URL];
-        dictionary = [NSPropertyListSerialization
-                      propertyListWithData:data
-                      options:NSPropertyListMutableContainers
-                      format:NULL
-                      error:NULL];
+        if (data) {
+            dictionary = [NSPropertyListSerialization
+                          propertyListWithData:data
+                          options:NSPropertyListMutableContainers
+                          format:NULL
+                          error:NULL];
+        }
         if (dictionary == nil) {
             dictionary = [NSMutableDictionary dictionary];
         }
