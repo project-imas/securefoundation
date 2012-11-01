@@ -16,12 +16,40 @@
 
 @implementation IMSKeychainTests
 
++ (NSURL *)URLForKeychainFile {
+    static NSURL *URL;
+    static dispatch_once_t token;
+    dispatch_once(&token, ^{
+        NSFileManager *manager = [NSFileManager defaultManager];
+        URL = [[manager
+                URLsForDirectory:NSLibraryDirectory
+                inDomains:NSUserDomainMask]
+               objectAtIndex:0];
+        URL = [URL URLByAppendingPathComponent:@".imskeychain"];
+    });
+    return URL;
+}
+
 - (void)setUp {
     [super setUp];
 }
 
 - (void)tearDown {
+    
+    static NSURL *URL;
+    static dispatch_once_t token;
+    dispatch_once(&token, ^{
+        NSFileManager *manager = [NSFileManager defaultManager];
+        URL = [[manager
+                URLsForDirectory:NSLibraryDirectory
+                inDomains:NSUserDomainMask]
+               objectAtIndex:0];
+        URL = [URL URLByAppendingPathComponent:@".imskeychain"];
+    });
+    [[NSFileManager defaultManager] removeItemAtURL:URL error:nil];
+    
     [super tearDown];
+    
 }
 
 - (void)testKeychainContents {
@@ -92,6 +120,35 @@
     
     two = [IMSKeychain passwordDataForService:service account:account error:&error];
     STAssertTrue([two isEqualToData:one], @"Passwords were not equal.");
+    
+}
+
+- (void)testEncryptedKeychainItemContents {
+    static NSString * const service = @"service";
+    static NSString * const account = @"account";
+    static NSString * const passcode = @"1234";
+    NSArray *questions = @[ @"question" ];
+    NSArray *answers = @[ @"answer" ];
+    BOOL success;
+    NSData *one;
+    NSData *two;
+    
+    IMSCryptoManagerStoreTemporaryPasscode(passcode);
+    IMSCryptoManagerStoreTemporarySecurityQuestionsAndAnswers(questions, answers); 
+    IMSCryptoManagerFinalize();
+    
+    IMSCryptoManagerPurge();
+    IMSCryptoManagerUnlockWithPasscode(passcode);
+    
+    one = IMSCryptoUtilsPseudoRandomData(54);
+    success = [IMSKeychain setSecurePasswordData:one forService:service account:account];
+    STAssertTrue(success, @"Password was not saved.");
+    
+    two = [IMSKeychain passwordDataForService:service account:account error:nil];
+    STAssertFalse([two isEqualToData:one], @"Passwords should not be equal.");
+    
+    two = [IMSKeychain securePasswordDataForService:service account:account];
+    STAssertTrue([two isEqualToData:one], @"Passwords should be equal.");
     
 }
 
