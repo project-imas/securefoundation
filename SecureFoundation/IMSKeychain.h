@@ -18,6 +18,16 @@
  */
 @interface IMSKeychain : NSObject
 
+#pragma mark - force keychain write
+
+/*
+ 
+ Force the keychain to write its contents to disk. This method will block
+ until the write is complete.
+ 
+ */
++ (void)synchronize;
+
 #pragma mark - get and set unsecured data
 
 /*

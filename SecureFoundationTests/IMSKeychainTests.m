@@ -16,25 +16,13 @@
 
 @implementation IMSKeychainTests
 
-+ (NSURL *)URLForKeychainFile {
-    static NSURL *URL;
-    static dispatch_once_t token;
-    dispatch_once(&token, ^{
-        NSFileManager *manager = [NSFileManager defaultManager];
-        URL = [[manager
-                URLsForDirectory:NSLibraryDirectory
-                inDomains:NSUserDomainMask]
-               objectAtIndex:0];
-        URL = [URL URLByAppendingPathComponent:@".imskeychain"];
-    });
-    return URL;
-}
-
 - (void)setUp {
     [super setUp];
 }
 
 - (void)tearDown {
+    
+    [IMSKeychain synchronize];
     
     static NSURL *URL;
     static dispatch_once_t token;

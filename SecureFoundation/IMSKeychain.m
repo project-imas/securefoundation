@@ -6,9 +6,24 @@
 //  Copyright (c) 2012 The MITRE Corporation. All rights reserved.
 //
 
+#import <UIKit/UIKit.h>
+
 #import "SecureFoundation.h"
 
 @implementation IMSKeychain
+
++ (void)initialize {
+    if (self == [IMSKeychain class]) {
+        NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+        [center
+         addObserverForName:UIApplicationWillResignActiveNotification
+         object:nil
+         queue:[NSOperationQueue mainQueue]
+         usingBlock:^(NSNotification *note) {
+             [self synchronize];
+         }];
+    }
+}
 
 + (NSArray *)accounts:(NSError **)error {
     return [self accountsForService:nil error:error];
@@ -145,18 +160,27 @@
     
 }
 
++ (void)synchronize {
+    [self accessKeychainInLock:^(NSMutableDictionary *keychain) {
+        NSURL *URL = [self URLForKeychainFile];
+        NSFileManager *manager = [NSFileManager defaultManager];
+        [manager removeItemAtURL:URL error:nil];
+        [keychain writeToURL:URL atomically:NO];
+    }];
+}
+
 #pragma mark - private methods
 
 + (void)accessKeychainInLock:(void (^) (NSMutableDictionary *keychain))block {
     
     // create variables
     static NSMutableDictionary *dictionary = nil;
-    static NSRecursiveLock *lock = nil;
+    static NSLock *lock = nil;
     static dispatch_once_t token;
     dispatch_once(&token, ^{
         
         // lock
-        lock = [[NSRecursiveLock alloc] init];
+        lock = [[NSLock alloc] init];
         
         // read data
         NSURL *URL = [self URLForKeychainFile];
@@ -210,12 +234,7 @@
             [lock unlock];
             
             // perform write
-            [self accessKeychainInLock:^(NSMutableDictionary *keychain) {
-                NSURL *URL = [self URLForKeychainFile];
-                NSFileManager *manager = [NSFileManager defaultManager];
-                [manager removeItemAtURL:URL error:nil];
-                [keychain writeToURL:URL atomically:NO];
-            }];
+            [self synchronize];
             
         });
         dispatch_resume(timer);
