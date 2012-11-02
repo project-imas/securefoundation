@@ -28,15 +28,13 @@ NSData *IMSCryptoManagerSalt(void) {
     dispatch_once(&token, ^{
         salt = [IMSKeychain
                 passwordDataForService:IMSCryptoManagerKeychainService
-                account:IMSCryptoManagerSaltAccount
-                error:nil];
+                account:IMSCryptoManagerSaltAccount];
         if (salt == nil) {
             salt = IMSCryptoUtilsPseudoRandomData(kCCKeySizeAES256);
             [IMSKeychain
              setPasswordData:salt
              forService:IMSCryptoManagerKeychainService
-             account:IMSCryptoManagerSaltAccount
-             error:nil];
+             account:IMSCryptoManagerSaltAccount];
         }
     });
     return salt;
@@ -93,8 +91,7 @@ void IMSCryptoManagerUpdatePasscode(NSString *passcode) {
         [IMSKeychain
          setPasswordData:encryptedKey
          forService:IMSCryptoManagerKeychainService
-         account:IMSCryptoManagerSharedKeyPasscodeAccount
-         error:nil];
+         account:IMSCryptoManagerSharedKeyPasscodeAccount];
     }
 }
 
@@ -113,8 +110,7 @@ void IMSCryptoManagerUpdateSecurityQuestionsAndAnswers(NSArray *questions, NSArr
         [IMSKeychain
          setPasswordData:encryptedKey
          forService:IMSCryptoManagerKeychainService
-         account:IMSCryptoManagerSharedKeySecurityAnswersAccount
-         error:nil];
+         account:IMSCryptoManagerSharedKeySecurityAnswersAccount];
         
         // questions
         NSMutableData *questionsData = [[NSJSONSerialization dataWithJSONObject:questions options:0 error:nil] mutableCopy];
@@ -124,8 +120,7 @@ void IMSCryptoManagerUpdateSecurityQuestionsAndAnswers(NSArray *questions, NSArr
         [IMSKeychain
          setPasswordData:questionsData
          forService:IMSCryptoManagerKeychainService
-         account:IMSCryptoManagerSecurityQuestionsAccount
-         error:nil];
+         account:IMSCryptoManagerSecurityQuestionsAccount];
         
     }
 }
@@ -136,8 +131,7 @@ BOOL IMSCryptoManagerUnlockWithPasscode(NSString *passcode) {
     // get encrypted key
     NSData *encryptedKey = [IMSKeychain
                             passwordDataForService:IMSCryptoManagerKeychainService
-                            account:IMSCryptoManagerSharedKeyPasscodeAccount
-                            error:nil];
+                            account:IMSCryptoManagerSharedKeyPasscodeAccount];
     
     // generate decryption key
     NSData *key = [passcode dataUsingEncoding:NSUTF8StringEncoding];
@@ -158,8 +152,7 @@ BOOL IMSCryptoManagerUnlockWithAnswersForSecurityQuestions(NSArray *answers) {
     // get encrypted key
     NSData *encryptedKey = [IMSKeychain
                             passwordDataForService:IMSCryptoManagerKeychainService
-                            account:IMSCryptoManagerSharedKeySecurityAnswersAccount
-                            error:nil];
+                            account:IMSCryptoManagerSharedKeySecurityAnswersAccount];
     
     // generate decryption key
     NSString *answersString = [answers componentsJoinedByString:@""];
@@ -182,8 +175,7 @@ BOOL IMSCryptoManagerIsLocked(void) {
 NSArray *IMSCryptoManagerSecurityQuestions(void) {
     NSMutableData *questions = [[IMSKeychain
                                  passwordDataForService:IMSCryptoManagerKeychainService
-                                 account:IMSCryptoManagerSharedKeySecurityAnswersAccount
-                                 error:nil]
+                                 account:IMSCryptoManagerSharedKeySecurityAnswersAccount]
                                 mutableCopy];
     NSUInteger length = [questions length];
     char *bytes = [questions mutableBytes];
@@ -194,19 +186,16 @@ NSArray *IMSCryptoManagerSecurityQuestions(void) {
 BOOL IMSCryptoManagerHasPasscode(void) {
     NSData *data = [IMSKeychain
                     passwordDataForService:IMSCryptoManagerKeychainService
-                    account:IMSCryptoManagerSharedKeyPasscodeAccount
-                    error:nil];
+                    account:IMSCryptoManagerSharedKeyPasscodeAccount];
     return (data != nil);
 }
 
 BOOL IMCryptoManagerHasSecurityQuestions(void) {
     NSData *questions = [IMSKeychain
                          passwordDataForService:IMSCryptoManagerKeychainService
-                         account:IMSCryptoManagerSecurityQuestionsAccount
-                         error:nil];
+                         account:IMSCryptoManagerSecurityQuestionsAccount];
     NSData *answers = [IMSKeychain
                        passwordDataForService:IMSCryptoManagerKeychainService
-                       account:IMSCryptoManagerSharedKeySecurityAnswersAccount
-                       error:nil];
+                       account:IMSCryptoManagerSharedKeySecurityAnswersAccount];
     return (answers != nil && questions != nil);
 }

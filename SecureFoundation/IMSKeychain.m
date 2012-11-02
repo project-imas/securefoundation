@@ -25,11 +25,11 @@
     }
 }
 
-+ (NSArray *)accounts:(NSError **)error {
-    return [self accountsForService:nil error:error];
++ (NSArray *)accounts {
+    return [self accountsForService:nil];
 }
 
-+ (NSArray *)accountsForService:(NSString *)service error:(NSError **)error {
++ (NSArray *)accountsForService:(NSString *)service {
     __block NSArray *keys = nil;
     [self accessKeychainInLock:^(NSMutableDictionary *keychain) {
         if (service == nil) {
@@ -47,15 +47,15 @@
     return keys;
 }
 
-+ (NSString *)passwordForService:(NSString *)service account:(NSString *)account error:(NSError **)error {
-    NSData *data = [self passwordDataForService:service account:account error:error];
++ (NSString *)passwordForService:(NSString *)service account:(NSString *)account {
+    NSData *data = [self passwordDataForService:service account:account];
     if ([data length]) {
         return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     }
     return nil;
 }
 
-+ (NSData *)passwordDataForService:(NSString *)service account:(NSString *)account error:(NSError **)error {
++ (NSData *)passwordDataForService:(NSString *)service account:(NSString *)account {
     
     // check parameters
     NSParameterAssert(service != nil);
@@ -72,7 +72,7 @@
     
 }
 
-+ (BOOL)deletePasswordForService:(NSString *)service account:(NSString *)account error:(NSError **)error {
++ (BOOL)deletePasswordForService:(NSString *)service account:(NSString *)account {
     
     // check parameters
     NSParameterAssert(service != nil);
@@ -90,12 +90,12 @@
     
 }
 
-+ (BOOL)setPassword:(NSString *)password forService:(NSString *)service account:(NSString *)account error:(NSError **)error {
++ (BOOL)setPassword:(NSString *)password forService:(NSString *)service account:(NSString *)account {
     NSData *data = [password dataUsingEncoding:NSUTF8StringEncoding];
-    return [self setPasswordData:data forService:service account:account error:error];
+    return [self setPasswordData:data forService:service account:account];
 }
 
-+ (BOOL)setPasswordData:(NSData *)password forService:(NSString *)service account:(NSString *)account error:(NSError **)error {
++ (BOOL)setPasswordData:(NSData *)password forService:(NSString *)service account:(NSString *)account {
     
     // check parameters
     NSParameterAssert(service != nil);
@@ -133,7 +133,7 @@
     // access keychain
     NSData *encrypted = IMSCryptoManagerEncryptData(password);
     if (encrypted) {
-        return [self setPasswordData:encrypted forService:service account:account error:nil];
+        return [self setPasswordData:encrypted forService:service account:account];
     }
     return NO;
     
@@ -155,7 +155,7 @@
     if (service == nil || account == nil) { return NO; }
     
     // access keychain
-    NSData *data = [self passwordDataForService:service account:account error:nil];
+    NSData *data = [self passwordDataForService:service account:account];
     return IMSCryptoManagerDecryptData(data);
     
 }

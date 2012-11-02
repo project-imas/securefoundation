@@ -44,13 +44,12 @@
     static NSString * const service = @"service";
     static NSString * const account = @"account";
     BOOL success;
-    NSError *error;
     
     NSData *one = IMSCryptoUtilsPseudoRandomData(54);
-    success = [IMSKeychain setPasswordData:one forService:service account:account error:&error];
-    STAssertTrue(success, @"Password was not saved.\n%@", error);
+    success = [IMSKeychain setPasswordData:one forService:service account:account];
+    STAssertTrue(success, @"Password was not saved.");
     
-    NSData *two = [IMSKeychain passwordDataForService:service account:account error:&error];
+    NSData *two = [IMSKeychain passwordDataForService:service account:account];
     STAssertTrue([two isEqualToData:one], @"Passwords were not equal.");
     
 }
@@ -59,16 +58,15 @@
     static NSString * const service = @"service";
     static NSString * const account = @"account";
     BOOL success;
-    NSError *error;
     
     NSData *one = IMSCryptoUtilsPseudoRandomData(54);
-    success = [IMSKeychain setPasswordData:one forService:service account:account error:&error];
-    STAssertTrue(success, @"Password was not saved.\n%@", error);
+    success = [IMSKeychain setPasswordData:one forService:service account:account];
+    STAssertTrue(success, @"Password was not saved.");
     
-    success = [IMSKeychain deletePasswordForService:service account:account error:&error];
-    STAssertTrue(success, @"Password was not deleted.\n%@", error);
+    success = [IMSKeychain deletePasswordForService:service account:account];
+    STAssertTrue(success, @"Password was not deleted.");
     
-    NSData *two = [IMSKeychain passwordDataForService:service account:account error:&error];
+    NSData *two = [IMSKeychain passwordDataForService:service account:account];
     STAssertNil(two, @"No data should have been returned.");
     
 }
@@ -77,13 +75,12 @@
     static NSString * const service = @"service";
     static NSString * const account = @"account";
     BOOL success;
-    NSError *error;
     
-    success = [IMSKeychain deletePasswordForService:service account:account error:&error];
-    STAssertTrue(success, @"Password was not deleted.\n%@", error);
+    success = [IMSKeychain deletePasswordForService:service account:account];
+    STAssertTrue(success, @"Password was not deleted.");
     
-    success = [IMSKeychain deletePasswordForService:service account:account error:&error];
-    STAssertTrue(success, @"Password was not deleted.\n%@", error);
+    success = [IMSKeychain deletePasswordForService:service account:account];
+    STAssertTrue(success, @"Password was not deleted.");
     
 }
 
@@ -91,22 +88,21 @@
     static NSString * const service = @"service";
     static NSString * const account = @"account";
     BOOL success;
-    NSError *error;
     NSData *one;
     NSData *two;
     
     one = IMSCryptoUtilsPseudoRandomData(54);
-    success = [IMSKeychain setPasswordData:one forService:service account:account error:&error];
-    STAssertTrue(success, @"Password was not saved.\n%@", error);
+    success = [IMSKeychain setPasswordData:one forService:service account:account];
+    STAssertTrue(success, @"Password was not saved.");
     
-    two = [IMSKeychain passwordDataForService:service account:account error:&error];
+    two = [IMSKeychain passwordDataForService:service account:account];
     STAssertTrue([two isEqualToData:one], @"Passwords were not equal.");
     
     one = IMSCryptoUtilsPseudoRandomData(54);
-    success = [IMSKeychain setPasswordData:one forService:service account:account error:&error];
-    STAssertTrue(success, @"Password was not saved.\n%@", error);
+    success = [IMSKeychain setPasswordData:one forService:service account:account];
+    STAssertTrue(success, @"Password was not saved.");
     
-    two = [IMSKeychain passwordDataForService:service account:account error:&error];
+    two = [IMSKeychain passwordDataForService:service account:account];
     STAssertTrue([two isEqualToData:one], @"Passwords were not equal.");
     
 }
@@ -132,7 +128,7 @@
     success = [IMSKeychain setSecurePasswordData:one forService:service account:account];
     STAssertTrue(success, @"Password was not saved.");
     
-    two = [IMSKeychain passwordDataForService:service account:account error:nil];
+    two = [IMSKeychain passwordDataForService:service account:account];
     STAssertFalse([two isEqualToData:one], @"Passwords should not be equal.");
     
     two = [IMSKeychain securePasswordDataForService:service account:account];
