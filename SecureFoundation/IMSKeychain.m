@@ -10,10 +10,16 @@
 
 #import "SecureFoundation.h"
 
+static dispatch_source_t _delayedWriteTimer = NULL;
+static dispatch_queue_t _delayedWriteQueue = NULL;
+static NSLock *_delayedWriteLock = nil;
+
 @implementation IMSKeychain
 
 + (void)initialize {
     if (self == [IMSKeychain class]) {
+        
+        // notifications
         NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
         [center
          addObserverForName:UIApplicationWillResignActiveNotification
@@ -22,6 +28,11 @@
          usingBlock:^(NSNotification *note) {
              [self synchronize];
          }];
+        
+        // static resources
+        _delayedWriteLock = [[NSLock alloc] init];
+        _delayedWriteQueue = dispatch_queue_create("org.mitre.imas.keychain.file-output-queue", DISPATCH_QUEUE_SERIAL);
+        
     }
 }
 
@@ -85,7 +96,7 @@
         if ([accounts count] == 1) { [keychain removeObjectForKey:service]; }
         else { [accounts removeObjectForKey:account]; }
     }];
-    [self setKeychainIsDirty];
+    [self setNeedsDelayedWrite];
     return YES;
     
 }
@@ -112,7 +123,7 @@
         }
         [accounts setObject:password forKey:account];
     }];
-    [self setKeychainIsDirty];
+    [self setNeedsDelayedWrite];
     return YES;
     
 }
@@ -167,13 +178,14 @@
         [manager removeItemAtURL:URL error:nil];
         [keychain writeToURL:URL atomically:NO];
     }];
+    [self cancelDelayedWrite];
 }
 
 #pragma mark - private methods
 
 + (void)accessKeychainInLock:(void (^) (NSMutableDictionary *keychain))block {
     
-    // create variables
+    // load variables
     static NSMutableDictionary *dictionary = nil;
     static NSLock *lock = nil;
     static dispatch_once_t token;
@@ -207,44 +219,18 @@
     
 }
 
-+ (void)setKeychainIsDirty {
-    static NSLock *lock;
-    static dispatch_queue_t queue;
-    static dispatch_once_t token;
-    static dispatch_source_t timer;
-    
-    // create queue and lock
-    dispatch_once(&token, ^{
-        queue = dispatch_queue_create("org.mitre.imas.keychain.file-output-queue", DISPATCH_QUEUE_SERIAL);
-        lock = [[NSLock alloc] init];
-    });
-    
-    // lock
-    [lock lock];
-    
-    // reset timer
-    if (timer == NULL) {
-        timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
-        dispatch_source_set_event_handler(timer, ^{
-            
-            // cancel timer
-            [lock lock];
-            dispatch_source_cancel(timer);
-            timer = NULL;
-            [lock unlock];
-            
-            // perform write
++ (void)setNeedsDelayedWrite {
+    [_delayedWriteLock lock];
+    if (_delayedWriteTimer == NULL) {
+        _delayedWriteTimer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, _delayedWriteQueue);
+        dispatch_source_set_event_handler(_delayedWriteTimer, ^{
             [self synchronize];
-            
         });
-        dispatch_resume(timer);
+        dispatch_resume(_delayedWriteTimer);
     }
     dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, 1.0 * NSEC_PER_SEC);
-    dispatch_source_set_timer(timer, time, 1000.0 * NSEC_PER_SEC, 0.0);
-    
-    // unlock
-    [lock unlock];
-    
+    dispatch_source_set_timer(_delayedWriteTimer, time, 1000.0 * NSEC_PER_SEC, 0.0);
+    [_delayedWriteLock unlock];
 }
 
 + (NSURL *)URLForKeychainFile {
@@ -259,6 +245,15 @@
         URL = [URL URLByAppendingPathComponent:@".imskeychain"];
     });
     return URL;
+}
+
++ (void)cancelDelayedWrite {
+    [_delayedWriteLock lock];
+    if (_delayedWriteTimer != NULL) {
+        dispatch_source_cancel(_delayedWriteTimer);
+        _delayedWriteTimer = NULL;
+    }
+    [_delayedWriteLock unlock];
 }
 
 @end
