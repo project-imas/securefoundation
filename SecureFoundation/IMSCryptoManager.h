@@ -53,8 +53,8 @@ void IMSCryptoManagerFinalize(void);
  unlocked.
  
  */
-void IMSCryptoManagerUpdatePasscode(NSString *passcode);
-void IMSCryptoManagerUpdateSecurityQuestionsAndAnswers(NSArray *questions, NSArray *answers);
+BOOL IMSCryptoManagerUpdatePasscode(NSString *passcode);
+BOOL IMSCryptoManagerUpdateSecurityQuestionsAndAnswers(NSArray *questions, NSArray *answers);
 
 /*
  
@@ -80,4 +80,4 @@ NSArray *IMSCryptoManagerSecurityQuestions(void);
  
  */
 BOOL IMSCryptoManagerHasPasscode(void);
-BOOL IMCryptoManagerHasSecurityQuestions(void);
+BOOL IMSCryptoManagerHasSecurityQuestionsAndAnswers(void);

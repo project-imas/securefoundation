@@ -18,7 +18,7 @@ int8_t IMSSum(const void *bytes, size_t length) {
 }
 
 int8_t IMSTwosComplement(int8_t value) {
-    return ~value + 1;
+    return (~value + 1);
 }
 
 int8_t IMSChecksum(NSData *data) {
