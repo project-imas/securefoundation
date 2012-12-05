@@ -69,6 +69,7 @@
 		3B8935F4162F206E003750B6 /* IMSCryptoUtilsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMSCryptoUtilsTests.m; sourceTree = "<group>"; };
 		3B98C7A5163092760070BD54 /* IMSCryptoManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMSCryptoManager.h; sourceTree = "<group>"; };
 		3B98C7A6163092760070BD54 /* IMSCryptoManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMSCryptoManager.m; sourceTree = "<group>"; };
+		3BC64071166FC3D5006E4E1B /* README.md */ = {isa = PBXFileReference; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; wrapsLines = 1; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,6 +98,7 @@
 		3B893571162C92F1003750B6 = {
 			isa = PBXGroup;
 			children = (
+				3BC64071166FC3D5006E4E1B /* README.md */,
 				3B893581162C92F1003750B6 /* SecureFoundation */,
 				3B893596162C92F1003750B6 /* SecureFoundationTests */,
 				3B89357E162C92F1003750B6 /* Frameworks */,

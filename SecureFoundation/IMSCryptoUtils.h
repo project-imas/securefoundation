@@ -17,29 +17,6 @@
 
 /*
  
- Perform a sum of the given bytes interpreted as eight-bit signed integers.
- This addition ignores overflow.
- 
- */
-int8_t IMSSum(const void *bytes, size_t length);
-
-/*
- 
- Simple utility for getting the two's complement of a signed integer value.
- 
- */
-int8_t IMSTwosComplement(int8_t value);
-
-/*
- 
- Get the checksum of a given data object by returning the two's complement
- of the sum of all of the bytes.
- 
- */
-int8_t IMSChecksum(NSData *data);
-
-/*
- 
  Generate an array of random bytes with the given length in bytes. This is a
  wrapper to arc4random_buf.
  
