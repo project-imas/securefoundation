@@ -4,6 +4,12 @@
 
 The "iMas Secure Foundation" project is designed to provide basic application-level security based on simple encryption mechanisms. It contains three components: a suite of cipher utilities, a collection of functions to assist with encryption through an application key, and a file-based keychain replacement.
 
+## Installation
+
+- Add SecureFoundation as a submodule to your project. `git submodule add https://github.com/mitre-imas/securefoundation.git vendor/securefoundation`
+- Add the "SecureFoundation" Xcode project as a subproject in your project. Add "libSecureFoundation.a" as a target depdency and to the "Link with Binary Libraries" build phase.
+- Import SecureFoundation in your source files `#import <SecureFoundation/SecureFoundation.h>`
+
 ## Cipher Utilities
 
 The methods found in `IMSCryptoUtils.h` help with encrypting and hashing various forms of data, as well as generating pseudo-random data and encryption keys. The methods here are all implemented in C so that they do not show up in the Objective-C symbol table or pass through `objc_msgSend`.
