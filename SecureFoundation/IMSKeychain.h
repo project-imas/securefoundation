@@ -32,14 +32,17 @@
 
 /*
  
- Get a list of all accounts across all services.
+ Get a list of all accounts across all services. This is equivelant to calling
+ `accountsForService` and passing `nil` as the service.
  
  */
 + (NSArray *)accounts;
 
 /*
  
- Get the account names for the given service.
+ Get all accounts for the given service. Pass `nil` to get all services.
+ Returns an array of dictionaries with `kSecAttrAccount` and `kSecAttrService`
+ as the keys.
  
  */
 + (NSArray *)accountsForService:(NSString *)service;

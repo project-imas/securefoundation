@@ -41,21 +41,36 @@ static NSLock *_delayedWriteLock = nil;
 }
 
 + (NSArray *)accountsForService:(NSString *)service {
-    __block NSArray *keys = nil;
+    
+    // create accounts list
+    NSMutableArray *accounts = [NSMutableArray array];
+    
+    // declare block for collecting accounts
+    void (^collectAccounts) (NSString *, NSDictionary *) = ^(NSString *blockService, NSDictionary *blockDictionary) {
+        [blockDictionary enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+            [accounts addObject:@{
+                 (__bridge NSString *)kSecAttrService : blockService,
+                 (__bridge NSString *)kSecAttrAccount : key
+             }];
+        }];
+    };
+    
+    // grab stuff
     [self accessKeychainInLock:^(NSMutableDictionary *keychain) {
         if (service == nil) {
-            NSMutableArray *accounts = [NSMutableArray array];
             [keychain enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-                [accounts addObjectsFromArray:[obj allKeys]];
+                collectAccounts(key, obj);
             }];
-            keys = accounts;
         }
         else {
-            NSMutableDictionary *accounts = [keychain objectForKey:service];
-            keys = [accounts allKeys];
+            NSMutableDictionary *dictionary = [keychain objectForKey:service];
+            collectAccounts(service, dictionary);
         }
     }];
-    return keys;
+    
+    // return
+    return accounts;
+    
 }
 
 + (NSString *)passwordForService:(NSString *)service account:(NSString *)account {
