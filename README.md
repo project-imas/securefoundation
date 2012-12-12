@@ -5,8 +5,7 @@
 The "iMas Secure Foundation" project is designed to provide basic application-level security based on simple encryption mechanisms. It contains three components: a suite of cipher utilities, a collection of functions to assist with encryption through an application key, and a file-based keychain replacement.
 
 
-## 
-Vulnerabilties Addressed
+## Vulnerabilties Addressed
 
 1. ??
 
