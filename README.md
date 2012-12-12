@@ -4,6 +4,13 @@
 
 The "iMas Secure Foundation" project is designed to provide basic application-level security based on simple encryption mechanisms. It contains three components: a suite of cipher utilities, a collection of functions to assist with encryption through an application key, and a file-based keychain replacement.
 
+
+## 
+Vulnerabilties Addressed
+
+1. ??
+
+
 ## Installation
 
 - Add SecureFoundation as a submodule to your project. `git submodule add https://github.com/mitre-imas/securefoundation.git vendor/securefoundation`
@@ -33,6 +40,7 @@ Just as with encryption, functions are provided to perform both MD5 and SHA256 h
 `IMSCryptoManager.h` contains functions to help applications build a secure container for themselves. Its primary task is to generate, maintain, and store application-wide encryption key. It also assists with the secure storage of other encryption keys and user data protected by an application passcode and, optionally, security questions and answers.
 
 Like the Cipher Utilities, the methods here are all implemented in C so that they do not show up in the Objective-C symbol table or pass through `objc_msgSend`.
+
 
 ### Using the Cryptography Manager
 
@@ -98,3 +106,21 @@ It also has methods like
     + (NSData *)securePasswordDataForService:(NSString *)service account:(NSString *)account;
     
 that pass the data through the Crypto Manager to perform encryption or decryption using the application shared key. It is important to note that the account service and account names are *not* stored encrypted in either case.
+
+License
+-------
+
+Copyright 2012 The MITRE Corporation, All Rights Reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
