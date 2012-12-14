@@ -7,7 +7,9 @@ The "iMas Secure Foundation" project is designed to provide basic application-le
 
 ## Vulnerabilties Addressed
 
-1. ??
+1. CoreData compromised after jailbreak or bruteforce device pin-code attack
+2. Objective-C reflectivity run-time application code exploration and explotation
+3. iOS keychain accessible after device pin-code login
 
 
 ## Installation
@@ -15,6 +17,10 @@ The "iMas Secure Foundation" project is designed to provide basic application-le
 - Add SecureFoundation as a submodule to your project. `git submodule add https://github.com/mitre-imas/securefoundation.git vendor/securefoundation`
 - Add the "SecureFoundation" Xcode project as a subproject in your project. Add "libSecureFoundation.a" as a target depdency and to the "Link with Binary Libraries" build phase.
 - Import SecureFoundation in your source files `#import <SecureFoundation/SecureFoundation.h>`
+
+## Standalone Test
+- Clone SecureFoundation
+- Open project in Xcode
 
 ## Cipher Utilities
 
