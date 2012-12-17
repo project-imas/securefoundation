@@ -8,7 +8,7 @@ The "iMas Secure Foundation" project is designed to provide basic application-le
 ## Vulnerabilties Addressed
 
 1. CoreData compromised after jailbreak or bruteforce device pin-code attack
-2. Objective-C reflectivity run-time application code exploration and explotation
+2. Objective-C reflectivity run-time application code exploration and exploitation
 3. iOS keychain accessible after device pin-code login
 
 
