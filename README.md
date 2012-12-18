@@ -4,20 +4,18 @@
 
 The "iMas Secure Foundation" project is designed to provide basic application-level security based on simple encryption mechanisms. It contains three components: a suite of cipher utilities, a collection of functions to assist with encryption through an application key, and a file-based keychain replacement.
 
-
 ## Vulnerabilities Addressed
 
 1. CoreData compromised after jailbreak or bruteforce device pin-code attack
 2. Objective-C reflectivity run-time application code exploration and exploitation
 3. iOS keychain accessible after device pin-code login
 
-
 ## Installation
 
 - Add SecureFoundation as a submodule to your project. `git submodule add https://github.com/mitre-imas/securefoundation.git vendor/securefoundation`
-- Add the "SecureFoundation" Xcode project as a subproject in your project. Add "libSecureFoundation.a" as a target dependency and to the "Link with Binary Libraries" build phase.
+- Add the "SecureFoundation" Xcode project as a subproject in your project
+- Add "libSecureFoundation.a" as a target dependency and to the "Link with Binary Libraries" build phase
 - Import SecureFoundation in your source files `#import <SecureFoundation/SecureFoundation.h>`
-
 
 ## Standalone Test
 - Clone SecureFoundation
@@ -47,7 +45,6 @@ Just as with encryption, functions are provided to perform both MD5 and SHA256 h
 
 Like the Cipher Utilities, the methods here are all implemented in C so that they do not show up in the Objective-C symbol table or pass through `objc_msgSend`.
 
-
 ### Using the Cryptography Manager
 
 On application launch, you should check to see if your application has been configured with the required security controls.
@@ -73,7 +70,7 @@ To attempt an application unlock with either a passcode or answers to security q
     else {
         // nope
     }
-    
+
 or
 
     if (IMSCryptoManagerUnlockWithAnswersForSecurityQuestions(answers)) {
@@ -89,12 +86,12 @@ The security questions and answers and the application passcode may be changed a
 
     IMSCryptoManagerUpdatePasscode(passcode);
     IMSCryptoManagerUpdateSecurityQuestionsAndAnswers(questions, answers);
-    
+
 Lastly, `IMSCryptoManager.h` contains two functions for performing encryption and decryption using the shared application encryption key.
 
     IMSCryptoManagerDecryptData(data);
     IMSCryptoManagerEncryptData(data);
-    
+
 ## Keychain
 
 The keychain API is designed to mirror the system keychain as closely as possible. The major difference is that it is stored in a file inside the application sandbox so that it does not stay on the device if the application is uninstalled. It follows the same service, user, and password pattern that the system keychain uses. All writes to the keychain are coalesced and performed in the background.
@@ -113,8 +110,7 @@ It also has methods like:
     
 These methods pass the data through the Crypto Manager to perform encryption or decryption using the application shared key. It is important to note that the account service and account names are *not* stored encrypted in either case.
 
-License
--------
+## License
 
 Copyright 2012 The MITRE Corporation, All Rights Reserved.
 
@@ -129,4 +125,3 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-
