@@ -186,7 +186,7 @@ BOOL IMSCryptoManagerIsLocked(void) {
 NSArray *IMSCryptoManagerSecurityQuestions(void) {
     NSMutableData *questions = [[IMSKeychain
                                  passwordDataForService:IMSCryptoManagerKeychainService
-                                 account:IMSCryptoManagerSharedKeySecurityAnswersAccount]
+                                 account:IMSCryptoManagerSecurityQuestionsAccount]
                                 mutableCopy];
     NSUInteger length = [questions length];
     char *bytes = [questions mutableBytes];
