@@ -6,9 +6,8 @@ The "iMas Secure Foundation" project is designed to provide basic application-le
 
 ## Vulnerabilities Addressed
 
-1. CoreData compromised after jailbreak or bruteforce device pin-code attack
-2. Objective-C reflectivity run-time application code exploration and exploitation
-3. iOS keychain accessible after device pin-code login
+1. Objective-C reflectivity run-time application code exploration and exploitation
+2. iOS keychain accessible after device pin-code login
 
 ## Installation
 
@@ -115,7 +114,7 @@ These methods pass the data through the Crypto Manager to perform encryption or 
 Copyright 2012 The MITRE Corporation, All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
+you may not use this project source code except in compliance with the License.
 You may obtain a copy of the License at
 
     http://www.apache.org/licenses/LICENSE-2.0
