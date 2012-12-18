@@ -17,9 +17,9 @@ The "iMas Secure Foundation" project is designed to provide basic application-le
 - Add "libSecureFoundation.a" as a target dependency and to the "Link with Binary Libraries" build phase
 - Import SecureFoundation in your source files `#import <SecureFoundation/SecureFoundation.h>`
 
-## Standalone Test
-- Clone SecureFoundation
-- Open project in Xcode
+## Test Suite
+
+Some (not all, yet) of the components here are testing using `OCUnit`. The tests can be found in `SecureFoundationTests`.
 
 ## Cipher Utilities
 
