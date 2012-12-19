@@ -8,7 +8,7 @@ The "iMas Secure Foundation" project is designed to provide basic application-le
 
 1. Objective-C reflectivity run-time application code exploration and exploitation
 2. iOS keychain accessible after device pin-code login
-- CWE-311: Missing Encryption of Sensitive Data
+  - CWE-311: Missing Encryption of Sensitive Data
 
 ## Installation
 
