@@ -4,6 +4,8 @@
 
 The "iMas Secure Foundation" project is designed to provide basic application-level security based on simple encryption mechanisms. It contains three components: a suite of cipher utilities, a collection of functions to assist with encryption through an application key, and a file-based keychain replacement.
 
+Common Weakness Enumerations (CWE), better known as software errors, have been applied to each vulnerability addressed, to better help security engineers identify the value of each implementation. More CWE details can be found at http://cwe.mitre.org.
+
 ## Vulnerabilities Addressed
 
 1. Objective-C reflectivity run-time application code exploration and exploitation
