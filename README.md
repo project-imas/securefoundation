@@ -8,7 +8,6 @@ The "iMas Secure Foundation" project is designed to provide basic application-le
 
 1. Objective-C reflectivity run-time application code exploration and exploitation
 2. iOS keychain accessible after device pin-code login
-- Add SecureFoundation as a submodule to your project. `git submodule add https://github.com/mitre-imas/securefoundation.git vendor/securefoundation`
 - CWE-311: Missing Encryption of Sensitive Data
 
 ## Installation
