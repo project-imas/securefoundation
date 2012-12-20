@@ -10,6 +10,10 @@
 
 #import "SecureFoundation.h"
 
+int8_t IMSSum(const void *bytes, size_t length);
+int8_t IMSTwosComplement(int8_t value);
+int8_t IMSChecksum(NSData *data);
+
 @interface IMSCryptoUtilsTests : SenTestCase
 
 @end

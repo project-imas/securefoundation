@@ -10,6 +10,12 @@
 
 #import "SecureFoundation.h"
 
+@interface IMSKeychain (TestExtensions)
+
++ (NSURL *)URLForKeychainFile;
+
+@end
+
 @interface IMSKeychainTests : SenTestCase
 
 @end
@@ -21,23 +27,10 @@
 }
 
 - (void)tearDown {
-    
     [IMSKeychain synchronize];
-    
-    static NSURL *URL;
-    static dispatch_once_t token;
-    dispatch_once(&token, ^{
-        NSFileManager *manager = [NSFileManager defaultManager];
-        URL = [[manager
-                URLsForDirectory:NSLibraryDirectory
-                inDomains:NSUserDomainMask]
-               objectAtIndex:0];
-        URL = [URL URLByAppendingPathComponent:@".imskeychain"];
-    });
+    NSURL *URL = [IMSKeychain URLForKeychainFile];
     [[NSFileManager defaultManager] removeItemAtURL:URL error:nil];
-    
     [super tearDown];
-    
 }
 
 - (void)testKeychainContents {

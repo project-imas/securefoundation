@@ -206,19 +206,17 @@ NSData *IMSHashPlistObject_SHA256(id object) {
 }
 
 NSData *IMSConvertPlistObjectToData(id object) {
-    CFDataRef data = CFPropertyListCreateData(kCFAllocatorDefault,
-                                              (__bridge CFPropertyListRef)object,
-                                              kCFPropertyListBinaryFormat_v1_0,
-                                              0,
-                                              NULL);
-    return (__bridge_transfer NSData *)data;
+    return [NSPropertyListSerialization
+            dataWithPropertyList:object
+            format:NSPropertyListBinaryFormat_v1_0
+            options:0
+            error:nil];
 }
 
 id IMSConvertDataToPlistObject(NSData *data) {
-    CFPropertyListRef plist = CFPropertyListCreateWithData(kCFAllocatorDefault,
-                                                           (__bridge CFDataRef)data,
-                                                           0,
-                                                           NULL,
-                                                           NULL);
-    return (__bridge_transfer id)plist;
+    return [NSPropertyListSerialization
+            propertyListWithData:data
+            options:0
+            format:0
+            error:nil];
 }
