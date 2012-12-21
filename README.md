@@ -9,6 +9,8 @@ Common Weakness Enumerations (CWE), better known as software errors, have been a
 ## Vulnerabilities Addressed
 
 1. Objective-C reflectivity run-time application code exploration and exploitation
+  - new CWE under review
+  - CWE-545: Use of Dynamic Class Loading
 2. iOS keychain accessible after device pin-code login
   - CWE-311: Missing Encryption of Sensitive Data
 
