@@ -19,6 +19,8 @@ The "iMas Secure Foundation" project is designed to provide basic application-le
   - SRG-APP-000243-MAPP-000049 Severity-CAT II: The mobile application must not write data to persistent memory accessible to other applications.
   - SRG-APP-000243-MAPP-000050 Severity-CAT II: The mobile application must not share working memory with other applications or processes.
   - SRG-APP-999999-MAPP-000067 Severity-CAT II: The mobile application must clear or overwrite memory blocks used to process sensitive data.
+  - SRG-APP-000128-MAPP-000028 Severity-CAT II: The mobile application must not change the file permissions of any files other than those dedicated to its own operation.
+
 
 ## Installation
 
