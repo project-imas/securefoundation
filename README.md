@@ -13,7 +13,6 @@ The "iMas Secure Foundation" project is designed to provide basic application-le
   - SRG-APP-000196-MAPP-000042 Severity-CAT II: The mobile application must implement required cryptographic protections using cryptographic modules complying with applicable federal laws, Executive Orders, directives, policies, regulations, standards, and guidance.
   - SRG-APP-000225-MAPP-000047 Severity-CAT II: The mobile application must fail to an initial state when the application unexpectedly terminates, unless it maintains a secure state at all times.
   - SRG-APP-000264-MAPP-000057 Severity-CAT II: The mobile application must employ cryptographic mechanisms preventing the unauthorized disclosure of information during transmission.
-  - SRG-APP-000275-MAPP-000062 Severity-CAT II: The mobile application must provide notification of failed automated security tests.
 2. iOS keychain accessible after device pin-code login
   - CWE-311: Missing Encryption of Sensitive Data
   - SRG-APP-000200-MAPP-000044 Severity-CAT II: The mobile application must shut down when it determines that a required security function is unavailable.
