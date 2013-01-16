@@ -4,15 +4,22 @@
 
 The "iMas Secure Foundation" project is designed to provide basic application-level security based on simple encryption mechanisms. It contains three components: a suite of cipher utilities, a collection of functions to assist with encryption through an application key, and a file-based keychain replacement.
 
-Common Weakness Enumerations (CWE), better known as software errors, have been applied to each vulnerability addressed, to better help security engineers identify the value of each implementation. More CWE details can be found at http://cwe.mitre.org.
-
 ## Vulnerabilities Addressed
 
 1. Objective-C reflectivity run-time application code exploration and exploitation
   - new CWE under review
   - CWE-545: Use of Dynamic Class Loading
+  - SRG-APP-000160-MAPP-000035 Severity-CAT II: The mobile application must authenticate devices using bidirectional cryptographic authentication if it manages wireless network connections for other devices.
+  - SRG-APP-000196-MAPP-000042 Severity-CAT II: The mobile application must implement required cryptographic protections using cryptographic modules complying with applicable federal laws, Executive Orders, directives, policies, regulations, standards, and guidance.
+  - SRG-APP-000225-MAPP-000047 Severity-CAT II: The mobile application must fail to an initial state when the application unexpectedly terminates, unless it maintains a secure state at all times.
+  - SRG-APP-000264-MAPP-000057 Severity-CAT II: The mobile application must employ cryptographic mechanisms preventing the unauthorized disclosure of information during transmission.
+  - SRG-APP-000275-MAPP-000062 Severity-CAT II: The mobile application must provide notification of failed automated security tests.
 2. iOS keychain accessible after device pin-code login
   - CWE-311: Missing Encryption of Sensitive Data
+  - SRG-APP-000200-MAPP-000044 Severity-CAT II: The mobile application must shut down when it determines that a required security function is unavailable.
+  - SRG-APP-000243-MAPP-000049 Severity-CAT II: The mobile application must not write data to persistent memory accessible to other applications.
+  - SRG-APP-000243-MAPP-000050 Severity-CAT II: The mobile application must not share working memory with other applications or processes.
+  - SRG-APP-999999-MAPP-000067 Severity-CAT II: The mobile application must clear or overwrite memory blocks used to process sensitive data.
 
 ## Installation
 
