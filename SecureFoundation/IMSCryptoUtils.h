@@ -88,3 +88,9 @@ NSData *IMSHashPlistObject_MD5(id object);
  */
 NSData *IMSHashData_SHA256(NSData *data);
 NSData *IMSHashPlistObject_SHA256(id object);
+
+
+//**
+NSString *IMSEncodeBase64(NSData *inputData);
+NSData *IMSDeodeBase64(NSString *encodedString);
+

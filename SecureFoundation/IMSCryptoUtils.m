@@ -7,6 +7,7 @@
 //
 
 #import "SecureFoundation.h"
+#import "Base64.h"
 
 int8_t IMSSum(const void *bytes, size_t length) {
     int8_t sum = 0;
@@ -220,3 +221,46 @@ id IMSConvertDataToPlistObject(NSData *data) {
             format:0
             error:nil];
 }
+
+
+/* Example Base64 test code
+- (void)testZeroWrapWidth
+{
+    //set up data
+    NSString *inputString = @"Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+    NSData *inputData = [inputString dataUsingEncoding:NSUTF8StringEncoding];
+    
+    //encode
+    NSString *encodedString = [inputData base64EncodedStringWithWrapWidth:0];
+    
+    //decode
+    NSData *outputData = [NSData dataWithBase64EncodedString:encodedString];
+    NSString *outputString = [[NSString alloc] initWithData:outputData encoding:NSUTF8StringEncoding];
+    NSAssert([outputString isEqualToString:inputString], @"WrappedInput test failed");
+}
+*/
+
+
+//****************
+//****************
+//**
+//**
+NSString *IMSEncodeBase64(NSData *inputData) {
+    //encode
+    NSString *encodedString = [Base64 encodeBase64WithData:inputData];
+
+    return encodedString;
+}
+
+//****************
+//****************
+//**
+//**
+NSData *IMSDeodeBase64(NSString *encodedString) {
+    // decode
+    NSData *outputData = [Base64 decodeBase64WithString:encodedString];
+
+    return outputData;
+}
+
+
