@@ -137,3 +137,8 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+
+
+[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/deee09168244f6094f41ef957d2a30b7 "githalytics.com")](http://githalytics.com/project-imas/securefoundation)
+
+
