@@ -9,8 +9,6 @@
 /* Begin PBXBuildFile section */
 		3B7F1675167147F600A9B236 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B7F1674167147F600A9B236 /* Security.framework */; };
 		3B7F1677167147FE00A9B236 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B7F1674167147F600A9B236 /* Security.framework */; };
-		3B7F16791671481500A9B236 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B7F16781671481500A9B236 /* UIKit.framework */; };
-		3B7F167A1671482300A9B236 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B7F16781671481500A9B236 /* UIKit.framework */; };
 		3B893580162C92F1003750B6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B89357F162C92F1003750B6 /* Foundation.framework */; };
 		3B893585162C92F1003750B6 /* SecureFoundation.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3B893584162C92F1003750B6 /* SecureFoundation.h */; };
 		3B89358F162C92F1003750B6 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B89358E162C92F1003750B6 /* SenTestingKit.framework */; };
@@ -56,14 +54,12 @@
 
 /* Begin PBXFileReference section */
 		3B7F1674167147F600A9B236 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
-		3B7F16781671481500A9B236 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		3B89357C162C92F1003750B6 /* libSecureFoundation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSecureFoundation.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B89357F162C92F1003750B6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		3B893583162C92F1003750B6 /* SecureFoundation-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SecureFoundation-Prefix.pch"; sourceTree = "<group>"; };
 		3B893584162C92F1003750B6 /* SecureFoundation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SecureFoundation.h; sourceTree = "<group>"; };
 		3B89358D162C92F1003750B6 /* SecureFoundationTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SecureFoundationTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B89358E162C92F1003750B6 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
-		3B893590162C92F1003750B6 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		3B893598162C92F1003750B6 /* SecureFoundationTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SecureFoundationTests-Info.plist"; sourceTree = "<group>"; };
 		3B89359A162C92F1003750B6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		3B8935A7162C93C6003750B6 /* IMSKeychain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMSKeychain.h; sourceTree = "<group>"; };
@@ -75,6 +71,7 @@
 		3B98C7A5163092760070BD54 /* IMSCryptoManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMSCryptoManager.h; sourceTree = "<group>"; };
 		3B98C7A6163092760070BD54 /* IMSCryptoManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMSCryptoManager.m; sourceTree = "<group>"; };
 		3BC64071166FC3D5006E4E1B /* README.md */ = {isa = PBXFileReference; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; wrapsLines = 1; };
+		4885E53516E92147000A99F4 /* IMSKeys.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IMSKeys.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,7 +79,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3B7F167A1671482300A9B236 /* UIKit.framework in Frameworks */,
 				3B7F1677167147FE00A9B236 /* Security.framework in Frameworks */,
 				3B893580162C92F1003750B6 /* Foundation.framework in Frameworks */,
 			);
@@ -92,7 +88,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3B7F16791671481500A9B236 /* UIKit.framework in Frameworks */,
 				3B7F1675167147F600A9B236 /* Security.framework in Frameworks */,
 				3B89358F162C92F1003750B6 /* SenTestingKit.framework in Frameworks */,
 				3B893592162C92F1003750B6 /* Foundation.framework in Frameworks */,
@@ -126,11 +121,9 @@
 		3B89357E162C92F1003750B6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				3B7F16781671481500A9B236 /* UIKit.framework */,
 				3B7F1674167147F600A9B236 /* Security.framework */,
 				3B89357F162C92F1003750B6 /* Foundation.framework */,
 				3B89358E162C92F1003750B6 /* SenTestingKit.framework */,
-				3B893590162C92F1003750B6 /* UIKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -146,6 +139,7 @@
 				3B8935AC162CA792003750B6 /* IMSCryptoUtils.m */,
 				3B98C7A5163092760070BD54 /* IMSCryptoManager.h */,
 				3B98C7A6163092760070BD54 /* IMSCryptoManager.m */,
+				4885E53516E92147000A99F4 /* IMSKeys.h */,
 			);
 			path = SecureFoundation;
 			sourceTree = "<group>";
