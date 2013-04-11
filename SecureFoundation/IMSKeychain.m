@@ -105,10 +105,15 @@ char * s = "shared-key.passcode";
     if (service == nil || account == nil) { return nil; }
     
     // access keychain
-    __block NSData      *password =  nil;
+    NSData              *password =  nil;
     NSMutableDictionary *keychain = [self link];
     NSMutableDictionary *accounts = [keychain objectForKey:service];
                          password = [accounts objectForKey:account];
+    
+//    NSString * test =  [[NSString alloc] initWithData:password
+//                                             encoding:NSUTF8StringEncoding];
+//    
+//    if ( nil == test ) password = nil;
     
     return password;
 }
@@ -247,6 +252,9 @@ char * s = "shared-key.passcode";
     NSMutableDictionary *chain    = [self link];
     NSURL               *URL;       IMSKeychainUrl
     
+    
+    if ( ![chain count] ) chain   = nil;
+    
     NSData              *dataRep  = [NSPropertyListSerialization
                                      dataFromPropertyList:chain
                                      format:kCFPropertyListBinaryFormat_v1_0
@@ -255,8 +263,16 @@ char * s = "shared-key.passcode";
     if ( [manager fileExistsAtPath:[URL path]] ) [manager removeItemAtURL:URL
                                                                     error:nil];
     // real
-    [dataRep      writeToURL:URL atomically:NO];
-    
+    if ( chain ) {
+        
+        [dataRep writeToURL:URL atomically:NO];
+        
+    } else {
+        
+        FILE *fd  = fopen(URL.path.UTF8String,"w");
+        
+        fclose(fd);
+    }
     
     NSMutableDictionary *keychain = [self accessKeychain];
     NSURL               *url      = [self URLForKeychainFile];
@@ -307,6 +323,7 @@ char * s = "shared-key.passcode";
     
     IMSKeyChainFile(imsKeyFile);
     
+    NSURL         *URL;      IMSKeychainUrl
     NSURL         *url     = [self URLForKeychainFile];
     NSData        *sFile   = [NSData dataWithBytes:imsKeyFile
                                             length:strlen(imsKeyFile)];
@@ -323,6 +340,8 @@ char * s = "shared-key.passcode";
         [manager removeItemAtURL:url
                            error:nil];
 
+    if ( [manager fileExistsAtPath:[URL path]])
+        
     [d writeToURL:url atomically:NO];
 }
 
