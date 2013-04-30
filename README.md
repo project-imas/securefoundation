@@ -1,4 +1,6 @@
-# iMas Secure Foundation
+# iMAS Secure Foundation
+
+OpenSSL FIPS compliant version 
 
 ## Background
 
