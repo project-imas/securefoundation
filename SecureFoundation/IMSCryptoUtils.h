@@ -31,8 +31,9 @@ NSData *IMSCryptoUtilsPseudoRandomData(size_t length);
  and `salt` parameters respectively.
  
  */
-NSData *IMSCryptoUtilsDeriveKey(NSData *key, size_t length, NSData *salt);
+//NSDictionary *IMSCryptoUtilsDeriveKey(NSData *key, size_t length, NSData *salt);
 
+NSDictionary * IMSCryptoUtilsDeriveKey( NSData *key_data, NSData *salt);
 /*
  
  Run AES-128 encryption on the given data with the given key. The key length
@@ -40,7 +41,7 @@ NSData *IMSCryptoUtilsDeriveKey(NSData *key, size_t length, NSData *salt);
  generated using `IMSCryptoUtilsDeriveKey`.
  
  */
-NSData *IMSCryptoUtilsEncryptData(NSData *data, NSData *key);
+NSData *IMSCryptoUtilsEncryptData(NSData *data, NSDictionary *key);
 
 /*
  
@@ -49,7 +50,7 @@ NSData *IMSCryptoUtilsEncryptData(NSData *data, NSData *key);
  `IMSCryptoUtilsEncryptData` and must be generated in the same fashion.
  
  */
-NSData *IMSCryptoUtilsDecryptData(NSData *data, NSData *key);
+NSData *IMSCryptoUtilsDecryptData(NSData *data, NSDictionary *key);
 
 /*
  

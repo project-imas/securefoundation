@@ -8,6 +8,15 @@
 
 #import "SecureFoundation.h"
 
+#import <string.h>
+#import <stdio.h>
+#import <stdlib.h>
+#import <openssl/evp.h>
+
+#import "IMSKeyConst.h"
+
+#define AES_BLOCK_SIZE 16
+
 int8_t IMSSum(const void *bytes, size_t length) {
     int8_t sum = 0;
     int8_t *values = (int8_t *)bytes;
@@ -35,6 +44,149 @@ NSData *IMSCryptoUtilsPseudoRandomData(size_t length) {
     return nil;
 }
 
+// -----------------------------------------------------------------------------
+// Create an 128 bit key and IV (initialization vector) for the key_data.
+//
+// returns an NSDictionary *gen on success with two keys @"k" and @"iv"
+// -----------------------------------------------------------------------------
+
+NSDictionary * IMSCryptoUtilsDeriveKey( NSData *key_data, NSData *salt) {
+    
+    NSDictionary  *gen     = nil;
+    int            i       = 0;
+    int            nrounds = 1000;
+    unsigned char  key[16];
+    unsigned char  iv [16];
+
+    // -------------------------------------------------------------------------
+    // Gen key & IV for AES 128 CBC mode. A SHA1 digest
+    // is used to hash the supplied key material. nrounds is the number of times
+    // the we hash the material. More rounds are more secure but slower.
+    // -------------------------------------------------------------------------
+    
+    i = EVP_BytesToKey(  EVP_aes_128_cbc()
+                       , EVP_sha1()
+                       , [salt bytes]
+                       , [key_data bytes]
+                       , [key_data length]
+                       , nrounds
+                       , key
+                       , iv);
+    if (i != 16) {
+
+#if DEBUG
+        NSLog(@"Key size is %d bits - should be 128 bits\n", i);
+#endif
+    } else {
+    
+        NSData *k  = [NSData dataWithBytes:key length:16];
+        NSData *iV = [NSData dataWithBytes:iv  length:16];
+        
+        gen        = @{@"k" : k, @"iv" : iV};
+    }
+    
+    return gen;
+}
+
+int initEncryptContext ( EVP_CIPHER_CTX *ctx
+                       , NSDictionary   *k_iv) {
+    
+    EVP_CIPHER_CTX_init(  ctx );
+    
+    return EVP_EncryptInit_ex ( ctx
+                              , EVP_aes_128_cbc()
+                              , NULL
+                              , [k_iv[kOBJ1] bytes]
+                              , [k_iv[kOBJ2] bytes]);
+}
+int initDencryptContext( EVP_CIPHER_CTX *ctx
+                       , NSDictionary   *k_iv) {
+    
+    EVP_CIPHER_CTX_init(  ctx );
+    
+    return EVP_DecryptInit_ex ( ctx
+                              , EVP_aes_128_cbc()
+                              , NULL
+                              , [k_iv[kOBJ1] bytes]
+                              , [k_iv[kOBJ2] bytes]);
+}
+
+NSData *IMSCryptoUtilsEncryptData(NSData *data, NSDictionary *key) {
+
+    NSData         *d          = nil;
+    // ----------------------------------------------
+    // max ciphertext len for a n bytes of plaintext
+    // is n + AES_BLOCK_SIZE -1 bytes
+    // ----------------------------------------------
+    int             c_len      = [data length] + AES_BLOCK_SIZE;
+    int             f_len      = 0;
+    unsigned char  *ciphertext = malloc(c_len);
+    
+    EVP_CIPHER_CTX ctx;
+    
+    if ( initEncryptContext (&ctx,key) ) {
+    
+        // update ciphertext, c_len is filled with
+        // the length of ciphertext generated, [data length]
+        // is the size of plaintext in bytes
+        int update = EVP_EncryptUpdate( &ctx
+                                       ,ciphertext
+                                       ,&c_len
+                                       ,[data bytes]
+                                       ,[data length]);
+        if ( update ) {
+            
+            // update ciphertext with the final remaining bytes
+            int final = EVP_EncryptFinal_ex(&ctx, ciphertext+c_len, &f_len);
+            
+            if ( final ) d = [NSData dataWithBytes:ciphertext
+                                            length:c_len+f_len];
+        }
+        
+        EVP_CIPHER_CTX_cleanup(&ctx);
+    }
+    
+    free(ciphertext);
+        
+    return d;
+}
+
+NSData *IMSCryptoUtilsDecryptData(NSData *data, NSDictionary *key) {
+
+    NSData        *d         = nil;
+    // because we have padding ON,
+    // we must allocate an extra cipher block size of memory
+    int            p_len     = [data length];
+    int            f_len     = 0;
+    unsigned char *plaintext = malloc(p_len + AES_BLOCK_SIZE);
+
+    EVP_CIPHER_CTX ctx;
+    
+    if ( initDencryptContext(&ctx,key) ) {
+
+        int update = EVP_DecryptUpdate  (&ctx
+                                         ,plaintext
+                                         ,&p_len
+                                         ,[data bytes]
+                                         ,[data length]);
+        
+        if ( update ) {
+        
+            int final = EVP_DecryptFinal_ex(&ctx, plaintext+p_len, &f_len);
+
+            if ( final ) d = [NSData dataWithBytes:plaintext
+                                            length:p_len+f_len];
+        }
+        
+        EVP_CIPHER_CTX_cleanup(&ctx);
+    }
+    
+    free(plaintext);
+    
+    return d;
+}
+
+/*
 NSData *IMSCryptoUtilsDeriveKey(NSData *key, size_t length, NSData *salt) {
     if (key && length && salt) {
         uint8_t *derived_key = malloc(length);
@@ -172,7 +324,7 @@ NSData *IMSCryptoUtilsDecryptData(NSData *data, NSData *key) {
     }
     return nil;
 }
-
+*/
 NSData *IMSCryptoUtilsEncryptPlistObject(id object, NSData *key) {
     NSData *data = IMSConvertPlistObjectToData(object);
     return IMSCryptoUtilsEncryptData(data, key);

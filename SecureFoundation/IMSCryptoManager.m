@@ -7,7 +7,7 @@
 //
 
 #import "SecureFoundation.h"
-
+#import "IMSKeyConst.h"
 // constants
 static NSString * const IMSCryptoManagerKeychainService = @"org.mitre.imas.crypto-manager";
 static NSString * const IMSCryptoManagerSharedKeyPasscodeAccount = @"shared-key.passcode";
@@ -17,7 +17,7 @@ static NSString * const IMSCryptoManagerSaltAccount = @"salt";
 static const int IMSCryptoManagerSecurityQuestionsXORKey = 156;
 
 // temporary memory storage
-static NSData *IMSCryptoManagerSharedKey;
+static NSDictionary *IMSCryptoManagerSharedKey;
 static NSString *IMSCryptoManagerTemporaryPasscode;
 static NSArray *IMSCryptoManagerTemporarySecurityQuestions;
 static NSArray *IMSCryptoManagerTemporarySecurityAnswers;
@@ -71,9 +71,11 @@ void IMSCryptoManagerFinalize(void) {
     }
     
     // generate a new key
-    NSData *key = IMSCryptoUtilsPseudoRandomData(kCCKeySizeAES256);
+    NSData *key  = IMSCryptoUtilsPseudoRandomData(kCCKeySizeAES256);
     NSData *salt = IMSCryptoManagerSalt();
-    IMSCryptoManagerSharedKey = IMSCryptoUtilsDeriveKey(key, kCCKeySizeAES256, salt);
+    
+    IMSCryptoManagerSharedKey = IMSCryptoUtilsDeriveKey( key
+                                                       , salt);
     
     // store things
     IMSCryptoManagerUpdatePasscode(IMSCryptoManagerTemporaryPasscode);
@@ -88,50 +90,99 @@ void IMSCryptoManagerFinalize(void) {
 }
 
 BOOL IMSCryptoManagerUpdatePasscode(NSString *passcode) {
+    
     NSCParameterAssert(!IMSCryptoManagerIsLocked());
     BOOL success = NO;
+    
     if (!IMSCryptoManagerIsLocked() && passcode != nil) {
-        NSData *key = [passcode dataUsingEncoding:NSUTF8StringEncoding];
-        NSData *salt = IMSCryptoManagerSalt();
-        key = IMSCryptoUtilsDeriveKey(key, kCCKeySizeAES256, salt);
-        NSData *encryptedKey = IMSCryptoUtilsEncryptData(IMSCryptoManagerSharedKey, key);
+
+        NSData       *key;
+        NSData       *salt;
+        NSDictionary *dkey;
+        NSData       *encryptedKey;
+
+        key  = [passcode dataUsingEncoding:NSUTF8StringEncoding];
+        salt = IMSCryptoManagerSalt();
+        dkey = IMSCryptoUtilsDeriveKey(key, salt);
+        
+        NSData *k    = IMSCryptoManagerSharedKey[kOBJ1];
+        
+        encryptedKey = IMSCryptoUtilsEncryptData( k, dkey );
+        
+//        success = [IMSKeychain
+//                   setPasswordData:encryptedKey
+//                        forService:IMSCryptoManagerKeychainService
+//                           account:IMSCryptoManagerSharedKeyPasscodeAccount];
         success = [IMSKeychain
-                   setPasswordData:encryptedKey
+                   setPasswordDictionary:dkey
                    forService:IMSCryptoManagerKeychainService
                    account:IMSCryptoManagerSharedKeyPasscodeAccount];
+
     }
     return success;
 }
 
-BOOL IMSCryptoManagerUpdateSecurityQuestionsAndAnswers(NSArray *questions, NSArray *answers) {
+BOOL IMSCryptoManagerUpdateSecurityQuestionsAndAnswers(  NSArray *questions
+                                                       , NSArray *answers) {
+    
     NSCParameterAssert(!IMSCryptoManagerIsLocked());
     BOOL success = NO;
-    if (!IMSCryptoManagerIsLocked() && questions != nil && answers != nil) {
+    
+    if (!IMSCryptoManagerIsLocked()
+    &&   questions != nil
+    &&   answers   != nil) {
         
+        //----------------------------------------------------------------------
         // answers
-        NSString *answersString = [answers componentsJoinedByString:@""];
-        NSData *key = [answersString dataUsingEncoding:NSUTF8StringEncoding];
-        NSData *salt = IMSCryptoManagerSalt();
-        key = IMSCryptoUtilsDeriveKey(key, kCCKeySizeAES256, salt);
-        NSData *encryptedKey = IMSCryptoUtilsEncryptData(IMSCryptoManagerSharedKey, key);
-        BOOL answersSet = [IMSKeychain
-                           setPasswordData:encryptedKey
-                           forService:IMSCryptoManagerKeychainService
-                           account:IMSCryptoManagerSharedKeySecurityAnswersAccount];
+        //----------------------------------------------------------------------
+        NSData       *key;
+        NSData       *salt;
+        NSDictionary *dkey;
+        NSData       *encryptedKey;
+        NSString     *answersString;
+        BOOL          answersSet;
+
+        answersString = [answers componentsJoinedByString:@""];
         
+        key           = [answersString dataUsingEncoding:NSUTF8StringEncoding];
+        salt          = IMSCryptoManagerSalt();
+        dkey          = IMSCryptoUtilsDeriveKey(key, salt);
+        
+        NSData *k     = IMSCryptoManagerSharedKey[kOBJ1];
+        
+        encryptedKey  = IMSCryptoUtilsEncryptData( k, dkey );
+        
+        answersSet    = [IMSKeychain
+                         setPasswordData:encryptedKey
+                         forService:IMSCryptoManagerKeychainService
+                       account:IMSCryptoManagerSharedKeySecurityAnswersAccount];
+        
+        //----------------------------------------------------------------------
         // questions
-        NSMutableData *questionsData = [[NSJSONSerialization dataWithJSONObject:questions options:0 error:nil] mutableCopy];
-        NSUInteger length = [questionsData length];
-        char *bytes = [questionsData mutableBytes];
+        //----------------------------------------------------------------------
+        NSMutableData *questionsData;
+        NSUInteger     length;
+        char          *bytes;
+        BOOL           questionsSet;
+
+        questionsData = [[NSJSONSerialization dataWithJSONObject:questions
+                                                         options:0
+                                                           error:nil]
+                         mutableCopy];
+        
+        length        = [questionsData length];
+        bytes         = [questionsData mutableBytes];
+        
         IMSXOR(IMSCryptoManagerSecurityQuestionsXORKey, bytes, length);
-        BOOL questionsSet = [IMSKeychain
-                             setPasswordData:questionsData
-                             forService:IMSCryptoManagerKeychainService
-                             account:IMSCryptoManagerSecurityQuestionsAccount];
         
+        questionsSet  = [IMSKeychain
+                          setPasswordData:questionsData
+                          forService:IMSCryptoManagerKeychainService
+                          account:IMSCryptoManagerSecurityQuestionsAccount];
+        //----------------------------------------------------------------------
         // save
+        //----------------------------------------------------------------------
         success = (questionsSet && answersSet);
-        
     }
     return success;
 }
@@ -139,44 +190,72 @@ BOOL IMSCryptoManagerUpdateSecurityQuestionsAndAnswers(NSArray *questions, NSArr
 BOOL IMSCryptoManagerUnlockWithPasscode(NSString *passcode) {
     NSCParameterAssert(passcode != nil);
     
+    NSData       *key;
+    NSData       *salt;
+    NSDictionary *dkey;
+    NSDictionary *encryptedKey;
+
     // get encrypted key
-    NSData *encryptedKey = [IMSKeychain
-                            passwordDataForService:IMSCryptoManagerKeychainService
-                            account:IMSCryptoManagerSharedKeyPasscodeAccount];
+    encryptedKey = [IMSKeychain
+                    passwordDictionaryForService:IMSCryptoManagerKeychainService
+                    account:IMSCryptoManagerSharedKeyPasscodeAccount];
     
     // generate decryption key
-    NSData *key = [passcode dataUsingEncoding:NSUTF8StringEncoding];
-    NSData *salt = IMSCryptoManagerSalt();
-    key = IMSCryptoUtilsDeriveKey(key, kCCKeySizeAES256, salt);
+    key          = [passcode dataUsingEncoding:NSUTF8StringEncoding];
+    salt         = IMSCryptoManagerSalt();
+    dkey         = IMSCryptoUtilsDeriveKey(key, salt);
     
     // perform decryption
-    IMSCryptoManagerSharedKey = IMSCryptoUtilsDecryptData(encryptedKey, key);
+    NSData *k    = IMSCryptoUtilsDecryptData(encryptedKey[kOBJ1], dkey);
+    NSData *iv   = IMSCryptoUtilsDecryptData(encryptedKey[kOBJ2], dkey);
+
+    if ( k && iv ) {
     
+        IMSCryptoManagerSharedKey = @{kOBJ1 : k, kOBJ2 : iv};
+        
+    } else {
+        
+        IMSCryptoManagerSharedKey = nil;
+    }
     // return
     return !IMSCryptoManagerIsLocked();
-    
 }
 
 BOOL IMSCryptoManagerUnlockWithAnswersForSecurityQuestions(NSArray *answers) {
     NSCParameterAssert(answers != nil);
     
+    NSData       *key;
+    NSData       *salt;
+    NSDictionary *dkey;
+    NSDictionary *encryptedKey;
+    NSString     *answersString;
+    
     // get encrypted key
-    NSData *encryptedKey = [IMSKeychain
-                            passwordDataForService:IMSCryptoManagerKeychainService
-                            account:IMSCryptoManagerSharedKeySecurityAnswersAccount];
+    encryptedKey  = [IMSKeychain
+                    passwordDictionaryForService:IMSCryptoManagerKeychainService
+                    account:IMSCryptoManagerSharedKeySecurityAnswersAccount];
     
     // generate decryption key
-    NSString *answersString = [answers componentsJoinedByString:@""];
-    NSData *key = [answersString dataUsingEncoding:NSUTF8StringEncoding];
-    NSData *salt = IMSCryptoManagerSalt();
-    key = IMSCryptoUtilsDeriveKey(key, kCCKeySizeAES256, salt);
+    answersString = [answers componentsJoinedByString:@""];
+    key           = [answersString dataUsingEncoding:NSUTF8StringEncoding];
+    salt          = IMSCryptoManagerSalt();
+    dkey          = IMSCryptoUtilsDeriveKey(key, salt);
     
     // perform decryption
-    IMSCryptoManagerSharedKey = IMSCryptoUtilsDecryptData(encryptedKey, key);
+    NSData *k    = IMSCryptoUtilsDecryptData(encryptedKey[kOBJ1],  dkey);
+    NSData *iv   = IMSCryptoUtilsDecryptData(encryptedKey[kOBJ2], dkey);
+    
+    if ( k && iv ) {
+        
+        IMSCryptoManagerSharedKey = @{kOBJ1 : k, kOBJ2 : iv};
+        
+    } else {
+        
+        IMSCryptoManagerSharedKey = nil;
+    }
     
     // return
     return !IMSCryptoManagerIsLocked();
-    
 }
 
 BOOL IMSCryptoManagerIsLocked(void) {

@@ -31,7 +31,7 @@ char * s = "shared-key.passcode";
 + (void) initialize {
     
     if (self == [IMSKeychain class]) {
-        
+                
         [self firstTimeCheck];
         [self theChain];        
     }
@@ -81,7 +81,7 @@ char * s = "shared-key.passcode";
     
     return accounts;
 }
-
+/*
 + (NSString*) passwordForService:(NSString *)service
                          account:(NSString *)account {
     
@@ -94,9 +94,9 @@ char * s = "shared-key.passcode";
     }
     return nil;
 }
-
-+ (NSData  *) passwordDataForService:(NSString *)service
-                             account:(NSString *)account {
+*/
++ (NSData *) passwordDataForService:(NSString *)service
+                            account:(NSString *)account {
     
     // check parameters
     NSParameterAssert(service != nil);
@@ -114,6 +114,30 @@ char * s = "shared-key.passcode";
 //                                             encoding:NSUTF8StringEncoding];
 //    
 //    if ( nil == test ) password = nil;
+    
+    return password;
+}
++ (NSDictionary *) passwordDictionaryForService:(NSString *)service
+                                        account:(NSString *)account {
+    
+    // check parameters
+    NSParameterAssert(service != nil);
+    NSParameterAssert(account != nil);
+    
+    if (service == nil || account == nil) { return nil; }
+    
+    // access keychain
+    NSDictionary        *password =  nil;
+    NSMutableDictionary *keychain = [self link];
+    NSMutableDictionary *accounts = [keychain objectForKey:service];
+                         password = [accounts objectForKey:account];
+    
+    NSLog(@"%@",password);
+
+    //    NSString * test =  [[NSString alloc] initWithData:password
+    //                                             encoding:NSUTF8StringEncoding];
+    //
+    //    if ( nil == test ) password = nil;
     
     return password;
 }
@@ -138,7 +162,7 @@ char * s = "shared-key.passcode";
     
     return YES;    
 }
-
+/*
 + (BOOL) setPassword:(NSString *)password
           forService:(NSString *)service
              account:(NSString *)account {
@@ -149,7 +173,7 @@ char * s = "shared-key.passcode";
                       forService:service
                          account:account];
 }
-
+*/
 + (BOOL) setPasswordData:(NSData   *)password
               forService:(NSString *)service
                  account:(NSString *)account {
@@ -164,6 +188,35 @@ char * s = "shared-key.passcode";
     // access keychain
     NSMutableDictionary *keychain = [self link];
     NSMutableDictionary *accounts = [keychain objectForKey:service];
+    
+    if (accounts == nil) {
+        
+        accounts = [NSMutableDictionary dictionary];
+        [keychain setObject:accounts forKey:service];
+    }
+    
+    [accounts setObject:password forKey:account];
+    
+    [self setNeedsWrite];
+    
+    return YES;
+}
++ (BOOL) setPasswordDictionary:(NSDictionary *)password
+                    forService:(NSString     *)service
+                       account:(NSString     *)account {
+    
+    // check parameters
+    NSParameterAssert(service  != nil);
+    NSParameterAssert(account  != nil);
+    NSParameterAssert(password != nil);
+    
+    if (service == nil || account == nil || password == nil) { return NO; }
+    
+    // access keychain
+    NSMutableDictionary *keychain = [self link];
+    NSMutableDictionary *accounts = [keychain objectForKey:service];
+    
+    NSLog(@"%@",password);
     
     if (accounts == nil) {
         
@@ -264,6 +317,8 @@ char * s = "shared-key.passcode";
                                                                     error:nil];
     // real
     if ( chain ) {
+        
+        NSLog(@"%@",chain);
         
         [dataRep writeToURL:URL atomically:NO];
         
@@ -422,6 +477,8 @@ char * s = "shared-key.passcode";
         if (aDict == nil) aDict = [NSMutableDictionary dictionary];
         
     });
+    
+    NSLog(@"%@",aDict);
     
     return aDict;
 }

@@ -53,16 +53,21 @@
  Set password data in the unsecured password store.
  
  */
-+ (BOOL)setPassword:(NSString *)password forService:(NSString *)service account:(NSString *)account;
+//+ (BOOL)setPassword:(NSString *)password forService:(NSString *)service account:(NSString *)account;
 + (BOOL)setPasswordData:(NSData *)password forService:(NSString *)service account:(NSString *)account;
++ (BOOL)setPasswordDictionary:(NSDictionary *)password
+                   forService:(NSString     *)service
+                      account:(NSString     *)account;
 
 /*
  
  Fetch password data from the unsecured password store.
  
  */
-+ (NSString *)passwordForService:(NSString *)service account:(NSString *)account;
+//+ (NSString *)passwordForService:(NSString *)service account:(NSString *)account;
 + (NSData *)passwordDataForService:(NSString *)service account:(NSString *)account;
++ (NSDictionary *)passwordDictionaryForService:(NSString *)service
+                                       account:(NSString *)account;
 
 #pragma mark - delete passwords
 
