@@ -32,6 +32,13 @@ openSSL - a full-strength general purpose cryptography library.
 - Add "libSecureFoundation.a" as a target dependency and to the "Link with Binary Libraries" build phase
 - Import SecureFoundation in your source files `#import <SecureFoundation/SecureFoundation.h>`
 - Add security.framework to build phase "Link Binary With Libraries"
+
+## Installation via CocoaPod
+
+- Add `pod 'SecureFoundation', :git => 'https://github.com/project-imas/securefoundation.git'` to your `PodFile`
+- Run `pod install`
+- Add `#import <SecureFoundation/SecureFoundation.h>` to your app
+
 ## Test Suite
 
 Some (not all, yet) of the components here are testing using `OCUnit`. The tests can be found in `SecureFoundationTests`.
