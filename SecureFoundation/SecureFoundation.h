@@ -12,3 +12,4 @@
 #import "IMSCryptoUtils.h"
 #import "IMSCryptoManager.h"
 #import "IMSKeychain.h"
+#import "Base64.h"

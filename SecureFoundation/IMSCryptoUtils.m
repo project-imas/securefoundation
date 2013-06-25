@@ -7,7 +7,7 @@
 //
 
 #import "SecureFoundation.h"
-#import "Base64.h"
+
 
 int8_t IMSSum(const void *bytes, size_t length) {
     int8_t sum = 0;

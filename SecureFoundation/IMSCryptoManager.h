@@ -34,8 +34,8 @@ void IMSCryptoManagerPurge(void);
  `IMSCryptoManagerFinalize` is called.
  
  */
-void IMSCryptoManagerStoreTemporaryPasscode(NSString *code);
-void IMSCryptoManagerStoreTemporarySecurityQuestionsAndAnswers(NSArray *questions, NSArray *answers);
+void IMSCryptoManagerStoreTP(NSString *code);
+void IMSCryptoManagerStoreTSQAnswers(NSArray *questions, NSArray *answers);
 
 /*
  

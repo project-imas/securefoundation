@@ -25,6 +25,7 @@
 		3BAABBEE1639B555009D3543 /* IMSCryptoUtils.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3B8935AB162CA792003750B6 /* IMSCryptoUtils.h */; };
 		3BAABBEF1639B555009D3543 /* IMSCryptoManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3B98C7A5163092760070BD54 /* IMSCryptoManager.h */; };
 		FE731DF4177A1B4900BAB7B3 /* Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = FE731DF3177A1B4900BAB7B3 /* Base64.m */; };
+		FE731DF5177A23C600BAB7B3 /* Base64.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = FE731DF2177A1B4900BAB7B3 /* Base64.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +45,7 @@
 			dstPath = "include/${PRODUCT_NAME}";
 			dstSubfolderSpec = 16;
 			files = (
+				FE731DF5177A23C600BAB7B3 /* Base64.h in CopyFiles */,
 				3BAABBEE1639B555009D3543 /* IMSCryptoUtils.h in CopyFiles */,
 				3BAABBEF1639B555009D3543 /* IMSCryptoManager.h in CopyFiles */,
 				3B8935AA162C93E1003750B6 /* IMSKeychain.h in CopyFiles */,

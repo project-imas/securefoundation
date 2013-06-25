@@ -2,8 +2,12 @@
 //  IMSCryptoManager.m
 //  SecureFoundation
 //
-//  Created by Caleb Davenport on 10/18/12.
-//  Copyright (c) 2012 The MITRE Corporation. All rights reserved.
+//  Upated:
+//     Gregg Ganley    June 2013
+//     Kevin O'Keefe   Apr 2013
+//
+//  Created on 10/18/12.
+//  Copyright (c) 2012, 2013 The MITRE Corporation. All rights reserved.
 //
 
 #import "SecureFoundation.h"
@@ -17,10 +21,15 @@ static NSString * const IMSCryptoManagerSaltAccount = @"salt";
 static const int IMSCryptoManagerSecurityQuestionsXORKey = 156;
 
 // temporary memory storage
-static NSData *IMSCryptoManagerSharedKey;
-static NSString *IMSCryptoManagerTemporaryPasscode;
-static NSArray *IMSCryptoManagerTemporarySecurityQuestions;
-static NSArray *IMSCryptoManagerTemporarySecurityAnswers;
+static NSData   *IMSCryptoManagerSharedKey;
+//** renamed for obfuscation pruposes
+//*  IMSCryptoManagerTemporaryPasscode
+static NSString *IMSCryptoManagerTP;
+//** TemporarySecurityQuestions
+static NSArray  *IMSCryptoManagerTSQ;
+//** TemporarySecurityAnswers
+static NSArray  *IMSCryptoManagerTSA;
+
 
 NSData *IMSCryptoManagerSalt(void) {
     static NSData *salt;
@@ -52,13 +61,18 @@ void IMSCryptoManagerPurge(void) {
     IMSCryptoManagerSharedKey = nil;
 }
 
-void IMSCryptoManagerStoreTemporaryPasscode(NSString *code) {
-    IMSCryptoManagerTemporaryPasscode = code;
+//** only called during initial passcode creation and no other times
+//** store temp password
+void IMSCryptoManagerStoreTP(NSString *code) {
+   
+    IMSCryptoManagerTP = code;
 }
 
-void IMSCryptoManagerStoreTemporarySecurityQuestionsAndAnswers(NSArray *questions, NSArray *answers) {
-    IMSCryptoManagerTemporarySecurityQuestions = questions;
-    IMSCryptoManagerTemporarySecurityAnswers = answers;
+//** store temp questions and answers
+void IMSCryptoManagerStoreTSQA(NSArray *questions, NSArray *answers) {
+
+    IMSCryptoManagerTSQ = questions;
+    IMSCryptoManagerTSA = answers;
 }
 
 void IMSCryptoManagerFinalize(void) {
@@ -76,14 +90,14 @@ void IMSCryptoManagerFinalize(void) {
     IMSCryptoManagerSharedKey = IMSCryptoUtilsDeriveKey(key, kCCKeySizeAES256, salt);
     
     // store things
-    IMSCryptoManagerUpdatePasscode(IMSCryptoManagerTemporaryPasscode);
-    IMSCryptoManagerUpdateSecurityQuestionsAndAnswers(IMSCryptoManagerTemporarySecurityQuestions,
-                                                      IMSCryptoManagerTemporarySecurityAnswers);
+    IMSCryptoManagerUpdatePasscode(IMSCryptoManagerTP);
+    IMSCryptoManagerUpdateSecurityQuestionsAndAnswers(IMSCryptoManagerTSQ,
+                                                      IMSCryptoManagerTSA);
     
     // clear memory
-    IMSCryptoManagerTemporaryPasscode = nil;
-    IMSCryptoManagerTemporarySecurityQuestions = nil;
-    IMSCryptoManagerTemporarySecurityAnswers = nil;
+    IMSCryptoManagerTP  = nil;
+    IMSCryptoManagerTSQ = nil;
+    IMSCryptoManagerTSA = nil;
     
 }
 
