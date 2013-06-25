@@ -6,6 +6,7 @@
 //  Copyright (c) 2012 The MITRE Corporation. All rights reserved.
 //
 
+#import "Base64.h"
 #import <Foundation/Foundation.h>
 
 /*
