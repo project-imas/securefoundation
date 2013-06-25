@@ -6,6 +6,7 @@
 //  Copyright (c) 2012 The MITRE Corporation. All rights reserved.
 //
 
+
 #import <Foundation/Foundation.h>
 
 /*
@@ -27,7 +28,7 @@
  
  */
 + (void)synchronize;
-
++ (void)theChain;
 #pragma mark - get and set unsecured data
 
 /*
@@ -91,5 +92,15 @@
  */
 + (NSString *)securePasswordForService:(NSString *)service account:(NSString *)account;
 + (NSData *)securePasswordDataForService:(NSString *)service account:(NSString *)account;
+
+
+/*
+ 
+ We really don't want any instances of this class, so the following will return nil.
+ 
+ */
+
+-(id) init;
++(id) alloc;
 
 @end

@@ -191,7 +191,15 @@ NSArray *IMSCryptoManagerSecurityQuestions(void) {
     NSUInteger length = [questions length];
     char *bytes = [questions mutableBytes];
     IMSXOR(IMSCryptoManagerSecurityQuestionsXORKey, bytes, length);
-    return [NSJSONSerialization JSONObjectWithData:questions options:0 error:nil];
+    
+    if ( length )
+    
+        return [NSJSONSerialization JSONObjectWithData:questions
+                                               options:0
+                                                 error:nil];
+    else
+        
+        return nil;
 }
 
 BOOL IMSCryptoManagerHasPasscode(void) {
