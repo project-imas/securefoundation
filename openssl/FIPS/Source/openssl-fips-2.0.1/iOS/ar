@@ -1,0 +1,63 @@
+#!/bin/sh
+#
+# 'ar' wrapper script to invoke libtool to support 'fat' binaries containing
+# more than one architecture in a single file
+#
+
+ORIG_ARGS="$@"
+
+if [ -z "$CROSS_CHAIN" ]; then
+  LIBTOOL=/usr/bin/libtool
+  exec /usr/bin/ar "$@"
+else
+  LIBTOOL="$CROSS_CHAIN"libtool
+fi
+
+abort() 
+{
+  echo "$0 $ORIG_ARGS: $1"
+  exit $EXIT
+}
+
+replace() 
+{
+  LIBTOOLOP=-a
+}
+
+delete() 
+{
+  echo "Deleting items from a library not supported for architecture $TGT"
+  echo "$0 $ORIG_ARGS"
+  exit $EXIT
+}
+
+EXIT=1
+OPERATION=$1
+shift
+TARGETLIB=$1
+shift
+
+case "$OPERATION" in
+  -r)	replace;;
+  r)	replace;;
+  d)	delete;;
+  -d)	delete;;
+  *)	abort "$0: Can't perform $1";;
+esac
+
+#
+# if the target already exists then we update writing to a temporary file
+# and then move it back to the original target
+#
+if [ -e "$TARGETLIB" ]; then
+  $LIBTOOL -static -o "$TARGETLIB".$$ "$LIBTOOLOP" "$TARGETLIB" $* && \
+	mv "$TARGETLIB".$$ "$TARGETLIB"
+  EXIT=$?
+else
+  $LIBTOOL -static -o "$TARGETLIB" "$LIBTOOLOP" $*
+  EXIT=$?
+fi
+
+# exit with appropriate return code
+exit $EXIT
+

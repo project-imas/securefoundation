@@ -1,0 +1,5 @@
+This is the OpenSSL FIPS 2.0 module.
+
+For build and usage instructions check the OpenSSL website:
+
+http://www.openssl.org/docs/fips

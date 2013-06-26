@@ -1,0 +1,1 @@
+fips_ecdsa_lib.o fips_ecdsa_sign.o fips_ecdsa_selftest.o

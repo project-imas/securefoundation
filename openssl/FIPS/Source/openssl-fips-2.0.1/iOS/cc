@@ -1,0 +1,9 @@
+#!/bin/sh
+#
+# call cross compile too
+#
+if [ -z "$CROSS_CHAIN" ]; then
+  exec /usr/bin/`basename $0` "$@"
+else
+  exec "$CROSS_CHAIN"/`basename $0` "$@"
+fi
