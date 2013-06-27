@@ -110,8 +110,8 @@
     NSData *one;
     NSData *two;
     
-    IMSCryptoManagerStoreTemporaryPasscode(passcode);
-    IMSCryptoManagerStoreTemporarySecurityQuestionsAndAnswers(questions, answers); 
+    IMSCryptoManagerStoreTP(passcode);
+    IMSCryptoManagerStoreTSQAnswers(questions, answers);
     IMSCryptoManagerFinalize();
     
     IMSCryptoManagerPurge();
