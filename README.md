@@ -80,8 +80,8 @@ On application launch, you should check to see if your application has been conf
 
 If the application has not been configured, you can set it up using the temporary storage and finalize methods.
 
-    IMSCryptoManagerStoreTemporaryPasscode(passcode);
-    IMSCryptoManagerStoreTemporarySecurityQuestionsAndAnswers(questions, answers);
+    IMSCryptoManagerStoreTP(passcode);
+    IMSCryptoManagerStoreTSQAnswers(questions, answers);
     IMSCryptoManagerFinalize();
 
 To attempt an application unlock with either a passcode or answers to security questions, call:
