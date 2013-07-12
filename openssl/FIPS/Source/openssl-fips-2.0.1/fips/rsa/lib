@@ -1,1 +1,0 @@
-fips_rsa_selftest.o fips_rsa_sign.o fips_rsa_lib.o
