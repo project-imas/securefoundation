@@ -135,7 +135,7 @@ These methods pass the data through the Crypto Manager to perform encryption or 
 ## OpenSSL
 
 SecureFoundation contains the OpenSSL crypto provided by [http://www.openssl.org] (http://www.openssl.org), please see their website for more technical
-details on OpenSSL.
+details on OpenSSL.  Quoting from the OpenSSL website below:
 
 This software package uses strong cryptography, so even if it is created, maintained and distributed from 
 liberal countries in Europe (where it is legal to do this), it falls under certain export/import and/or use 
