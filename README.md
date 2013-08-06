@@ -132,6 +132,22 @@ It also has methods like:
     
 These methods pass the data through the Crypto Manager to perform encryption or decryption using the application shared key. It is important to note that the account service and account names are *not* stored encrypted in either case.
 
+## OpenSSL
+
+SecureFoundation contains the OpenSSL crypto provided by [http://www.openssl.org] (http://www.openssl.org), please see their website for more technical
+details on OpenSSL.
+
+This software package uses strong cryptography, so even if it is created, maintained and distributed from 
+liberal countries in Europe (where it is legal to do this), it falls under certain export/import and/or use 
+restrictions in some other parts of the world.
+
+PLEASE REMEMBER THAT EXPORT/IMPORT AND/OR USE OF STRONG CRYPTOGRAPHY SOFTWARE, PROVIDING CRYPTOGRAPHY HOOKS OR 
+EVEN JUST COMMUNICATING TECHNICAL DETAILS ABOUT CRYPTOGRAPHY SOFTWARE IS ILLEGAL IN SOME PARTS OF THE WORLD. SO, 
+WHEN YOU IMPORT THIS PACKAGE TO YOUR COUNTRY, RE-DISTRIBUTE IT FROM THERE OR EVEN JUST EMAIL TECHNICAL SUGGESTIONS 
+OR EVEN SOURCE PATCHES TO THE AUTHOR OR OTHER PEOPLE YOU ARE STRONGLY ADVISED TO PAY CLOSE ATTENTION TO ANY 
+EXPORT/IMPORT AND/OR USE LAWS WHICH APPLY TO YOU. THE AUTHORS OF OPENSSL ARE NOT LIABLE FOR ANY VIOLATIONS YOU MAKE 
+HERE. SO BE CAREFUL, IT IS YOUR RESPONSIBILITY.
+
 ## License
 
 Copyright 2012 The MITRE Corporation, All Rights Reserved.
