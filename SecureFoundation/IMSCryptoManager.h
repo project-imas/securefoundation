@@ -35,7 +35,7 @@ void IMSCryptoManagerPurge(void);
  
  */
 void IMSCryptoManagerStoreTP(NSString *code);
-void IMSCryptoManagerStoreTSQAnswers(NSArray *questions, NSArray *answers);
+void IMSCryptoManagerStoreTSQA(NSArray *questions, NSArray *answers);
 
 /*
  
