@@ -17,6 +17,9 @@ static NSString * const IMSCryptoManagerKeychainService = @"org.mitre.imas.crypt
 static NSString * const IMSCryptoManagerSharedKeyPasscodeAccount = @"shared-key.passcode";
 static NSString * const IMSCryptoManagerSharedKeySecurityAnswersAccount = @"shared-key.security-answers";
 static NSString * const IMSCryptoManagerSecurityQuestionsAccount = @"security-questions";
+//** storage of generic item, could be a key to database or API key etc
+static NSString * const IMSCryptoManagerGenItemAccount = @"gen-item";
+static NSString * const IMSCryptoManagerGenItemKAccount = @"gen-itemk";
 static NSString * const IMSCryptoManagerSaltAccount = @"salt";
 static const int IMSCryptoManagerSecurityQuestionsXORKey = 156;
 
@@ -100,6 +103,111 @@ void IMSCryptoManagerFinalize(void) {
     IMSCryptoManagerTSA = nil;
     
 }
+
+NSString *IMSCryptoManagerGenItemCreate(NSArray *answers, int len) {
+    NSCParameterAssert(IMSCryptoManagerTP != nil);
+    
+    if (len <= 0 || answers == nil)
+        return nil;
+    
+    //** generate this string, encode, encrypt, store it, and return it
+    NSString *genItem = IMSGenerateRandomString(len);
+    NSData *dbk = [genItem dataUsingEncoding:NSUTF8StringEncoding];
+    
+    // secure gen item with answers
+    NSString *answersString = [answers componentsJoinedByString:@""];
+    NSData *akey = [answersString dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *salt = IMSCryptoManagerSalt();
+    NSData *adk = IMSCryptoUtilsDeriveKey(akey, kCCKeySizeAES256, salt);
+    //** encrypt dbk item with adk, returns encrypted cipher text to store on keychain
+    NSData *encryptedCT = IMSCryptoUtilsEncryptData(dbk, adk);
+    BOOL genItemSet = [IMSKeychain
+                       setPasswordData:encryptedCT
+                       forService:IMSCryptoManagerKeychainService
+                       account:IMSCryptoManagerGenItemAccount];
+
+    //** secure answers key with user password
+    NSData *passcodeD = [IMSCryptoManagerTP dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *pak = IMSCryptoUtilsDeriveKey(passcodeD, kCCKeySizeAES256, salt);
+    //** encrypt abk item with upasswd, returns encrypted cipher text to store on keychain
+    encryptedCT = IMSCryptoUtilsEncryptData(adk, pak);
+    BOOL genItemKSet = [IMSKeychain
+                        setPasswordData:encryptedCT
+                        forService:IMSCryptoManagerKeychainService
+                        account:IMSCryptoManagerGenItemKAccount];
+    
+    if (genItemSet == YES && genItemKSet == YES)
+        return genItem;
+    
+    return nil;
+}
+
+NSString *IMSCryptoManagerGenItemGet(NSString *passcode) {
+    NSCParameterAssert(passcode != nil);
+    NSCParameterAssert(!IMSCryptoManagerIsLocked());
+    
+    // get encrypted key
+    NSData *encryptedCT = [IMSKeychain
+                           passwordDataForService:IMSCryptoManagerKeychainService
+                           account:IMSCryptoManagerGenItemKAccount];
+    
+    // generate decryption key
+    NSData *passcodeD = [passcode dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *salt = IMSCryptoManagerSalt();
+    NSData *pak = IMSCryptoUtilsDeriveKey(passcodeD, kCCKeySizeAES256, salt);
+    
+    // perform decryption
+    NSData *adk = IMSCryptoUtilsDecryptData(encryptedCT, pak);
+
+    
+    encryptedCT = [IMSKeychain
+                   passwordDataForService:IMSCryptoManagerKeychainService
+                   account:IMSCryptoManagerGenItemAccount];
+    
+    // perform decryption
+    NSData *genItemD = IMSCryptoUtilsDecryptData(encryptedCT, adk);
+    NSString* genItem = [[NSString alloc] initWithData:genItemD encoding:NSASCIIStringEncoding];
+    
+    return genItem;
+}
+
+NSString *IMSCryptoManagerGenItemReset(NSArray *answers, NSString *passcode) {
+
+    if (passcode == nil || answers == nil)
+        return nil;
+    
+    //** get genItem from keychain
+    NSString *answersString = [answers componentsJoinedByString:@""];
+    NSData *akey = [answersString dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *salt = IMSCryptoManagerSalt();
+    NSData *adk = IMSCryptoUtilsDeriveKey(akey, kCCKeySizeAES256, salt);
+    
+    NSData *encryptedCT = [IMSKeychain
+                           passwordDataForService:IMSCryptoManagerKeychainService
+                           account:IMSCryptoManagerGenItemAccount];
+    
+    NSData *genItemD = IMSCryptoUtilsDecryptData(encryptedCT, adk);
+    NSString* genItem = [[NSString alloc] initWithData:genItemD encoding:NSASCIIStringEncoding];
+    
+    //** encrypt with passcode and store on keychain
+    
+    //** secure answers key with user password
+    NSData *passcodeD = [passcode dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *pak = IMSCryptoUtilsDeriveKey(passcodeD, kCCKeySizeAES256, salt);
+    //** encrypt abk item with upasswd, returns encrypted cipher text to store on keychain
+    encryptedCT = IMSCryptoUtilsEncryptData(adk, pak);
+    BOOL genItemKSet = [IMSKeychain
+                        setPasswordData:encryptedCT
+                        forService:IMSCryptoManagerKeychainService
+                        account:IMSCryptoManagerGenItemKAccount];
+    
+    if (genItemKSet == YES)
+        return genItem;
+    
+    return nil;
+}
+
+
 
 BOOL IMSCryptoManagerUpdatePasscode(NSString *passcode) {
     NSCParameterAssert(!IMSCryptoManagerIsLocked());

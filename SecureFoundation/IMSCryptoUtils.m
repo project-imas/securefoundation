@@ -36,6 +36,15 @@ NSData *IMSCryptoUtilsPseudoRandomData(size_t length) {
     return nil;
 }
 
+
+NSString *IMSGenerateRandomString(int num) {
+    NSMutableString* string = [NSMutableString stringWithCapacity:num];
+    for (int i = 0; i < num; i++) {
+        [string appendFormat:@"%C", (unichar)('a' + arc4random_uniform(25))];
+    }
+    return string;
+}
+
 NSData *IMSCryptoUtilsDeriveKey(NSData *key, size_t length, NSData *salt) {
     if (key && length && salt) {
         uint8_t *derived_key = malloc(length);

@@ -81,3 +81,10 @@ NSArray *IMSCryptoManagerSecurityQuestions(void);
  */
 BOOL IMSCryptoManagerHasPasscode(void);
 BOOL IMSCryptoManagerHasSecurityQuestionsAndAnswers(void);
+
+
+//**  create a random string of len, encrypt and store in keychain
+NSString *IMSCryptoManagerGenItemCreate(NSArray *answers, int len);
+NSString *IMSCryptoManagerGenItemGet(NSString *passcode);
+NSString *IMSCryptoManagerGenItemReset(NSArray *answers, NSString *passcode);
+

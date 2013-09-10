@@ -24,6 +24,12 @@
 NSData *IMSCryptoUtilsPseudoRandomData(size_t length);
 
 /*
+  Generate a random string with the given length in bytes.
+  */
+NSString *IMSGenerateRandomString(int num);
+    
+
+/*
  
  Generate a derived key from the given key. This uses PBKDF2 key generation,
  SHA256 for pseudo random data generation, and one thousand rounds. Indicate
@@ -93,4 +99,6 @@ NSData *IMSHashPlistObject_SHA256(id object);
 //**
 NSString *IMSEncodeBase64(NSData *inputData);
 NSData *IMSDeodeBase64(NSString *encodedString);
+
+
 
