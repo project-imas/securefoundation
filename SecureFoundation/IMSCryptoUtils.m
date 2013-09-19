@@ -2,13 +2,20 @@
 //  IMSCryptoUtils.m
 //  CryptoUtils
 //
-//  Created by Caleb Davenport on 10/8/12.
-//  Copyright (c) 2012 The MITRE Corporation. All rights reserved.
+//  Upated:
+//     Gregg Ganley    Sep 2013
+//
+//  Created on 10/8/12.
+//  Copyright (c) 2013 The MITRE Corporation. All rights reserved.
 //
 
 #import "SecureFoundation.h"
 
 
+//**********************
+//**********************
+//**
+//**
 int8_t IMSSum(const void *bytes, size_t length) {
     int8_t sum = 0;
     int8_t *values = (int8_t *)bytes;
@@ -18,15 +25,30 @@ int8_t IMSSum(const void *bytes, size_t length) {
     return sum;
 }
 
+
+//**********************
+//**********************
+//**
+//**
 int8_t IMSTwosComplement(int8_t value) {
     return (~value + 1);
 }
 
+
+//**********************
+//**********************
+//**
+//**
 int8_t IMSChecksum(NSData *data) {
     int8_t sum = IMSSum([data bytes], [data length]);
     return IMSTwosComplement(sum);
 }
 
+
+//**********************
+//**********************
+//**
+//**
 NSData *IMSCryptoUtilsPseudoRandomData(size_t length) {
     if (length) {
         uint8_t *bytes = malloc(length);
@@ -37,6 +59,10 @@ NSData *IMSCryptoUtilsPseudoRandomData(size_t length) {
 }
 
 
+//**********************
+//**********************
+//**
+//**
 NSString *IMSGenerateRandomString(int num) {
     NSMutableString* string = [NSMutableString stringWithCapacity:num];
     for (int i = 0; i < num; i++) {
@@ -45,10 +71,40 @@ NSString *IMSGenerateRandomString(int num) {
     return string;
 }
 
+
+//**********************
+//**********************
+//**
+//**
 NSData *IMSCryptoUtilsDeriveKey(NSData *key, size_t length, NSData *salt) {
-    if (key && length && salt) {
-        uint8_t *derived_key = malloc(length);
-        int status = CCKeyDerivationPBKDF(kCCPBKDF2,
+
+    if (!(key && length && salt))
+        return nil;
+    
+#ifdef OpenSSL
+    /* Initialise the library */
+    ERR_load_crypto_strings();
+    OpenSSL_add_all_algorithms();
+    OPENSSL_config(NULL);
+    
+    uint8_t *derived_key = malloc(length);
+    int status = PKCS5_PBKDF2_HMAC_SHA1(
+                               [key bytes],
+                               [key length],
+                               [salt bytes],
+                               [salt length],
+                               1000, // number of rounds
+                               length,
+                               derived_key);
+    /* Clean up */
+    EVP_cleanup();
+    ERR_free_strings();
+    
+    if (status == 1)
+#else
+
+    uint8_t *derived_key = malloc(length);
+    int status = CCKeyDerivationPBKDF(kCCPBKDF2,
                                           [key bytes],
                                           [key length],
                                           [salt bytes],
@@ -57,146 +113,363 @@ NSData *IMSCryptoUtilsDeriveKey(NSData *key, size_t length, NSData *salt) {
                                           1000, // number of rounds
                                           derived_key,
                                           length);
-        if (status == kCCSuccess) { return [NSData dataWithBytesNoCopy:derived_key length:length]; }
-        else {
-            free(derived_key);
-#if DEBUG
-            NSLog(@"%s: Unable to generate derived key. Error %d", __PRETTY_FUNCTION__, status);
+    if (status == kCCSuccess)
+
+//** OpenSSL
 #endif
-        }
+    {
+        return [NSData dataWithBytesNoCopy:derived_key length:length];
     }
+    else {
+        free(derived_key);
+        //NSLog(@"%s: Unable to generate derived key. Error %d", __PRETTY_FUNCTION__, status);
+    }
+    
     return nil;
 }
 
-NSData *IMSCryptoUtilsEncryptData(NSData *data, NSData *key) {
-    if (data && key) {
-        
-        // get initialization vector
-        NSData *iv_data = IMSCryptoUtilsPseudoRandomData(kCCBlockSizeAES128);
-        
-        // get a cryptor instance
-        CCCryptorRef cryptor;
-        CCCryptorStatus status = CCCryptorCreate(kCCEncrypt, // operation
-                                                 kCCAlgorithmAES128, // algorithm
-                                                 kCCOptionPKCS7Padding, // options
-                                                 [key bytes], [key length], // key bytes and length
-                                                 [iv_data bytes], // initialization vector
-                                                 &cryptor);
-        if (status != kCCSuccess) { return nil; }
-        
-        // create a buffer
-        size_t bufferSize = ([data length] + kCCBlockSizeAES128 + [iv_data length]);
-        size_t length = [iv_data length];
-        size_t written = length;
-        void *buffer = malloc(bufferSize);
-        if (buffer == nil) { return nil; }
-        
-        // set initialization vector
-        memcpy(buffer, [iv_data bytes], [iv_data length]);
-        
-        // encrypt user data
-        status = CCCryptorUpdate(cryptor,
-                                 [data bytes], [data length],
-                                 buffer + length,
-                                 bufferSize - length,
-                                 &written);
-        if (status != kCCSuccess) { return nil; }
-        length += written;
-        
-        // encrypt checksum
-        int8_t checksum = IMSChecksum(data);
-        CCCryptorUpdate(cryptor,
-                        &checksum, sizeof(int8_t),
-                        buffer + length,
-                        bufferSize - length,
-                        &written);
-        length += written;
-        
-        // finalize
-        status = CCCryptorFinal(cryptor,
-                                buffer + length,
-                                bufferSize - length,
-                                &written);
-        length += written;
-        
-        // release
-        CCCryptorRelease(cryptor);
-        
-        // cleanup and return
-        if (status == kCCSuccess) {
-            return [NSData dataWithBytesNoCopy:buffer length:length];
-        }
-        else {
-            free(buffer);
-#if DEBUG
-            NSLog(@"%s: Unable to perform encryption. Error %d", __PRETTY_FUNCTION__, status);
-#endif
-        }
-        
+
+//**********************
+//**********************
+//**
+//**
+NSData *IMSCryptoUtilsEncryptData(NSData *plaintext, NSData *key) {
+    
+    if (plaintext == 0 || key == 0)
+        return nil;
+    
+#ifdef OpenSSL
+    // get initialization vector
+    NSData *iv_data = IMSCryptoUtilsPseudoRandomData(kCCBlockSizeAES128);
+    
+    /* Buffer for ciphertext. Ensure the buffer is long enough for the
+     * ciphertext which may be longer than the plaintext, dependant on the
+     * algorithm and mode
+     */
+    //** ciphertext:
+    //**  ||| IV (16B) | ciphertext | checksum (1B) |||
+    //** extra length defined here (16B + plaintext.len + 16B, but that is ok
+    size_t ciphertext_len = ([plaintext length] + kCCBlockSizeAES128 + [iv_data length]);
+    //** set the running length
+    size_t length = [iv_data length];
+    int   written;
+    void *ciphertext = malloc(ciphertext_len);
+    if (ciphertext == nil)
+        { return nil; }
+    
+    /* Initialise the library */
+    ERR_load_crypto_strings();
+    OpenSSL_add_all_algorithms();
+    OPENSSL_config(NULL);
+    
+    /* Encrypt the plaintext */
+    EVP_CIPHER_CTX *ctx;
+    
+    /* Create and initialise the context */
+    if (!(ctx = EVP_CIPHER_CTX_new())) {
+        free(ciphertext);
+        //NSLog(@"%s: Unable to perform encryption. Error 1", __PRETTY_FUNCTION__);
+        //ERR_print_errors_fp(stderr);
+        return nil;
     }
+    
+    //** Initialise the encryption operation.
+    //** use CFB. cipher feedback, or streaming block cipher mode such that plaintext = cipher text
+    if (1 != EVP_EncryptInit_ex(ctx, EVP_aes_256_cfb(), NULL, [key bytes], [iv_data bytes])) {
+        free(ciphertext);
+        //NSLog(@"%s: Unable to perform encryption. Error 2", __PRETTY_FUNCTION__);
+        //ERR_print_errors_fp(stderr);
+        return nil;
+    }
+    
+    //** ciphertext:
+    //**  ||| IV (16B) | ciphertext | checksum (1B) |||
+    
+    //** copy initialization vector(IV) to start of ciphertext...
+    memcpy(ciphertext, [iv_data bytes], [iv_data length]);
+    
+    //** Provide the plaintext to be encrypted, and obtain the encrypted output
+    //** set ciphertext pointer past IV
+    if (1 != EVP_EncryptUpdate(ctx, ciphertext + length, &written, [plaintext bytes], [plaintext length])) {
+        free(ciphertext);
+        //NSLog(@"%s: Unable to perform encryption. Error 3", __PRETTY_FUNCTION__);
+        //ERR_print_errors_fp(stderr);
+        return nil;
+    }
+    length += written;
+    
+    // encrypt plaintext checksum and add to end of ciphertext
+    uint8_t checksum = IMSChecksum(plaintext);
+    if (1 != EVP_EncryptUpdate(ctx, ciphertext + length, &written, &checksum, sizeof(uint8_t)) ) {
+        free(ciphertext);
+        //NSLog(@"%s: Unable to perform encryption. Error 3", __PRETTY_FUNCTION__);
+        //ERR_print_errors_fp(stderr);
+        return nil;
+    }
+    length += written;
+
+    /* Clean up */
+    EVP_CIPHER_CTX_free(ctx);
+
+#if 0
+    //** debug
+    printf("Ciphertext is:\n");
+    BIO_dump_fp(stdout, ciphertext, length);
+#endif
+    
+    /* Clean up */
+    EVP_cleanup();
+    ERR_free_strings();
+
+    return [NSData dataWithBytesNoCopy:ciphertext length:length];  
+    
+#else
+    //*****************************************
+    //*****************************************
+    //** Apple Crypto
+    
+    // get initialization vector
+    NSData *iv_data = IMSCryptoUtilsPseudoRandomData(kCCBlockSizeAES128);
+        
+    // get a cryptor instance
+    CCCryptorRef cryptor;
+    CCCryptorStatus status = CCCryptorCreate(kCCEncrypt, // operation
+                                             kCCAlgorithmAES128, // algorithm
+                                             kCCOptionPKCS7Padding, // options
+                                             [key bytes], [key length], // key bytes and length
+                                             [iv_data bytes], // initialization vector
+                                             &cryptor);
+    if (status != kCCSuccess)
+        { return nil; }
+        
+    // create a buffer
+    size_t ciphertext_len = ([plaintext length] + kCCBlockSizeAES128 + [iv_data length]);
+    size_t length = [iv_data length];
+    size_t written;
+    void *ciphertext = malloc(ciphertext_len);
+    if (ciphertext == nil)
+        { return nil; }
+    
+    // set initialization vector, at start of ciphertext...
+    memcpy(ciphertext, [iv_data bytes], [iv_data length]);
+        
+    // encrypt user data, add to pointer after IV data
+    status = CCCryptorUpdate(cryptor,
+                             [plaintext bytes], [plaintext length],
+                             ciphertext + length,
+                             ciphertext_len - length,
+                             &written);
+    if (status != kCCSuccess)
+        { return nil; }
+    length += written;
+        
+    // encrypt plaintext checksum
+    int8_t checksum = IMSChecksum(plaintext);
+    CCCryptorUpdate(cryptor,
+                    &checksum, sizeof(int8_t),
+                    ciphertext + length,
+                    ciphertext_len - length,
+                    &written);
+    length += written;
+        
+    // finalize
+    status = CCCryptorFinal(cryptor,
+                            ciphertext + length,
+                            ciphertext_len - length,
+                            &written);
+    length += written;
+        
+    // release
+    CCCryptorRelease(cryptor);
+        
+    // cleanup and return
+    if (status == kCCSuccess) {
+         return [NSData dataWithBytesNoCopy:ciphertext length:length];
+    }
+    else {
+        free(ciphertext);
+        //NSLog(@"%s: Unable to perform encryption. Error %d", __PRETTY_FUNCTION__, status);
+    }
+
     return nil;
+    
+//** end OpenSSL
+#endif
+    
 }
 
-NSData *IMSCryptoUtilsDecryptData(NSData *data, NSData *key) {
-    if (data && key) {
-        
-        // determine total needed space
-        size_t length;
-        CCCryptorStatus status;
-        CCCrypt(kCCDecrypt, kCCAlgorithmAES128, kCCOptionPKCS7Padding,
-                [key bytes], [key length],
-                [data bytes],
-                [data bytes] + kCCBlockSizeAES128, [data length] - kCCBlockSizeAES128,
-                NULL, 0,
-                &length);
-        
-        // create buffer
-        void *buffer = malloc(length);
-        if (buffer == nil) { return nil; }
-        
-        // perform decryption
-        status = CCCrypt(kCCDecrypt, kCCAlgorithmAES128, kCCOptionPKCS7Padding,
-                         [key bytes], [key length],
-                         [data bytes],
-                         [data bytes] + kCCBlockSizeAES128, [data length] - kCCBlockSizeAES128,
-                         buffer, length,
-                         &length);
-        
-        // cleanup and return
-        if (status == kCCSuccess) {
-            int8_t sum = IMSSum(buffer, length);
-            NSData *data = [NSData dataWithBytesNoCopy:buffer length:length - 1];
-            if (sum == 0) { return data; }
-            else {
-                NSLog(@"%s: Integrity check failed.", __PRETTY_FUNCTION__);
-                return nil;
-            }    
-        }
-        else {
-            free(buffer);
-#if DEBUG
-            NSLog(@"%s: Unable to perform encryption. Error %d", __PRETTY_FUNCTION__, status);
-#endif
-        }
-        
-    }
+
+//**********************
+//**********************
+//**
+//**
+NSData *IMSCryptoUtilsDecryptData(NSData *ciphertext, NSData *key) {
+  if (ciphertext == 0 || key == 0)
     return nil;
+  
+#ifdef OpenSSL
+  /* Initialise the library */
+  ERR_load_crypto_strings();
+  OpenSSL_add_all_algorithms();
+  OPENSSL_config(NULL);
+  
+  EVP_CIPHER_CTX *ctx;
+  int len = 0;
+    
+  //** ciphertext:
+  //**  ||| IV (16B) | ciphertext | checksum (1B) ||||
+    
+  //** subtract lenght of IV from ciphertext len
+  int plaintext_len = [ciphertext length]  -  kCCBlockSizeAES128;
+  
+  /* Create and initialise the context */
+  if(!(ctx = EVP_CIPHER_CTX_new())) {
+    //NSLog(@"%s: Unable to perform decryption. Error 1", __PRETTY_FUNCTION__);
+    //ERR_print_errors_fp(stderr);
+    return nil;
+  }
+  
+  //** Initialise the decryption operation. 
+  //** start of cipher text is the IV, 128 bits
+  //** get initialization vector at start of ciphertext...
+  unsigned char *iv = malloc(kCCBlockSizeAES128);
+  if (iv == nil) { return nil; }
+  memcpy(iv, [ciphertext bytes],  kCCBlockSizeAES128);
+  if(1 != EVP_DecryptInit_ex(ctx, EVP_aes_256_cfb(), NULL, [key bytes], iv)) {
+    //NSLog(@"%s: Unable to perform decryption. Error 2", __PRETTY_FUNCTION__);
+    //ERR_print_errors_fp(stderr);
+    return nil;
+  }
+  
+  // create buffer
+  void *plaintext = malloc(plaintext_len);
+  if (plaintext == nil)
+    { return nil; }
+  
+  //** decrypt ciphertext, starting with pointer set to end of IV (16B)
+  if(1 != EVP_DecryptUpdate(ctx, plaintext, &len, 
+                            [ciphertext bytes] + kCCBlockSizeAES128, 
+                            [ciphertext length] -  kCCBlockSizeAES128) ) {
+    //NSLog(@"%s: Unable to perform decryption. Error 3", __PRETTY_FUNCTION__);
+    //ERR_print_errors_fp(stderr);
+    return nil;
+  }
+  
+  /* Clean up */
+  EVP_CIPHER_CTX_free(ctx);
+
+  //** ensure the newly decrypted plain text length is same length as ciphertext len (not including IV)
+  int8_t sum = IMSSum(plaintext, plaintext_len);
+  //** return ciphertext being sure to strip checksum byte from end
+  NSData *data = [NSData dataWithBytesNoCopy:plaintext length:plaintext_len - 1];
+  if (sum == 0) {
+    //** success
+    return data;
+  }
+
+  NSLog(@"%s: Integrity check failed.", __PRETTY_FUNCTION__);
+  return nil;
+
+#else
+  //*****************************************
+  //*****************************************
+  //** Apple Crypto
+  
+  // determine total needed space
+  size_t plaintext_len;
+  CCCryptorStatus status;
+  CCCrypt(kCCDecrypt, kCCAlgorithmAES128, kCCOptionPKCS7Padding,
+          [key bytes], [key length],
+          [ciphertext bytes],
+          [ciphertext bytes] + kCCBlockSizeAES128, [ciphertext length] - kCCBlockSizeAES128,
+          NULL, 0,
+          &plaintext_len);
+  
+  // create buffer
+  void *plaintext = malloc(plaintext_len);
+  if (plaintext == nil)
+    { return nil; }
+  
+  // perform decryption
+  status = CCCrypt(kCCDecrypt, kCCAlgorithmAES128, kCCOptionPKCS7Padding,
+                   [key bytes], [key length],
+                   [ciphertext bytes],
+                   [ciphertext bytes] + kCCBlockSizeAES128, [ciphertext length] - kCCBlockSizeAES128,
+                   plaintext, plaintext_len, &plaintext_len);
+  
+  // cleanup and return
+  if (status == kCCSuccess) {
+    int8_t sum = IMSSum(plaintext, plaintext_len);
+    NSData *data = [NSData dataWithBytesNoCopy:plaintext length:plaintext_len - 1];
+    if (sum == 0) {
+      //** success
+      return data;
+    }
+    else {
+      NSLog(@"%s: Integrity check failed.", __PRETTY_FUNCTION__);
+      return nil;
+    }
+  }
+  else {
+    free((__bridge void *)(ciphertext));
+#ifdef DEBUG
+    NSLog(@"%s: Unable to perform encryption. Error %d", __PRETTY_FUNCTION__, status);
+#endif
+  }
+  
+//** end OpenSSL
+#endif
+    
+  return nil;
 }
 
+
+//**********************
+//**********************
+//**
+//**
 NSData *IMSCryptoUtilsEncryptPlistObject(id object, NSData *key) {
     NSData *data = IMSConvertPlistObjectToData(object);
     return IMSCryptoUtilsEncryptData(data, key);
 }
 
+
+//**********************
+//**********************
+//**
+//**
 id IMSCryptoUtilsDecryptPlistObject(NSData *data, NSData *key) {
     NSData *decrypted = IMSCryptoUtilsDecryptData(data, key);
     return IMSConvertDataToPlistObject(decrypted);
 }
 
+
+//**********************
+//**********************
+//**
+//**
 NSData *IMSHashData_MD5(NSData *data) {
+#ifdef OpenSSL
+    EVP_MD_CTX	evp;
+    
+    void *buffer = malloc(MD5_DIGEST_LENGTH);
+    EVP_MD_CTX_init(&evp);
+    
+    EVP_DigestInit_ex(&evp,EVP_md5(), NULL);
+    
+    EVP_DigestUpdate(&evp,	[data bytes], [data length]);
+    
+    EVP_DigestFinal_ex(&evp, buffer,NULL);
+    
+    EVP_MD_CTX_cleanup(&evp);
+    
+    return [NSData dataWithBytesNoCopy:buffer length:MD5_DIGEST_LENGTH];
+#else
     void *buffer = malloc(CC_MD5_DIGEST_LENGTH);
     CC_MD5([data bytes], [data length], buffer);
     return [NSData dataWithBytesNoCopy:buffer length:CC_MD5_DIGEST_LENGTH];
+#endif
+    return nil;
 }
 
 NSData *IMSHashPlistObject_MD5(id object) {
@@ -204,17 +477,50 @@ NSData *IMSHashPlistObject_MD5(id object) {
     return IMSHashData_MD5(data);
 }
 
+
+//**********************
+//**********************
+//**
+//**
 NSData *IMSHashData_SHA256(NSData *data) {
+#ifdef OpenSSL
+    EVP_MD_CTX	evp;
+    
+    void *buffer = malloc(SHA256_DIGEST_LENGTH);
+    EVP_MD_CTX_init(&evp);
+    
+    EVP_DigestInit_ex(&evp,EVP_sha256(), NULL);
+    
+    EVP_DigestUpdate(&evp,	[data bytes], [data length]);
+    
+    EVP_DigestFinal_ex(&evp, buffer,NULL);
+    
+    EVP_MD_CTX_cleanup(&evp);
+        
+    return [NSData dataWithBytesNoCopy:buffer length:SHA256_DIGEST_LENGTH];
+
+#else
     void *buffer = malloc(CC_SHA256_DIGEST_LENGTH);
     CC_SHA256([data bytes], [data length], buffer);
     return [NSData dataWithBytesNoCopy:buffer length:CC_SHA256_DIGEST_LENGTH];
+#endif
 }
 
+
+//**********************
+//**********************
+//**
+//**
 NSData *IMSHashPlistObject_SHA256(id object) {
     NSData *data = IMSConvertPlistObjectToData(object);
     return IMSHashData_SHA256(data);
 }
 
+
+//**********************
+//**********************
+//**
+//**
 NSData *IMSConvertPlistObjectToData(id object) {
     return [NSPropertyListSerialization
             dataWithPropertyList:object
@@ -223,6 +529,11 @@ NSData *IMSConvertPlistObjectToData(id object) {
             error:nil];
 }
 
+
+//**********************
+//**********************
+//**
+//**
 id IMSConvertDataToPlistObject(NSData *data) {
     return [NSPropertyListSerialization
             propertyListWithData:data

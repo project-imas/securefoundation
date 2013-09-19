@@ -2,13 +2,17 @@
 //  CryptoUtilsTests.m
 //  CryptoUtilsTests
 //
-//  Created by Caleb Davenport on 10/8/12.
-//  Copyright (c) 2012 The MITRE Corporation. All rights reserved.
+//  Upated:
+//     Gregg Ganley    Sep 2013
+//
+//  Created on 10/8/12.
+//
+//  Copyright (c) 2013 The MITRE Corporation. All rights reserved.
 //
 
 #import <SenTestingKit/SenTestingKit.h>
 
-#import "SecureFoundation.h"
+#import <SecureFoundation/SecureFoundation.h>
 
 int8_t IMSSum(const void *bytes, size_t length);
 int8_t IMSTwosComplement(int8_t value);
@@ -57,6 +61,7 @@ int8_t IMSChecksum(NSData *data);
 - (void)testGeneratedKeyLength {
     NSData *salt = IMSCryptoUtilsPseudoRandomData(8);
     NSData *key = IMSCryptoUtilsPseudoRandomData(8);
+    NSLog(@"Gregg was here");
     [@[ @0, @128, @256, @512 ] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         NSUInteger length = [obj unsignedIntegerValue];
         NSData *data = IMSCryptoUtilsDeriveKey(key, length, salt);
@@ -115,6 +120,24 @@ int8_t IMSChecksum(NSData *data);
     STAssertTrue([plain isEqualToData:plainPrime], @"The data should be equal");
     STAssertFalse([plain isEqualToData:cipher], @"The data should not be equal");
     
+    
+    //** TEST 2
+    plain = IMSCryptoUtilsPseudoRandomData(1);
+    cipher = IMSCryptoUtilsEncryptData(plain, key);
+    plainPrime = IMSCryptoUtilsDecryptData(cipher, key);
+    STAssertTrue([plain isEqualToData:plainPrime], @"The data should be equal");
+    STAssertFalse([plain isEqualToData:cipher], @"The data should not be equal");
+    
+    
+    //** TEST 3
+    plain = IMSCryptoUtilsPseudoRandomData(250);
+    cipher = IMSCryptoUtilsEncryptData(plain, key);
+    plainPrime = IMSCryptoUtilsDecryptData(cipher, key);
+    STAssertTrue([plain isEqualToData:plainPrime], @"The data should be equal");
+    STAssertFalse([plain isEqualToData:cipher], @"The data should not be equal");
+    
+    
+    
 }
 
 - (void)testTwosComplement {
@@ -149,6 +172,55 @@ int8_t IMSChecksum(NSData *data);
     NSData *encrypted = IMSCryptoUtilsEncryptPlistObject(names, key);
     NSArray *namesPrime = IMSCryptoUtilsDecryptPlistObject(encrypted, key);
     STAssertTrue([names isEqualToArray:namesPrime], @"The arrays are not equal");
+}
+
+
+
+- (void)testShaHASH {
+#ifdef OpenSSL
+    NSUInteger slen = SHA256_DIGEST_LENGTH;
+#else
+    NSUInteger slen = CC_SHA256_DIGEST_LENGTH;
+#endif
+
+    NSData *data1 = IMSCryptoUtilsPseudoRandomData(60);
+    NSData *data2 = IMSCryptoUtilsPseudoRandomData(95);
+    NSData *hash1 = IMSHashData_SHA256(data1);
+    NSData *hash2 = IMSHashData_SHA256(data2);
+    //printf("data1 is:\n");
+    //BIO_dump_fp(stdout, [data1 bytes], [data1 length]);
+    //printf("hash1 is:\n");
+    //BIO_dump_fp(stdout, [hash1 bytes], [hash1 length]);
+    
+    STAssertFalse([hash1 isEqualToData:hash2], @"The SHA hashes should not be equal");
+    STAssertFalse([data1 isEqualToData:hash1], @"data and SHA hash should not be equal");
+    STAssertFalse([data2 isEqualToData:hash2], @"data and SHA hash should not be equal");
+    STAssertEquals([hash1 length], slen, @"SHA hash1 length are not equal");
+    STAssertEquals([hash2 length], slen, @"SHA hash2 length are not equal");
+    
+}
+
+- (void)testMD5HASH {
+#ifdef OpenSSL
+    NSUInteger slen = MD5_DIGEST_LENGTH;
+#else
+    NSUInteger slen = CC_MD5_DIGEST_LENGTH;
+#endif
+    NSData *data1 = IMSCryptoUtilsPseudoRandomData(60);
+    NSData *data2 = IMSCryptoUtilsPseudoRandomData(88);
+    NSData *hash1 = IMSHashData_MD5(data1);
+    NSData *hash2 = IMSHashData_MD5(data2);
+    //printf("data1 is:\n");
+    //BIO_dump_fp(stdout, [data1 bytes], [data1 length]);
+    //printf("hash1 is:\n");
+    //BIO_dump_fp(stdout, [hash1 bytes], [hash1 length]);
+
+    STAssertFalse([hash1 isEqualToData:hash2], @"The MD5 hashes should not be equal");
+    STAssertFalse([data1 isEqualToData:hash1], @"data and MD5 hash should not be equal");
+    STAssertFalse([data2 isEqualToData:hash2], @"data and MD5 hash should not be equal");
+    STAssertEquals([hash1 length], slen, @"MD5 hash1 length are not equal");
+    STAssertEquals([hash2 length], slen, @"MD5 hash2 length are not equal");
+    
 }
 
 @end

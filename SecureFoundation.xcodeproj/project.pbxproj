@@ -7,25 +7,24 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3B7F1675167147F600A9B236 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B7F1674167147F600A9B236 /* Security.framework */; };
 		3B7F1677167147FE00A9B236 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B7F1674167147F600A9B236 /* Security.framework */; };
 		3B893580162C92F1003750B6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B89357F162C92F1003750B6 /* Foundation.framework */; };
 		3B893585162C92F1003750B6 /* SecureFoundation.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3B893584162C92F1003750B6 /* SecureFoundation.h */; };
 		3B89358F162C92F1003750B6 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B89358E162C92F1003750B6 /* SenTestingKit.framework */; };
 		3B893592162C92F1003750B6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B89357F162C92F1003750B6 /* Foundation.framework */; };
 		3B893595162C92F1003750B6 /* libSecureFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B89357C162C92F1003750B6 /* libSecureFoundation.a */; };
-		3B89359B162C92F1003750B6 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3B893599162C92F1003750B6 /* InfoPlist.strings */; };
 		3B8935A9162C93C6003750B6 /* IMSKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B8935A8162C93C6003750B6 /* IMSKeychain.m */; };
 		3B8935AA162C93E1003750B6 /* IMSKeychain.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3B8935A7162C93C6003750B6 /* IMSKeychain.h */; };
 		3B8935AD162CA792003750B6 /* IMSCryptoUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B8935AC162CA792003750B6 /* IMSCryptoUtils.m */; };
 		3B8935AE162CA792003750B6 /* IMSCryptoUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B8935AC162CA792003750B6 /* IMSCryptoUtils.m */; };
-		3B8935F2162F2034003750B6 /* IMSKeychainTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B8935F1162F2034003750B6 /* IMSKeychainTests.m */; };
-		3B8935F5162F206E003750B6 /* IMSCryptoUtilsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B8935F4162F206E003750B6 /* IMSCryptoUtilsTests.m */; };
 		3B98C7A7163092760070BD54 /* IMSCryptoManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B98C7A6163092760070BD54 /* IMSCryptoManager.m */; };
 		3BAABBEE1639B555009D3543 /* IMSCryptoUtils.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3B8935AB162CA792003750B6 /* IMSCryptoUtils.h */; };
 		3BAABBEF1639B555009D3543 /* IMSCryptoManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3B98C7A5163092760070BD54 /* IMSCryptoManager.h */; };
 		FE731DF4177A1B4900BAB7B3 /* Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = FE731DF3177A1B4900BAB7B3 /* Base64.m */; };
 		FE731DF5177A23C600BAB7B3 /* Base64.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = FE731DF2177A1B4900BAB7B3 /* Base64.h */; };
+		FEDBEDCC17E386FB00BBC6C5 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FEDBEDC917E386C800BBC6C5 /* libcrypto.a */; };
+		FEDBEDCD17E397EE00BBC6C5 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FEDBEDC917E386C800BBC6C5 /* libcrypto.a */; };
+		FEDBEDCE17E397F600BBC6C5 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B7F1674167147F600A9B236 /* Security.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,6 +34,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = 3B89357B162C92F1003750B6;
 			remoteInfo = SecureFoundation;
+		};
+		FEDBEDC817E386C800BBC6C5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FEDBEDC417E386C800BBC6C5 /* openssl.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9069D28C0FCE659A0042E34C;
+			remoteInfo = crypto;
+		};
+		FEDBEDCA17E386EF00BBC6C5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FEDBEDC417E386C800BBC6C5 /* openssl.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 9069D28B0FCE659A0042E34C;
+			remoteInfo = crypto;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -63,20 +76,18 @@
 		3B893584162C92F1003750B6 /* SecureFoundation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SecureFoundation.h; sourceTree = "<group>"; };
 		3B89358D162C92F1003750B6 /* SecureFoundationTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SecureFoundationTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B89358E162C92F1003750B6 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
-		3B893598162C92F1003750B6 /* SecureFoundationTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SecureFoundationTests-Info.plist"; sourceTree = "<group>"; };
-		3B89359A162C92F1003750B6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		3B8935A7162C93C6003750B6 /* IMSKeychain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMSKeychain.h; sourceTree = "<group>"; };
 		3B8935A8162C93C6003750B6 /* IMSKeychain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMSKeychain.m; sourceTree = "<group>"; };
 		3B8935AB162CA792003750B6 /* IMSCryptoUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMSCryptoUtils.h; sourceTree = "<group>"; };
 		3B8935AC162CA792003750B6 /* IMSCryptoUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMSCryptoUtils.m; sourceTree = "<group>"; };
-		3B8935F1162F2034003750B6 /* IMSKeychainTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMSKeychainTests.m; sourceTree = "<group>"; };
-		3B8935F4162F206E003750B6 /* IMSCryptoUtilsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMSCryptoUtilsTests.m; sourceTree = "<group>"; };
 		3B98C7A5163092760070BD54 /* IMSCryptoManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMSCryptoManager.h; sourceTree = "<group>"; };
 		3B98C7A6163092760070BD54 /* IMSCryptoManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMSCryptoManager.m; sourceTree = "<group>"; };
 		3BC64071166FC3D5006E4E1B /* README.md */ = {isa = PBXFileReference; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; wrapsLines = 1; };
 		4885E53516E92147000A99F4 /* IMSKeys.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IMSKeys.h; sourceTree = "<group>"; };
+		FE008F2A17E3AC63007B01B2 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		FE731DF2177A1B4900BAB7B3 /* Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Base64.h; sourceTree = "<group>"; };
 		FE731DF3177A1B4900BAB7B3 /* Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Base64.m; sourceTree = "<group>"; };
+		FEDBEDC417E386C800BBC6C5 /* openssl.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openssl.xcodeproj; path = vendor/openssl/openssl.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,6 +95,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FEDBEDCC17E386FB00BBC6C5 /* libcrypto.a in Frameworks */,
 				3B7F1677167147FE00A9B236 /* Security.framework in Frameworks */,
 				3B893580162C92F1003750B6 /* Foundation.framework in Frameworks */,
 			);
@@ -93,7 +105,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3B7F1675167147F600A9B236 /* Security.framework in Frameworks */,
+				FEDBEDCE17E397F600BBC6C5 /* Security.framework in Frameworks */,
+				FEDBEDCD17E397EE00BBC6C5 /* libcrypto.a in Frameworks */,
 				3B89358F162C92F1003750B6 /* SenTestingKit.framework in Frameworks */,
 				3B893592162C92F1003750B6 /* Foundation.framework in Frameworks */,
 				3B893595162C92F1003750B6 /* libSecureFoundation.a in Frameworks */,
@@ -106,9 +119,9 @@
 		3B893571162C92F1003750B6 = {
 			isa = PBXGroup;
 			children = (
+				FEDBEDC417E386C800BBC6C5 /* openssl.xcodeproj */,
 				3BC64071166FC3D5006E4E1B /* README.md */,
 				3B893581162C92F1003750B6 /* SecureFoundation */,
-				3B893596162C92F1003750B6 /* SecureFoundationTests */,
 				3B89357E162C92F1003750B6 /* Frameworks */,
 				3B89357D162C92F1003750B6 /* Products */,
 			);
@@ -129,6 +142,7 @@
 				3B7F1674167147F600A9B236 /* Security.framework */,
 				3B89357F162C92F1003750B6 /* Foundation.framework */,
 				3B89358E162C92F1003750B6 /* SenTestingKit.framework */,
+				FE008F2A17E3AC63007B01B2 /* UIKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -151,23 +165,12 @@
 			path = SecureFoundation;
 			sourceTree = "<group>";
 		};
-		3B893596162C92F1003750B6 /* SecureFoundationTests */ = {
+		FEDBEDC517E386C800BBC6C5 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				3B8935F4162F206E003750B6 /* IMSCryptoUtilsTests.m */,
-				3B8935F1162F2034003750B6 /* IMSKeychainTests.m */,
-				3B893597162C92F1003750B6 /* Supporting Files */,
+				FEDBEDC917E386C800BBC6C5 /* libcrypto.a */,
 			);
-			path = SecureFoundationTests;
-			sourceTree = "<group>";
-		};
-		3B893597162C92F1003750B6 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				3B893598162C92F1003750B6 /* SecureFoundationTests-Info.plist */,
-				3B893599162C92F1003750B6 /* InfoPlist.strings */,
-			);
-			name = "Supporting Files";
+			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -184,6 +187,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				FEDBEDCB17E386EF00BBC6C5 /* PBXTargetDependency */,
 			);
 			name = SecureFoundation;
 			productName = SecureFoundation;
@@ -228,6 +232,12 @@
 			mainGroup = 3B893571162C92F1003750B6;
 			productRefGroup = 3B89357D162C92F1003750B6 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = FEDBEDC517E386C800BBC6C5 /* Products */;
+					ProjectRef = FEDBEDC417E386C800BBC6C5 /* openssl.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				3B89357B162C92F1003750B6 /* SecureFoundation */,
@@ -236,12 +246,21 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXReferenceProxy section */
+		FEDBEDC917E386C800BBC6C5 /* libcrypto.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libcrypto.a;
+			remoteRef = FEDBEDC817E386C800BBC6C5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
 /* Begin PBXResourcesBuildPhase section */
 		3B89358A162C92F1003750B6 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3B89359B162C92F1003750B6 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -280,8 +299,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				3B8935AE162CA792003750B6 /* IMSCryptoUtils.m in Sources */,
-				3B8935F2162F2034003750B6 /* IMSKeychainTests.m in Sources */,
-				3B8935F5162F206E003750B6 /* IMSCryptoUtilsTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -293,18 +310,12 @@
 			target = 3B89357B162C92F1003750B6 /* SecureFoundation */;
 			targetProxy = 3B893593162C92F1003750B6 /* PBXContainerItemProxy */;
 		};
-/* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		3B893599162C92F1003750B6 /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				3B89359A162C92F1003750B6 /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
+		FEDBEDCB17E386EF00BBC6C5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = crypto;
+			targetProxy = FEDBEDCA17E386EF00BBC6C5 /* PBXContainerItemProxy */;
 		};
-/* End PBXVariantGroup section */
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		3B89359F162C92F1003750B6 /* Debug */ = {
@@ -360,6 +371,7 @@
 				DSTROOT = /tmp/SecureFoundation.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SecureFoundation/SecureFoundation-Prefix.pch";
+				HEADER_SEARCH_PATHS = "$(OPENSSL_SRC)/include";
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -373,6 +385,7 @@
 				DSTROOT = /tmp/SecureFoundation.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SecureFoundation/SecureFoundation-Prefix.pch";
+				HEADER_SEARCH_PATHS = "$(OPENSSL_SRC)/include";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -388,8 +401,13 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SecureFoundation/SecureFoundation-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)",
+					"$(OPENSSL_SRC)/include",
+				);
 				INFOPLIST_FILE = "SecureFoundationTests/SecureFoundationTests-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = $OPENSSL_SRC/include;
 				WRAPPER_EXTENSION = octest;
 			};
 			name = Debug;
@@ -403,8 +421,13 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SecureFoundation/SecureFoundation-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)",
+					"$(OPENSSL_SRC)/include",
+				);
 				INFOPLIST_FILE = "SecureFoundationTests/SecureFoundationTests-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = $OPENSSL_SRC/include;
 				WRAPPER_EXTENSION = octest;
 			};
 			name = Release;

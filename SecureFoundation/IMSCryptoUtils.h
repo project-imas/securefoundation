@@ -2,8 +2,11 @@
 //  IMSCryptoUtils.h
 //  CryptoUtils
 //
-//  Created by Caleb Davenport on 10/8/12.
-//  Copyright (c) 2012 The MITRE Corporation. All rights reserved.
+//  Upated:
+//     Gregg Ganley    Sep 2013
+//
+//  Created on 10/8/12.
+//  Copyright (c) 2013 The MITRE Corporation. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

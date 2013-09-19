@@ -1,14 +1,19 @@
+
 //
 //  IMSKeychainTests.m
 //  SecureFoundation
 //
-//  Created by Caleb Davenport on 10/17/12.
-//  Copyright (c) 2012 The MITRE Corporation. All rights reserved.
+//  Upated:
+//     Gregg Ganley    Sep 2013
+//
+//  Created on 10/8/12.
+//  Copyright (c) 2013 The MITRE Corporation. All rights reserved.
 //
 
 #import <SenTestingKit/SenTestingKit.h>
 
-#import "SecureFoundation.h"
+#import <SecureFoundation/SecureFoundation.h>
+
 
 @interface IMSKeychain (TestExtensions)
 
@@ -27,9 +32,14 @@
 }
 
 - (void)tearDown {
+    //** purge keychain file
     [IMSKeychain synchronize];
-    NSURL *URL = [IMSKeychain URLForKeychainFile];
-    [[NSFileManager defaultManager] removeItemAtURL:URL error:nil];
+    NSFileManager *manager = [NSFileManager defaultManager];
+    NSURL  *URL = [[manager URLsForDirectory:NSLibraryDirectory
+                                   inDomains:NSUserDomainMask] 
+                                   objectAtIndex:0];
+    [manager removeItemAtURL:URL error:nil];
+
     [super tearDown];
 }
 
@@ -110,8 +120,8 @@
     NSData *one;
     NSData *two;
     
-    IMSCryptoManagerStoreTemporaryPasscode(passcode);
-    IMSCryptoManagerStoreTemporarySecurityQuestionsAndAnswers(questions, answers); 
+    IMSCryptoManagerStoreTP(passcode);
+    IMSCryptoManagerStoreTSQA(questions, answers);
     IMSCryptoManagerFinalize();
     
     IMSCryptoManagerPurge();
