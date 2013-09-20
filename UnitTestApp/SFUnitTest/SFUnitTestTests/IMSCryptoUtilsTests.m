@@ -187,16 +187,19 @@ int8_t IMSChecksum(NSData *data);
     NSData *data2 = IMSCryptoUtilsPseudoRandomData(95);
     NSData *hash1 = IMSHashData_SHA256(data1);
     NSData *hash2 = IMSHashData_SHA256(data2);
+    unsigned char *buf2  = IMSHashBytes_SHA256([data2 bytes], [data2 length]);
     //printf("data1 is:\n");
     //BIO_dump_fp(stdout, [data1 bytes], [data1 length]);
     //printf("hash1 is:\n");
     //BIO_dump_fp(stdout, [hash1 bytes], [hash1 length]);
     
     STAssertFalse([hash1 isEqualToData:hash2], @"The SHA hashes should not be equal");
+    NSData *hash2b = [NSData dataWithBytesNoCopy:buf2 length:slen];
+    STAssertTrue([hash2 isEqualToData:hash2b], @"The SHA hashes should be equal");
     STAssertFalse([data1 isEqualToData:hash1], @"data and SHA hash should not be equal");
     STAssertFalse([data2 isEqualToData:hash2], @"data and SHA hash should not be equal");
-    STAssertEquals([hash1 length], slen, @"SHA hash1 length are not equal");
-    STAssertEquals([hash2 length], slen, @"SHA hash2 length are not equal");
+    STAssertEquals([hash1 length], slen, @"SHA hash1 and digest length are not equal");
+    STAssertEquals([hash2 length], slen, @"SHA hash2 and digest length are not equal");
     
 }
 
@@ -210,12 +213,16 @@ int8_t IMSChecksum(NSData *data);
     NSData *data2 = IMSCryptoUtilsPseudoRandomData(88);
     NSData *hash1 = IMSHashData_MD5(data1);
     NSData *hash2 = IMSHashData_MD5(data2);
+    unsigned char *buf2  = IMSHashBytes_MD5([data2 bytes], [data2 length]);
+
     //printf("data1 is:\n");
     //BIO_dump_fp(stdout, [data1 bytes], [data1 length]);
     //printf("hash1 is:\n");
     //BIO_dump_fp(stdout, [hash1 bytes], [hash1 length]);
 
     STAssertFalse([hash1 isEqualToData:hash2], @"The MD5 hashes should not be equal");
+    NSData *hash2b = [NSData dataWithBytesNoCopy:buf2 length:slen];
+    STAssertTrue([hash2 isEqualToData:hash2b], @"The SHA hashes should be equal");
     STAssertFalse([data1 isEqualToData:hash1], @"data and MD5 hash should not be equal");
     STAssertFalse([data2 isEqualToData:hash2], @"data and MD5 hash should not be equal");
     STAssertEquals([hash1 length], slen, @"MD5 hash1 length are not equal");

@@ -89,6 +89,7 @@ id IMSConvertDataToPlistObject(NSData *data);
  */
 NSData *IMSHashData_MD5(NSData *data);
 NSData *IMSHashPlistObject_MD5(id object);
+unsigned char *IMSHashBytes_MD5(void *obj, int len);
 
 /*
  
@@ -97,6 +98,7 @@ NSData *IMSHashPlistObject_MD5(id object);
  */
 NSData *IMSHashData_SHA256(NSData *data);
 NSData *IMSHashPlistObject_SHA256(id object);
+unsigned char *IMSHashBytes_SHA256(void *obj, int len);
 
 
 //**

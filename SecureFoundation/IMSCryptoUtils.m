@@ -472,6 +472,35 @@ NSData *IMSHashData_MD5(NSData *data) {
     return nil;
 }
 
+//**********************
+//**********************
+//**
+//**
+unsigned char *IMSHashBytes_MD5(void *obj, int len) {
+#ifdef OpenSSL
+    EVP_MD_CTX	evp;
+    
+    void *buffer = malloc(MD5_DIGEST_LENGTH);
+    EVP_MD_CTX_init(&evp);
+    
+    EVP_DigestInit_ex(&evp,EVP_md5(), NULL);
+    
+    EVP_DigestUpdate(&evp,	obj, len);
+    
+    EVP_DigestFinal_ex(&evp, buffer, NULL);
+    
+    EVP_MD_CTX_cleanup(&evp);
+    
+    return buffer;
+    
+#else
+    void *buffer = malloc(CC_MD5_DIGEST_LENGTH);
+    CC_MD5(obj, len, buffer);
+    return buffer;
+#endif
+}
+
+
 NSData *IMSHashPlistObject_MD5(id object) {
     NSData *data = IMSConvertPlistObjectToData(object);
     return IMSHashData_MD5(data);
@@ -506,6 +535,33 @@ NSData *IMSHashData_SHA256(NSData *data) {
 #endif
 }
 
+//**********************
+//**********************
+//**
+//**
+unsigned char *IMSHashBytes_SHA256(void *obj, int len) {
+#ifdef OpenSSL
+    EVP_MD_CTX	evp;
+    
+    void *buffer = malloc(SHA256_DIGEST_LENGTH);
+    EVP_MD_CTX_init(&evp);
+    
+    EVP_DigestInit_ex(&evp,EVP_sha256(), NULL);
+    
+    EVP_DigestUpdate(&evp,	obj, len);
+    
+    EVP_DigestFinal_ex(&evp, buffer, NULL);
+    
+    EVP_MD_CTX_cleanup(&evp);
+    
+    return buffer;
+    
+#else
+    void *buffer = malloc(CC_SHA256_DIGEST_LENGTH);
+    CC_SHA256(obj, len, buffer);
+    return buffer;
+#endif
+}
 
 //**********************
 //**********************
