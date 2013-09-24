@@ -140,6 +140,42 @@ int8_t IMSChecksum(NSData *data);
     
 }
 
+
+- (void)testSimpleCipher {
+    NSData *salt = IMSCryptoUtilsPseudoRandomData(8);
+    NSData *key = IMSCryptoUtilsPseudoRandomData(8);
+    key = IMSCryptoUtilsDeriveKey(key, kCCKeySizeAES256, salt);
+    
+    // get some plain data
+    NSData *plain = IMSCryptoUtilsPseudoRandomData(14);
+    
+    // encrypt then decrypt
+    NSData *iv = IMSCryptoUtilsPseudoRandomData(kCCBlockSizeAES128);
+    NSData *cipher = IMSCryptoUtilsSimpleEncryptData(plain, key, iv);
+    NSData *plainPrime = IMSCryptoUtilsSimpleDecryptData(cipher, key, iv);
+    
+    // tests
+    STAssertTrue([plain isEqualToData:plainPrime], @"The data should be equal");
+    STAssertFalse([plain isEqualToData:cipher], @"The data should not be equal");
+    
+    //** TEST 2
+    plain = IMSCryptoUtilsPseudoRandomData(1);
+    cipher = IMSCryptoUtilsSimpleEncryptData(plain, key, iv);
+    plainPrime = IMSCryptoUtilsSimpleDecryptData(cipher, key, iv);
+    STAssertTrue([plain isEqualToData:plainPrime], @"The data should be equal");
+    STAssertFalse([plain isEqualToData:cipher], @"The data should not be equal");
+    
+    //** TEST 3
+    plain = IMSCryptoUtilsPseudoRandomData(250);
+    cipher = IMSCryptoUtilsSimpleEncryptData(plain, key, iv);
+    plainPrime = IMSCryptoUtilsSimpleDecryptData(cipher, key, iv);
+    STAssertTrue([plain isEqualToData:plainPrime], @"The data should be equal");
+    STAssertFalse([plain isEqualToData:cipher], @"The data should not be equal");
+
+    
+}
+
+
 - (void)testTwosComplement {
     int8_t known = 0b11111101;
     int8_t comp = IMSTwosComplement(3);

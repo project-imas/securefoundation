@@ -44,22 +44,19 @@ NSData *IMSCryptoUtilsDeriveKey(NSData *key, size_t length, NSData *salt);
 
 /*
  
- Run AES-128 encryption on the given data with the given key. The key length
+ Run AES-128 (AES-256 with openSSL version) encryption on the given data with the given key. The key length
  must be suitable for use in AES encryption. It is preferred that the key is 
- generated using `IMSCryptoUtilsDeriveKey`.
+ generated using `IMSCryptoUtilsDeriveKey`.  ciphertext contains IV and a checksum, so ciphertext len > plaintext len
  
  */
 NSData *IMSCryptoUtilsEncryptData(NSData *data, NSData *key);
-
-/*
- 
- Run AES-128 decryption on the given data with the given key. Given the nature
- of symetric-key encryption, the key must meet all requirements stated in
- `IMSCryptoUtilsEncryptData` and must be generated in the same fashion.
- 
- */
 NSData *IMSCryptoUtilsDecryptData(NSData *data, NSData *key);
 
+
+//** AES 256 bit encryption using OpenSSL, ciphertext len = plaintext len
+NSData *IMSCryptoUtilsSimpleEncryptData(NSData *ciphertext, NSData *key, NSData *iv);
+NSData *IMSCryptoUtilsSimpleDecryptData(NSData *ciphertext, NSData *key, NSData *iv);
+        
 /*
  
  Convert the given plist object then encrypt using `IMSCryptoUtilsEncryptData`.
