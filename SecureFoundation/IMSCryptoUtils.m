@@ -142,9 +142,6 @@ NSData *IMSCryptoUtilsSimpleEncryptData(NSData *plaintext, NSData *key, NSData *
 #ifdef OpenSSL
     int   written;
     int length = [plaintext length];
-    void *ciphertext = malloc(length);
-    if (ciphertext == nil)
-    { return nil; }
     
     /* Initialise the library */
     ERR_load_crypto_strings();
@@ -156,7 +153,6 @@ NSData *IMSCryptoUtilsSimpleEncryptData(NSData *plaintext, NSData *key, NSData *
     
     /* Create and initialise the context */
     if (!(ctx = EVP_CIPHER_CTX_new())) {
-        free(ciphertext);
         //NSLog(@"%s: Unable to perform encryption. Error 1", __PRETTY_FUNCTION__);
         //ERR_print_errors_fp(stderr);
         return nil;
@@ -165,11 +161,14 @@ NSData *IMSCryptoUtilsSimpleEncryptData(NSData *plaintext, NSData *key, NSData *
     //** Initialise the encryption operation.
     //** use CFB. cipher feedback, or streaming block cipher mode such that plaintext len = cipher text
     if (1 != EVP_EncryptInit_ex(ctx, EVP_aes_256_cfb(), NULL, [key bytes], [iv bytes])) {
-        free(ciphertext);
         //NSLog(@"%s: Unable to perform encryption. Error 2", __PRETTY_FUNCTION__);
         //ERR_print_errors_fp(stderr);
         return nil;
     }
+    
+    void *ciphertext = malloc(length);
+    if (ciphertext == nil)
+        { return nil; }
     
     //** Provide the plaintext to be encrypted, and obtain the encrypted output
     //** set ciphertext pointer past IV
@@ -183,8 +182,11 @@ NSData *IMSCryptoUtilsSimpleEncryptData(NSData *plaintext, NSData *key, NSData *
     /* Clean up */
     EVP_CIPHER_CTX_free(ctx);
 
-    if (written != length)
+    if (written != length) {
+        free(ciphertext);
+        //NSLog(@"%s: Unable to perform encryption. Error 4", __PRETTY_FUNCTION__);
         return nil;
+    }
     
 
 #if 0
@@ -248,6 +250,7 @@ NSData *IMSCryptoUtilsSimpleDecryptData(NSData *ciphertext, NSData *key, NSData 
         { return nil; }
     
     if(1 != EVP_DecryptUpdate(ctx, plaintext, &written, [ciphertext bytes], length) ) {
+        free(plaintext);
         //NSLog(@"%s: Unable to perform decryption. Error 3", __PRETTY_FUNCTION__);
         //ERR_print_errors_fp(stderr);
         return nil;
@@ -256,8 +259,11 @@ NSData *IMSCryptoUtilsSimpleDecryptData(NSData *ciphertext, NSData *key, NSData 
     /* Clean up */
     EVP_CIPHER_CTX_free(ctx);
     
-    if (written != length)
+    if (written != length) {
+        free(plaintext);
+        //NSLog(@"%s: Unable to perform decryption. Error 4", __PRETTY_FUNCTION__);
         return nil;
+    }
 
     
     return [NSData dataWithBytesNoCopy:plaintext length:length];
@@ -298,9 +304,6 @@ NSData *IMSCryptoUtilsEncryptData(NSData *plaintext, NSData *key) {
     //** set the running length
     size_t length = [iv_data length];
     int   written;
-    void *ciphertext = malloc(ciphertext_len);
-    if (ciphertext == nil)
-        { return nil; }
     
     /* Initialise the library */
     ERR_load_crypto_strings();
@@ -312,7 +315,6 @@ NSData *IMSCryptoUtilsEncryptData(NSData *plaintext, NSData *key) {
     
     /* Create and initialise the context */
     if (!(ctx = EVP_CIPHER_CTX_new())) {
-        free(ciphertext);
         //NSLog(@"%s: Unable to perform encryption. Error 1", __PRETTY_FUNCTION__);
         //ERR_print_errors_fp(stderr);
         return nil;
@@ -321,12 +323,15 @@ NSData *IMSCryptoUtilsEncryptData(NSData *plaintext, NSData *key) {
     //** Initialise the encryption operation.
     //** use CFB. cipher feedback, or streaming block cipher mode such that plaintext = cipher text
     if (1 != EVP_EncryptInit_ex(ctx, EVP_aes_256_cfb(), NULL, [key bytes], [iv_data bytes])) {
-        free(ciphertext);
         //NSLog(@"%s: Unable to perform encryption. Error 2", __PRETTY_FUNCTION__);
         //ERR_print_errors_fp(stderr);
         return nil;
     }
     
+    void *ciphertext = malloc(ciphertext_len);
+    if (ciphertext == nil)
+        { return nil; }
+
     //** ciphertext:
     //**  ||| IV (16B) | ciphertext | checksum (1B) |||
     
@@ -478,18 +483,22 @@ NSData *IMSCryptoUtilsDecryptData(NSData *ciphertext, NSData *key) {
   //** start of cipher text is the IV, 128 bits
   //** get initialization vector at start of ciphertext...
   unsigned char *iv = malloc(kCCBlockSizeAES128);
-  if (iv == nil) { return nil; }
+  if (iv == nil)
+    { return nil; }
   memcpy(iv, [ciphertext bytes],  kCCBlockSizeAES128);
   if(1 != EVP_DecryptInit_ex(ctx, EVP_aes_256_cfb(), NULL, [key bytes], iv)) {
-    //NSLog(@"%s: Unable to perform decryption. Error 2", __PRETTY_FUNCTION__);
+    free(iv);
+      //NSLog(@"%s: Unable to perform decryption. Error 2", __PRETTY_FUNCTION__);
     //ERR_print_errors_fp(stderr);
     return nil;
   }
   
   // create buffer
   void *plaintext = malloc(plaintext_len);
-  if (plaintext == nil)
-    { return nil; }
+  if (plaintext == nil) {
+    free(iv);
+    return nil;
+  }
   
   //** decrypt ciphertext, starting with pointer set to end of IV (16B)
   if(1 != EVP_DecryptUpdate(ctx, plaintext, &len, 
@@ -497,6 +506,8 @@ NSData *IMSCryptoUtilsDecryptData(NSData *ciphertext, NSData *key) {
                             [ciphertext length] -  kCCBlockSizeAES128) ) {
     //NSLog(@"%s: Unable to perform decryption. Error 3", __PRETTY_FUNCTION__);
     //ERR_print_errors_fp(stderr);
+    free(iv);
+    free(plaintext);
     return nil;
   }
   
@@ -509,10 +520,13 @@ NSData *IMSCryptoUtilsDecryptData(NSData *ciphertext, NSData *key) {
   NSData *data = [NSData dataWithBytesNoCopy:plaintext length:plaintext_len - 1];
   if (sum == 0) {
     //** success
+    free(iv);
     return data;
   }
 
   NSLog(@"%s: Integrity check failed.", __PRETTY_FUNCTION__);
+  free(iv);
+  free(plaintext);
   return nil;
 
 #else
