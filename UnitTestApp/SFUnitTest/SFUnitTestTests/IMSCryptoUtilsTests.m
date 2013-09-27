@@ -174,9 +174,9 @@ int8_t IMSChecksum(NSData *data);
     
     //** TEST 4 - C_encrypt/decrypt
     plain = IMSCryptoUtilsPseudoRandomData(250);
-    void *cipherC = IMSCryptoUtilsC_EncryptData([plain bytes], [plain length], [key bytes], [iv bytes]);
+    void *cipherC = IMSCryptoUtilsC_EncryptData([plain bytes], [plain length], [key bytes], [key length], [iv bytes]);
     NSData *cipherD = [NSData dataWithBytesNoCopy:cipherC length:250 freeWhenDone:YES];
-    void *plainC  = IMSCryptoUtilsC_DecryptData([cipherD bytes], [cipherD length], [key bytes], [iv bytes]);
+    void *plainC  = IMSCryptoUtilsC_DecryptData([cipherD bytes], [cipherD length], [key bytes], [key length], [iv bytes]);
     NSData *plainD = [NSData dataWithBytesNoCopy:plainC length:250 freeWhenDone:YES];
     STAssertTrue([plain isEqualToData:plainD], @"The data should be equal");
     STAssertFalse([plain isEqualToData:cipherD], @"The data should not be equal");
