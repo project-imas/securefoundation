@@ -266,4 +266,21 @@ int8_t IMSChecksum(NSData *data);
     
 }
 
+- (void)testBase64 {
+    
+    //NSString *str = [[NSString alloc] initWithFormat:@"Four hundred ninety five svsdfsdfsdf"];
+    NSString *str = [[NSString alloc] initWithFormat:@"Four hundred ninety five svsdfsdfsdf ds$#QAGDAA gawtvq;hagawcl b85vaug sdfsdf agagdsfgsrtergegsergregagteshsyjdytk"];
+    NSLog(@"str len: %d", [str length]);
+    NSData* data = [str dataUsingEncoding:NSUTF8StringEncoding];
+    //**
+    NSString *str_enc = IMSEncodeBase64(data);
+    
+    NSData *data2 = IMSDeodeBase64(str_enc);
+    STAssertTrue([data isEqualToData:data2], @"the data should be equal");
+    //** convert data to str and compare to orig
+    NSString *str2 = [[NSString alloc] initWithData:data2 encoding:NSUTF8StringEncoding];
+    STAssertTrue([str isEqualToString:str2], @"the strings should be equal");
+    STAssertEquals([str length], [str2 length], nil);
+}
+
 @end
