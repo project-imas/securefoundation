@@ -133,8 +133,9 @@ NSData *IMSCryptoUtilsDeriveKey(NSData *key, size_t length, NSData *salt) {
 //**********************
 //**********************
 //**
-//**
-void *IMSCryptoUtilsC_EncryptData(u_int8_t *plaintext, int length, u_int8_t *key, int key_len, u_int8_t *iv) {
+//** Key length must be 32 bytes!!
+//** IV length must be 16 bytes!!
+void *IMSCryptoUtilsC_EncryptData(u_int8_t *plaintext, int length, u_int8_t *key, u_int8_t *iv) {
     
     if (plaintext == 0 || key == 0 || iv == 0)
         return nil;
@@ -157,8 +158,9 @@ void *IMSCryptoUtilsC_EncryptData(u_int8_t *plaintext, int length, u_int8_t *key
         return nil;
     }
     
-    EVP_EncryptInit_ex(ctx, EVP_aes_256_cfb(), NULL, NULL, NULL);
-    EVP_CIPHER_CTX_set_key_length(ctx, key_len);
+    //** password length
+    //EVP_EncryptInit_ex(ctx, EVP_aes_256_cfb(), NULL, NULL, NULL);
+    //EVP_CIPHER_CTX_set_key_length(ctx, key_len);
             
     //** Initialise the encryption operation.
     //** use CFB. cipher feedback, or streaming block cipher mode such that plaintext len = cipher text
@@ -219,7 +221,7 @@ void *IMSCryptoUtilsC_EncryptData(u_int8_t *plaintext, int length, u_int8_t *key
 //**********************
 //**
 //**
-void *IMSCryptoUtilsC_DecryptData(u_int8_t *ciphertext, int length, u_int8_t *key, int key_len, u_int8_t *iv)
+void *IMSCryptoUtilsC_DecryptData(u_int8_t *ciphertext, int length, u_int8_t *key, u_int8_t *iv)
 {
     if (ciphertext == 0 || key == 0 || iv == 0)
         return nil;
@@ -240,9 +242,6 @@ void *IMSCryptoUtilsC_DecryptData(u_int8_t *ciphertext, int length, u_int8_t *ke
         return nil;
     }
     
-    EVP_EncryptInit_ex(ctx, EVP_aes_256_cfb(), NULL, NULL, NULL);
-    EVP_CIPHER_CTX_set_key_length(ctx, key_len);
-
     if(1 != EVP_DecryptInit_ex(ctx, EVP_aes_256_cfb(), NULL, key, iv)) {
         //NSLog(@"%s: Unable to perform decryption. Error 2", __PRETTY_FUNCTION__);
         //ERR_print_errors_fp(stderr);

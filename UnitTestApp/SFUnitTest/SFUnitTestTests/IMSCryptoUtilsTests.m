@@ -173,15 +173,19 @@ int8_t IMSChecksum(NSData *data);
     STAssertFalse([plain isEqualToData:cipher], @"The data should not be equal");
     
     //** TEST 4 - C_encrypt/decrypt
-    plain = IMSCryptoUtilsPseudoRandomData(250);
-    void *cipherC = IMSCryptoUtilsC_EncryptData([plain bytes], [plain length], [key bytes], [key length], [iv bytes]);
-    NSData *cipherD = [NSData dataWithBytesNoCopy:cipherC length:250 freeWhenDone:YES];
-    void *plainC  = IMSCryptoUtilsC_DecryptData([cipherD bytes], [cipherD length], [key bytes], [key length], [iv bytes]);
-    NSData *plainD = [NSData dataWithBytesNoCopy:plainC length:250 freeWhenDone:YES];
-    STAssertTrue([plain isEqualToData:plainD], @"The data should be equal");
-    STAssertFalse([plain isEqualToData:cipherD], @"The data should not be equal");
+    int len = 50;
+    u_int8_t *data = malloc(len);
+    memset(data, 0x5a, len);
+    void *cipherB = IMSCryptoUtilsC_EncryptData(data, len, [key bytes], [iv bytes]);
+    NSData *cipherD = [NSData dataWithBytesNoCopy:cipherB length:len freeWhenDone:NO];
     
-
+    u_int8_t *plainB  = IMSCryptoUtilsC_DecryptData(cipherB, len, [key bytes], [iv bytes]);
+    NSData *plainD = [NSData dataWithBytesNoCopy:plainB length:50 freeWhenDone:YES];
+    NSData *dataD  = [NSData dataWithBytesNoCopy:data   length:50 freeWhenDone:YES];
+    STAssertTrue([dataD isEqualToData:plainD], @"The data should be equal");
+    STAssertFalse([plainD isEqualToData:cipherD], @"The data should not be equal");
+    
+    free(cipherB);
     
 }
 

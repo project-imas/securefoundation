@@ -59,8 +59,10 @@ NSData *IMSCryptoUtilsSimpleDecryptData(NSData *ciphertext, NSData *key, NSData 
 
 
 //** AES 256 bit encryption using OpenSSL, C buffers, and ciphertext len = plaintext len
-void *IMSCryptoUtilsC_EncryptData(u_int8_t *plaintext,  int length, u_int8_t *key, int key_len, u_int8_t *iv);
-void *IMSCryptoUtilsC_DecryptData(u_int8_t *ciphertext, int length, u_int8_t *key, int key_len, u_int8_t *iv);
+//** Key length must be 32 bytes!!
+//** IV length must be 16 bytes!!
+void *IMSCryptoUtilsC_EncryptData(u_int8_t *plaintext,  int length, u_int8_t *key, u_int8_t *iv);
+void *IMSCryptoUtilsC_DecryptData(u_int8_t *ciphertext, int length, u_int8_t *key, u_int8_t *iv);
 
 
 /*
