@@ -134,9 +134,159 @@ NSData *IMSCryptoUtilsDeriveKey(NSData *key, size_t length, NSData *salt) {
 //**********************
 //**
 //**
+void *IMSCryptoUtilsC_EncryptData(u_int8_t *plaintext, int length, u_int8_t *key, u_int8_t *iv) {
+    
+    if (plaintext == 0 || key == 0 || iv == 0)
+        return nil;
+    
+#ifdef OpenSSL
+    int   written;
+    
+    /* Initialise the library */
+    ERR_load_crypto_strings();
+    OpenSSL_add_all_algorithms();
+    OPENSSL_config(NULL);
+    
+    /* Encrypt the plaintext */
+    EVP_CIPHER_CTX *ctx;
+    
+    /* Create and initialise the context */
+    if (!(ctx = EVP_CIPHER_CTX_new())) {
+        //NSLog(@"%s: Unable to perform encryption. Error 1", __PRETTY_FUNCTION__);
+        //ERR_print_errors_fp(stderr);
+        return nil;
+    }
+    
+    //** Initialise the encryption operation.
+    //** use CFB. cipher feedback, or streaming block cipher mode such that plaintext len = cipher text
+    if (1 != EVP_EncryptInit_ex(ctx, EVP_aes_256_cfb(), NULL, key, iv)) {
+        //NSLog(@"%s: Unable to perform encryption. Error 2", __PRETTY_FUNCTION__);
+        //ERR_print_errors_fp(stderr);
+        return nil;
+    }
+    
+    void *ciphertext = malloc(length);
+    if (ciphertext == nil)
+        { return nil; }
+    
+    //** Provide the plaintext to be encrypted, and obtain the encrypted output
+    //** set ciphertext pointer past IV
+    if (1 != EVP_EncryptUpdate(ctx, ciphertext, &written, plaintext, length)) {
+        free(ciphertext);
+        //NSLog(@"%s: Unable to perform encryption. Error 3", __PRETTY_FUNCTION__);
+        //ERR_print_errors_fp(stderr);
+        return nil;
+    }
+    
+    /* Clean up */
+    EVP_CIPHER_CTX_free(ctx);
+    
+    if (written != length) {
+        free(ciphertext);
+        //NSLog(@"%s: Unable to perform encryption. Error 4", __PRETTY_FUNCTION__);
+        return nil;
+    }
+    
+    
+#if 0
+    //** debug
+    printf("Ciphertext is:\n");
+    BIO_dump_fp(stdout, ciphertext, length);
+#endif
+    
+    /* Clean up */
+    EVP_cleanup();
+    ERR_free_strings();
+    
+    return ciphertext;
+    
+#else
+    //*****************************************
+    //*****************************************
+    //** Apple Crypto
+    
+    return nil;
+#endif
+    
+}
+
+
+
+//**********************
+//**********************
+//**
+//**
+void *IMSCryptoUtilsC_DecryptData(u_int8_t *ciphertext, int length, u_int8_t *key, u_int8_t *iv)
+{
+    if (ciphertext == 0 || key == 0 || iv == 0)
+        return nil;
+    
+#ifdef OpenSSL
+    /* Initialise the library */
+    ERR_load_crypto_strings();
+    OpenSSL_add_all_algorithms();
+    OPENSSL_config(NULL);
+    
+    int written;
+    EVP_CIPHER_CTX *ctx;
+    
+    /* Create and initialise the context */
+    if(!(ctx = EVP_CIPHER_CTX_new())) {
+        //NSLog(@"%s: Unable to perform decryption. Error 1", __PRETTY_FUNCTION__);
+        //ERR_print_errors_fp(stderr);
+        return nil;
+    }
+    
+    if(1 != EVP_DecryptInit_ex(ctx, EVP_aes_256_cfb(), NULL, key, iv)) {
+        //NSLog(@"%s: Unable to perform decryption. Error 2", __PRETTY_FUNCTION__);
+        //ERR_print_errors_fp(stderr);
+        return nil;
+    }
+    
+    // create buffer
+    void *plaintext = malloc(length);
+    if (plaintext == nil)
+        { return nil; }
+    
+    if(1 != EVP_DecryptUpdate(ctx, plaintext, &written, ciphertext, length) ) {
+        free(plaintext);
+        //NSLog(@"%s: Unable to perform decryption. Error 3", __PRETTY_FUNCTION__);
+        //ERR_print_errors_fp(stderr);
+        return nil;
+    }
+    
+    /* Clean up */
+    EVP_CIPHER_CTX_free(ctx);
+    
+    if (written != length) {
+        free(plaintext);
+        //NSLog(@"%s: Unable to perform decryption. Error 4", __PRETTY_FUNCTION__);
+        return nil;
+    }
+    
+    
+    return plaintext;
+    
+#else
+    //*****************************************
+    //*****************************************
+    //** Apple Crypto
+    
+    return nil;
+#endif
+    
+}
+
+
+
+
+//**********************
+//**********************
+//**
+//**
 NSData *IMSCryptoUtilsSimpleEncryptData(NSData *plaintext, NSData *key, NSData *iv) {
     
-    if (plaintext == 0 || key == 0, iv == 0)
+    if (plaintext == 0 || key == 0 || iv == 0)
         return nil;
 
 #ifdef OpenSSL

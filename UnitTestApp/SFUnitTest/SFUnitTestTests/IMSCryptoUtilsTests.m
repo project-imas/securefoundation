@@ -171,6 +171,16 @@ int8_t IMSChecksum(NSData *data);
     plainPrime = IMSCryptoUtilsSimpleDecryptData(cipher, key, iv);
     STAssertTrue([plain isEqualToData:plainPrime], @"The data should be equal");
     STAssertFalse([plain isEqualToData:cipher], @"The data should not be equal");
+    
+    //** TEST 4 - C_encrypt/decrypt
+    plain = IMSCryptoUtilsPseudoRandomData(250);
+    void *cipherC = IMSCryptoUtilsC_EncryptData([plain bytes], [plain length], [key bytes], [iv bytes]);
+    NSData *cipherD = [NSData dataWithBytesNoCopy:cipherC length:250 freeWhenDone:YES];
+    void *plainC  = IMSCryptoUtilsC_DecryptData([cipherD bytes], [cipherD length], [key bytes], [iv bytes]);
+    NSData *plainD = [NSData dataWithBytesNoCopy:plainC length:250 freeWhenDone:YES];
+    STAssertTrue([plain isEqualToData:plainD], @"The data should be equal");
+    STAssertFalse([plain isEqualToData:cipherD], @"The data should not be equal");
+    
 
     
 }
@@ -250,6 +260,7 @@ int8_t IMSChecksum(NSData *data);
     NSData *hash1 = IMSHashData_MD5(data1);
     NSData *hash2 = IMSHashData_MD5(data2);
     unsigned char *buf2  = IMSHashBytes_MD5([data2 bytes], [data2 length]);
+
 
     //printf("data1 is:\n");
     //BIO_dump_fp(stdout, [data1 bytes], [data1 length]);
