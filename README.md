@@ -25,8 +25,14 @@ openSSL - a full-strength general purpose cryptography library.
   - SRG-APP-000128-MAPP-000028 Severity-CAT II: The mobile application must not change the file permissions of any files other than those dedicated to its own operation.
 
 
-## Installation
+## Pre Install
 
+- The build process requires openssl source code to be setup in the environment.
+  - Download OpenSSL from <http://www.openssl.org/source/>. hReader has been tested against version 1.0.1c.
+  - Untar the OpenSSL archive.
+  - Create a new source tree in your Xcode preferences (Xcode > Preferences > Locations > Source Trees) called `OPENSSL_SRC` pointed at the location of the OpenSSL source directory.
+
+## Installation
 - Add SecureFoundation as a submodule to your project. `git submodule add https://github.com/mitre-imas/securefoundation.git vendor/securefoundation`
 - Add the "SecureFoundation" Xcode project as a subproject in your project
 - Add "libSecureFoundation.a" as a target dependency and to the "Link with Binary Libraries" build phase
