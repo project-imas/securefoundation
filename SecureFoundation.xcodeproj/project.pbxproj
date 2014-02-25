@@ -22,8 +22,6 @@
 		3BAABBEF1639B555009D3543 /* IMSCryptoManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3B98C7A5163092760070BD54 /* IMSCryptoManager.h */; };
 		FE731DF4177A1B4900BAB7B3 /* Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = FE731DF3177A1B4900BAB7B3 /* Base64.m */; };
 		FE731DF5177A23C600BAB7B3 /* Base64.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = FE731DF2177A1B4900BAB7B3 /* Base64.h */; };
-		FEDBEDCC17E386FB00BBC6C5 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FEDBEDC917E386C800BBC6C5 /* libcrypto.a */; };
-		FEDBEDCD17E397EE00BBC6C5 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FEDBEDC917E386C800BBC6C5 /* libcrypto.a */; };
 		FEDBEDCE17E397F600BBC6C5 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B7F1674167147F600A9B236 /* Security.framework */; };
 /* End PBXBuildFile section */
 
@@ -34,20 +32,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 3B89357B162C92F1003750B6;
 			remoteInfo = SecureFoundation;
-		};
-		FEDBEDC817E386C800BBC6C5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = FEDBEDC417E386C800BBC6C5 /* openssl.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 9069D28C0FCE659A0042E34C;
-			remoteInfo = crypto;
-		};
-		FEDBEDCA17E386EF00BBC6C5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = FEDBEDC417E386C800BBC6C5 /* openssl.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 9069D28B0FCE659A0042E34C;
-			remoteInfo = crypto;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -87,7 +71,6 @@
 		FE008F2A17E3AC63007B01B2 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		FE731DF2177A1B4900BAB7B3 /* Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Base64.h; sourceTree = "<group>"; };
 		FE731DF3177A1B4900BAB7B3 /* Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Base64.m; sourceTree = "<group>"; };
-		FEDBEDC417E386C800BBC6C5 /* openssl.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openssl.xcodeproj; path = vendor/openssl/openssl.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,7 +78,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FEDBEDCC17E386FB00BBC6C5 /* libcrypto.a in Frameworks */,
 				3B7F1677167147FE00A9B236 /* Security.framework in Frameworks */,
 				3B893580162C92F1003750B6 /* Foundation.framework in Frameworks */,
 			);
@@ -106,7 +88,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				FEDBEDCE17E397F600BBC6C5 /* Security.framework in Frameworks */,
-				FEDBEDCD17E397EE00BBC6C5 /* libcrypto.a in Frameworks */,
 				3B89358F162C92F1003750B6 /* SenTestingKit.framework in Frameworks */,
 				3B893592162C92F1003750B6 /* Foundation.framework in Frameworks */,
 				3B893595162C92F1003750B6 /* libSecureFoundation.a in Frameworks */,
@@ -119,7 +100,6 @@
 		3B893571162C92F1003750B6 = {
 			isa = PBXGroup;
 			children = (
-				FEDBEDC417E386C800BBC6C5 /* openssl.xcodeproj */,
 				3BC64071166FC3D5006E4E1B /* README.md */,
 				3B893581162C92F1003750B6 /* SecureFoundation */,
 				3B89357E162C92F1003750B6 /* Frameworks */,
@@ -165,14 +145,6 @@
 			path = SecureFoundation;
 			sourceTree = "<group>";
 		};
-		FEDBEDC517E386C800BBC6C5 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				FEDBEDC917E386C800BBC6C5 /* libcrypto.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -187,7 +159,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				FEDBEDCB17E386EF00BBC6C5 /* PBXTargetDependency */,
 			);
 			name = SecureFoundation;
 			productName = SecureFoundation;
@@ -232,12 +203,6 @@
 			mainGroup = 3B893571162C92F1003750B6;
 			productRefGroup = 3B89357D162C92F1003750B6 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = FEDBEDC517E386C800BBC6C5 /* Products */;
-					ProjectRef = FEDBEDC417E386C800BBC6C5 /* openssl.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				3B89357B162C92F1003750B6 /* SecureFoundation */,
@@ -245,16 +210,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		FEDBEDC917E386C800BBC6C5 /* libcrypto.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libcrypto.a;
-			remoteRef = FEDBEDC817E386C800BBC6C5 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		3B89358A162C92F1003750B6 /* Resources */ = {
@@ -309,11 +264,6 @@
 			isa = PBXTargetDependency;
 			target = 3B89357B162C92F1003750B6 /* SecureFoundation */;
 			targetProxy = 3B893593162C92F1003750B6 /* PBXContainerItemProxy */;
-		};
-		FEDBEDCB17E386EF00BBC6C5 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = crypto;
-			targetProxy = FEDBEDCA17E386EF00BBC6C5 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -401,13 +351,10 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SecureFoundation/SecureFoundation-Prefix.pch";
-				HEADER_SEARCH_PATHS = (
-					"$(PROJECT_DIR)",
-					"$(OPENSSL_SRC)/include",
-				);
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)";
 				INFOPLIST_FILE = "SecureFoundationTests/SecureFoundationTests-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = $OPENSSL_SRC/include;
+				USER_HEADER_SEARCH_PATHS = "";
 				WRAPPER_EXTENSION = octest;
 			};
 			name = Debug;
@@ -421,13 +368,10 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SecureFoundation/SecureFoundation-Prefix.pch";
-				HEADER_SEARCH_PATHS = (
-					"$(PROJECT_DIR)",
-					"$(OPENSSL_SRC)/include",
-				);
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)";
 				INFOPLIST_FILE = "SecureFoundationTests/SecureFoundationTests-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = $OPENSSL_SRC/include;
+				USER_HEADER_SEARCH_PATHS = "";
 				WRAPPER_EXTENSION = octest;
 			};
 			name = Release;
