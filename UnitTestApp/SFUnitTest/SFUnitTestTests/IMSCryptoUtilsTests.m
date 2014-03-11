@@ -128,7 +128,6 @@ int8_t IMSChecksum(NSData *data);
     STAssertTrue([plain isEqualToData:plainPrime], @"The data should be equal");
     STAssertFalse([plain isEqualToData:cipher], @"The data should not be equal");
     
-    
     //** TEST 3
     plain = IMSCryptoUtilsPseudoRandomData(250);
     cipher = IMSCryptoUtilsEncryptData(plain, key);
@@ -227,11 +226,7 @@ int8_t IMSChecksum(NSData *data);
 
 
 - (void)testShaHASH {
-#ifdef OpenSSL
-    NSUInteger slen = SHA256_DIGEST_LENGTH;
-#else
     NSUInteger slen = CC_SHA256_DIGEST_LENGTH;
-#endif
 
     NSData *data1 = IMSCryptoUtilsPseudoRandomData(60);
     NSData *data2 = IMSCryptoUtilsPseudoRandomData(95);
@@ -254,11 +249,8 @@ int8_t IMSChecksum(NSData *data);
 }
 
 - (void)testMD5HASH {
-#ifdef OpenSSL
-    NSUInteger slen = MD5_DIGEST_LENGTH;
-#else
     NSUInteger slen = CC_MD5_DIGEST_LENGTH;
-#endif
+
     NSData *data1 = IMSCryptoUtilsPseudoRandomData(60);
     NSData *data2 = IMSCryptoUtilsPseudoRandomData(88);
     NSData *hash1 = IMSHashData_MD5(data1);

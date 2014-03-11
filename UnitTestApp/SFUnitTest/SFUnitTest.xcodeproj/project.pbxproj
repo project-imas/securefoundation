@@ -29,9 +29,7 @@
 		FEB8569717EB6E9300793E07 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEB8569617EB6E9300793E07 /* Security.framework */; };
 		FEDB70A217E3B1FC00FF5786 /* IMSCryptoUtilsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FEDB70A117E3B1FC00FF5786 /* IMSCryptoUtilsTests.m */; };
 		FEDB70A517E3B24E00FF5786 /* libSecureFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FEDB709E17E3B1D400FF5786 /* libSecureFoundation.a */; };
-		FEDB70A717E3B25200FF5786 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FEDB70A617E3B25200FF5786 /* libcrypto.a */; };
 		FEDB70A817E3B2F800FF5786 /* libSecureFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FEDB709E17E3B1D400FF5786 /* libSecureFoundation.a */; };
-		FEDB70AA17E3B2FD00FF5786 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FEDB70A917E3B2FD00FF5786 /* libcrypto.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -95,8 +93,6 @@
 		FEB8569617EB6E9300793E07 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		FEDB709717E3B1D400FF5786 /* SecureFoundation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SecureFoundation.xcodeproj; path = ../../SecureFoundation.xcodeproj; sourceTree = "<group>"; };
 		FEDB70A117E3B1FC00FF5786 /* IMSCryptoUtilsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMSCryptoUtilsTests.m; sourceTree = "<group>"; };
-		FEDB70A617E3B25200FF5786 /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = "../../../../../mobilesec/msbuild/Release-iphoneos/libcrypto.a"; sourceTree = "<group>"; };
-		FEDB70A917E3B2FD00FF5786 /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = "../../../../../mobilesec/msbuild/Release-iphoneos/libcrypto.a"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -104,7 +100,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FEDB70A717E3B25200FF5786 /* libcrypto.a in Frameworks */,
 				FEDB70A517E3B24E00FF5786 /* libSecureFoundation.a in Frameworks */,
 				FE008F7C17E3B0C0007B01B2 /* UIKit.framework in Frameworks */,
 				FE008F7E17E3B0C0007B01B2 /* Foundation.framework in Frameworks */,
@@ -117,7 +112,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				FEB8569717EB6E9300793E07 /* Security.framework in Frameworks */,
-				FEDB70AA17E3B2FD00FF5786 /* libcrypto.a in Frameworks */,
 				FEDB70A817E3B2F800FF5786 /* libSecureFoundation.a in Frameworks */,
 				FE008FA617E3B0C0007B01B2 /* SenTestingKit.framework in Frameworks */,
 				FE008FA717E3B0C0007B01B2 /* UIKit.framework in Frameworks */,
@@ -132,8 +126,6 @@
 			isa = PBXGroup;
 			children = (
 				FEB8569617EB6E9300793E07 /* Security.framework */,
-				FEDB70A917E3B2FD00FF5786 /* libcrypto.a */,
-				FEDB70A617E3B25200FF5786 /* libcrypto.a */,
 				FEDB709717E3B1D400FF5786 /* SecureFoundation.xcodeproj */,
 				FE008F8117E3B0C0007B01B2 /* SFUnitTest */,
 				FE008FAB17E3B0C0007B01B2 /* SFUnitTestTests */,
