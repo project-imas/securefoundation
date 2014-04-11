@@ -4,8 +4,7 @@
 
 The "iMAS Secure Foundation" project is designed to provide advanced application-level security based on simple 
 encryption mechanisms. It contains three components: a suite of cipher utilities, a collection of functions to 
-assist with encryption through an application key, and a file-based keychain replacement.  Of note is that we include 
-openSSL - a full-strength general purpose cryptography library.
+assist with encryption through an application key, and a file-based keychain replacement.  Of note, we have removed the OpenSSL dependency and now rely soley on Apple's FIPs compliant cryptography library (as it turns out, Apple uses openSSL as their crypto libraries under the covers).
 
 ## Vulnerabilities Addressed
 
@@ -24,13 +23,6 @@ openSSL - a full-strength general purpose cryptography library.
   - SRG-APP-999999-MAPP-000067 Severity-CAT II: The mobile application must clear or overwrite memory blocks used to process sensitive data.
   - SRG-APP-000128-MAPP-000028 Severity-CAT II: The mobile application must not change the file permissions of any files other than those dedicated to its own operation.
 
-
-## Pre Install
-
-- The build process requires openssl source code to be setup in the environment.
-  - Download OpenSSL from <http://www.openssl.org/source/>. hReader has been tested against version 1.0.1c.
-  - Untar the OpenSSL archive.
-  - Create a new source tree in your Xcode preferences (Xcode > Preferences > Locations > Source Trees) called `OPENSSL_SRC` pointed at the location of the OpenSSL source directory.
 
 ## Installation
 - Add SecureFoundation as a submodule to your project. `git submodule add https://github.com/mitre-imas/securefoundation.git vendor/securefoundation`
@@ -138,21 +130,6 @@ It also has methods like:
     
 These methods pass the data through the Crypto Manager to perform encryption or decryption using the application shared key. It is important to note that the account service and account names are *not* stored encrypted in either case.
 
-## OpenSSL
-
-SecureFoundation contains the OpenSSL crypto provided by [http://www.openssl.org] (http://www.openssl.org), please see their website for more technical
-details on OpenSSL.  Quoting from the OpenSSL website below:
-
-This software package uses strong cryptography, so even if it is created, maintained and distributed from 
-liberal countries in Europe (where it is legal to do this), it falls under certain export/import and/or use 
-restrictions in some other parts of the world.
-
-PLEASE REMEMBER THAT EXPORT/IMPORT AND/OR USE OF STRONG CRYPTOGRAPHY SOFTWARE, PROVIDING CRYPTOGRAPHY HOOKS OR 
-EVEN JUST COMMUNICATING TECHNICAL DETAILS ABOUT CRYPTOGRAPHY SOFTWARE IS ILLEGAL IN SOME PARTS OF THE WORLD. SO, 
-WHEN YOU IMPORT THIS PACKAGE TO YOUR COUNTRY, RE-DISTRIBUTE IT FROM THERE OR EVEN JUST EMAIL TECHNICAL SUGGESTIONS 
-OR EVEN SOURCE PATCHES TO THE AUTHOR OR OTHER PEOPLE YOU ARE STRONGLY ADVISED TO PAY CLOSE ATTENTION TO ANY 
-EXPORT/IMPORT AND/OR USE LAWS WHICH APPLY TO YOU. THE AUTHORS OF OPENSSL ARE NOT LIABLE FOR ANY VIOLATIONS YOU MAKE 
-HERE. SO BE CAREFUL, IT IS YOUR RESPONSIBILITY.
 
 ## License
 
