@@ -321,7 +321,7 @@
 				DSTROOT = /tmp/SecureFoundation.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SecureFoundation/SecureFoundation-Prefix.pch";
-				HEADER_SEARCH_PATHS = "$(OPENSSL_SRC)/include";
+				HEADER_SEARCH_PATHS = "";
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -335,7 +335,7 @@
 				DSTROOT = /tmp/SecureFoundation.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SecureFoundation/SecureFoundation-Prefix.pch";
-				HEADER_SEARCH_PATHS = "$(OPENSSL_SRC)/include";
+				HEADER_SEARCH_PATHS = "";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;

@@ -44,7 +44,7 @@ NSData *IMSCryptoUtilsDeriveKey(NSData *key, size_t length, NSData *salt);
 
 /*
  
- Run AES-128 (AES-256 with openSSL version) encryption on the given data with the given key. The key length
+ Run AES-128  encryption on the given data with the given key. The key length
  must be suitable for use in AES encryption. It is preferred that the key is 
  generated using `IMSCryptoUtilsDeriveKey`.  ciphertext contains IV and a checksum, so ciphertext len > plaintext len
  
@@ -53,12 +53,12 @@ NSData *IMSCryptoUtilsEncryptData(NSData *data, NSData *key);
 NSData *IMSCryptoUtilsDecryptData(NSData *data, NSData *key);
 
 
-//** AES 256 bit encryption using OpenSSL, ciphertext len = plaintext len
+//** AES 256 bit encryption, ciphertext len = plaintext len
 NSData *IMSCryptoUtilsSimpleEncryptData(NSData *plaintext, NSData *key, NSData *iv);
 NSData *IMSCryptoUtilsSimpleDecryptData(NSData *ciphertext, NSData *key, NSData *iv);
 
 
-//** AES 256 bit encryption using OpenSSL, C buffers, and ciphertext len = plaintext len
+//** AES 256 bit encryption, C buffers, and ciphertext len = plaintext len
 //** Key length must be 32 bytes!!
 //** IV length must be 16 bytes!!
 void *IMSCryptoUtilsC_EncryptData(u_int8_t *plaintext,  int length, u_int8_t *key, u_int8_t *iv);

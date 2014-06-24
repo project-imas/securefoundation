@@ -9,9 +9,6 @@
 //  Copyright (c) 2013 The MITRE Corporation. All rights reserved.
 //
 
-//** select CRYPTO, comment out to use commonCrypto
-#define OpenSSL
-
 #import <Foundation/Foundation.h>
 
 #import <CommonCrypto/CommonCrypto.h>
