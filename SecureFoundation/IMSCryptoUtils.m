@@ -115,9 +115,20 @@ void *IMSCryptoUtilsC_EncryptData(u_int8_t *plaintext, int length, u_int8_t *key
     
     if (plaintext == 0 || key == 0 || iv == 0)
         return nil;
-        //*****************************************
+    //*****************************************
     //*****************************************
     //** Apple Crypto
+    
+    NSData *plaintextData = [NSData dataWithBytes:plaintext length:length];
+    NSData *keyData = [NSData dataWithBytes:key length:kCCKeySizeAES256];
+    NSData *ivData = [NSData dataWithBytes:iv length:kCCKeySizeAES128];
+    
+    
+    NSData *data = IMSCryptoUtilsSimpleEncryptData(plaintextData, keyData, ivData);
+    if(data) {
+        NSLog(@">>return");
+        return (u_int8_t *)[data bytes];
+    }
     
     return nil;
 }
@@ -132,6 +143,20 @@ void *IMSCryptoUtilsC_DecryptData(u_int8_t *ciphertext, int length, u_int8_t *ke
 {
     if (ciphertext == 0 || key == 0 || iv == 0)
         return nil;
+    
+    //*****************************************
+    //*****************************************
+    //** Apple Crypto
+    
+    NSData *ciphertextData = [NSData dataWithBytes:ciphertext length:length];
+    NSData *keyData = [NSData dataWithBytes:key length:kCCKeySizeAES256];
+    NSData *ivData = [NSData dataWithBytes:iv length:kCCKeySizeAES128];
+    
+    NSData *data = IMSCryptoUtilsSimpleDecryptData(ciphertextData, keyData, ivData);
+    if(data) {
+        NSLog(@">>Return2");
+        return (u_int8_t *)[data bytes];
+    }
     
     return nil;    
 }
@@ -152,7 +177,67 @@ NSData *IMSCryptoUtilsSimpleEncryptData(NSData *plaintext, NSData *key, NSData *
     //*****************************************
     //** Apple Crypto
     
-    return nil;    
+    // get a cryptor instance
+    CCCryptorRef cryptor;
+    CCCryptorStatus status = CCCryptorCreate(kCCEncrypt, // operation
+                                             kCCAlgorithmAES128, // algorithm
+                                             kCCOptionPKCS7Padding, // options
+                                             [key bytes], [key length], // key bytes and length
+                                             [iv bytes], // initialization vector
+                                             &cryptor);
+    if (status != kCCSuccess)
+    { return nil; }
+    
+    // create a buffer
+    size_t ciphertext_len = ([plaintext length] + kCCBlockSizeAES128 + [iv length]);
+    size_t length = [iv length];
+    size_t written;
+    void *ciphertext = malloc(ciphertext_len);
+    if (ciphertext == nil)
+    { return nil; }
+    
+    // set initialization vector, at start of ciphertext...
+    memcpy(ciphertext, [iv bytes], [iv length]);
+    
+    // encrypt user data, add to pointer after IV data
+    status = CCCryptorUpdate(cryptor,
+                             [plaintext bytes], [plaintext length],
+                             ciphertext + length,
+                             ciphertext_len - length,
+                             &written);
+    if (status != kCCSuccess)
+    { return nil; }
+    length += written;
+    
+    // encrypt plaintext checksum
+    int8_t checksum = IMSChecksum(plaintext);
+    CCCryptorUpdate(cryptor,
+                    &checksum, sizeof(int8_t),
+                    ciphertext + length,
+                    ciphertext_len - length,
+                    &written);
+    length += written;
+    
+    // finalize
+    status = CCCryptorFinal(cryptor,
+                            ciphertext + length,
+                            ciphertext_len - length,
+                            &written);
+    length += written;
+    
+    // release
+    CCCryptorRelease(cryptor);
+    
+    // cleanup and return
+    if (status == kCCSuccess) {
+        return [NSData dataWithBytesNoCopy:ciphertext length:length];
+    }
+    else {
+        free(ciphertext);
+        //NSLog(@"%s: Unable to perform encryption. Error %d", __PRETTY_FUNCTION__, status);
+    }
+    
+    return nil;
 }
 
 
@@ -164,8 +249,60 @@ NSData *IMSCryptoUtilsSimpleEncryptData(NSData *plaintext, NSData *key, NSData *
 NSData *IMSCryptoUtilsSimpleDecryptData(NSData *ciphertext, NSData *key, NSData *iv) {
     if (ciphertext == 0 || key == 0 || iv == 0)
         return nil;
+    
+    //*****************************************
+    //*****************************************
+    //** Apple Crypto
+    
+    // determine total needed space
+    size_t plaintext_len;
+    CCCryptorStatus status;
+    CCCrypt(kCCDecrypt, kCCAlgorithmAES128, kCCOptionPKCS7Padding,
+            [key bytes], [key length],
+            [ciphertext bytes],
+            [ciphertext bytes] + kCCBlockSizeAES128, [ciphertext length] - kCCBlockSizeAES128,
+            NULL, 0,
+            &plaintext_len);
+    
+    // create buffer
+    void *plaintext = malloc(plaintext_len);
+    if (plaintext == nil)
+    { return nil; }
+    
+    // perform decryption
+    status = CCCrypt(kCCDecrypt,
+                     kCCAlgorithmAES128,
+                     kCCOptionPKCS7Padding,
+                     [key bytes],
+                     [key length],
+                     [iv bytes]/*[ciphertext bytes]*/, // iv
+                     [ciphertext bytes] + kCCBlockSizeAES128,
+                     [ciphertext length] - kCCBlockSizeAES128,
+                     plaintext,
+                     plaintext_len,
+                     &plaintext_len);
+    
+    // cleanup and return
+    if (status == kCCSuccess) {
+        int8_t sum = IMSSum(plaintext, plaintext_len);
+        NSData *data = [NSData dataWithBytesNoCopy:plaintext length:plaintext_len - 1];
+        if (sum == 0) {
+            // success
+            return data;
+        }
+        else {
+            NSLog(@"%s: Integrity check failed.", __PRETTY_FUNCTION__);
+            return nil;
+        }
+    }
+    else {
+        free((__bridge void *)(ciphertext));
+#ifdef DEBUG
+        NSLog(@"%s: Unable to perform encryption. Error %d", __PRETTY_FUNCTION__, status);
+#endif
+    }
+    
     return nil;
-
 }
 
 
@@ -175,79 +312,13 @@ NSData *IMSCryptoUtilsSimpleDecryptData(NSData *ciphertext, NSData *key, NSData 
 //**
 //**
 NSData *IMSCryptoUtilsEncryptData(NSData *plaintext, NSData *key) {
-    
     if (plaintext == 0 || key == 0)
         return nil;
-   
-    //*****************************************
-    //*****************************************
-    //** Apple Crypto
     
-    // get initialization vector
+    
+    // get initialization vector to pass to generalized function
     NSData *iv_data = IMSCryptoUtilsPseudoRandomData(kCCBlockSizeAES128);
-        
-    // get a cryptor instance
-    CCCryptorRef cryptor;
-    CCCryptorStatus status = CCCryptorCreate(kCCEncrypt, // operation
-                                             kCCAlgorithmAES128, // algorithm
-                                             kCCOptionPKCS7Padding, // options
-                                             [key bytes], [key length], // key bytes and length
-                                             [iv_data bytes], // initialization vector
-                                             &cryptor);
-    if (status != kCCSuccess)
-        { return nil; }
-        
-    // create a buffer
-    size_t ciphertext_len = ([plaintext length] + kCCBlockSizeAES128 + [iv_data length]);
-    size_t length = [iv_data length];
-    size_t written;
-    void *ciphertext = malloc(ciphertext_len);
-    if (ciphertext == nil)
-        { return nil; }
-    
-    // set initialization vector, at start of ciphertext...
-    memcpy(ciphertext, [iv_data bytes], [iv_data length]);
-        
-    // encrypt user data, add to pointer after IV data
-    status = CCCryptorUpdate(cryptor,
-                             [plaintext bytes], [plaintext length],
-                             ciphertext + length,
-                             ciphertext_len - length,
-                             &written);
-    if (status != kCCSuccess)
-        { return nil; }
-    length += written;
-        
-    // encrypt plaintext checksum
-    int8_t checksum = IMSChecksum(plaintext);
-    CCCryptorUpdate(cryptor,
-                    &checksum, sizeof(int8_t),
-                    ciphertext + length,
-                    ciphertext_len - length,
-                    &written);
-    length += written;
-        
-    // finalize
-    status = CCCryptorFinal(cryptor,
-                            ciphertext + length,
-                            ciphertext_len - length,
-                            &written);
-    length += written;
-        
-    // release
-    CCCryptorRelease(cryptor);
-        
-    // cleanup and return
-    if (status == kCCSuccess) {
-         return [NSData dataWithBytesNoCopy:ciphertext length:length];
-    }
-    else {
-        free(ciphertext);
-        //NSLog(@"%s: Unable to perform encryption. Error %d", __PRETTY_FUNCTION__, status);
-    }
-
-    return nil;
-    
+    return IMSCryptoUtilsSimpleEncryptData(plaintext, key, iv_data);
 }
 
 
@@ -256,56 +327,14 @@ NSData *IMSCryptoUtilsEncryptData(NSData *plaintext, NSData *key) {
 //**
 //**
 NSData *IMSCryptoUtilsDecryptData(NSData *ciphertext, NSData *key) {
-  if (ciphertext == 0 || key == 0)
-    return nil;
+    if (ciphertext == 0 || key == 0)
+        return nil;
   
-  //*****************************************
-  //*****************************************
-  //** Apple Crypto
-  
-  // determine total needed space
-  size_t plaintext_len;
-  CCCryptorStatus status;
-  CCCrypt(kCCDecrypt, kCCAlgorithmAES128, kCCOptionPKCS7Padding,
-          [key bytes], [key length],
-          [ciphertext bytes],
-          [ciphertext bytes] + kCCBlockSizeAES128, [ciphertext length] - kCCBlockSizeAES128,
-          NULL, 0,
-          &plaintext_len);
-  
-  // create buffer
-  void *plaintext = malloc(plaintext_len);
-  if (plaintext == nil)
-    { return nil; }
-  
-  // perform decryption
-  status = CCCrypt(kCCDecrypt, kCCAlgorithmAES128, kCCOptionPKCS7Padding,
-                   [key bytes], [key length],
-                   [ciphertext bytes],
-                   [ciphertext bytes] + kCCBlockSizeAES128, [ciphertext length] - kCCBlockSizeAES128,
-                   plaintext, plaintext_len, &plaintext_len);
-  
-  // cleanup and return
-  if (status == kCCSuccess) {
-    int8_t sum = IMSSum(plaintext, plaintext_len);
-    NSData *data = [NSData dataWithBytesNoCopy:plaintext length:plaintext_len - 1];
-    if (sum == 0) {
-      //** success
-      return data;
-    }
-    else {
-      NSLog(@"%s: Integrity check failed.", __PRETTY_FUNCTION__);
-      return nil;
-    }
-  }
-  else {
-    free((__bridge void *)(ciphertext));
-#ifdef DEBUG
-    NSLog(@"%s: Unable to perform encryption. Error %d", __PRETTY_FUNCTION__, status);
-#endif
-  }
-      
-  return nil;
+    //*****************************************
+    //*****************************************
+    //** Apple Crypto
+    
+    return IMSCryptoUtilsSimpleDecryptData(ciphertext, key, ciphertext);
 }
 
 
