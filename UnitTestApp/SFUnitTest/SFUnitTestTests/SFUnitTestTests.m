@@ -13,7 +13,7 @@
 - (void)setUp
 {
     [super setUp];
-    
+    NSLog(@"setup");
     // Set-up code here.
 }
 

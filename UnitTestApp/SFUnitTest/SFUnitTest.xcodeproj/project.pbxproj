@@ -33,6 +33,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		B4E6310C196AE6C000E52F40 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FEDB709717E3B1D400FF5786 /* SecureFoundation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 3B89357B162C92F1003750B6;
+			remoteInfo = SecureFoundation;
+		};
 		FE008FA917E3B0C0007B01B2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FE008F7017E3B0C0007B01B2 /* Project object */;
@@ -247,6 +254,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				B4E6310D196AE6C000E52F40 /* PBXTargetDependency */,
 				FE008FAA17E3B0C0007B01B2 /* PBXTargetDependency */,
 			);
 			name = SFUnitTestTests;
@@ -261,6 +269,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = iMAS;
+				LastTestingUpgradeCheck = 0510;
 				LastUpgradeCheck = 0460;
 				ORGANIZATIONNAME = "MITRE Corp";
 			};
@@ -370,6 +379,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		B4E6310D196AE6C000E52F40 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = SecureFoundation;
+			targetProxy = B4E6310C196AE6C000E52F40 /* PBXContainerItemProxy */;
+		};
 		FE008FAA17E3B0C0007B01B2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = FE008F7717E3B0C0007B01B2 /* SFUnitTest */;

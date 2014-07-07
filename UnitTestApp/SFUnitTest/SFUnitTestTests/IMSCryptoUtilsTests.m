@@ -185,6 +185,7 @@ int8_t IMSChecksum(NSData *data);
     STAssertFalse([plainD isEqualToData:cipherD], @"The data should not be equal");
     
     free(cipherB);
+
     
 }
 
@@ -213,7 +214,7 @@ int8_t IMSChecksum(NSData *data);
     }
 }
 
-- (void)testEncrtypedPlistDataContents {
+- (void)testEncryptedPlistDataContents {
     NSData *salt = IMSCryptoUtilsPseudoRandomData(8);
     NSData *key = IMSCryptoUtilsPseudoRandomData(8);
     key = IMSCryptoUtilsDeriveKey(key, kCCKeySizeAES256, salt);
