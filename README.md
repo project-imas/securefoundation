@@ -3,8 +3,8 @@
 ## Background
 
 The "iMAS Secure Foundation" project is designed to provide advanced application-level security based on simple 
-encryption mechanisms. It contains three components: a suite of cipher utilities, a collection of functions to 
-assist with encryption through an application key, and a file-based keychain replacement.  Of note, we have removed the OpenSSL dependency and now rely soley on Apple's FIPs compliant cryptography library (as it turns out, Apple uses openSSL as their crypto libraries under the covers).
+encryption mechanisms. It contains four components: a suite of cipher utilities, a collection of functions to
+assist with encryption through an application key, a file-based keychain replacement, and the ability to shred files on disk.  Of note, we have removed the OpenSSL dependency and now rely solely on Apple's FIPs-compliant cryptography library (as it turns out, Apple uses openSSL as their crypto libraries under the covers).
 
 ## Vulnerabilities Addressed
 
@@ -22,6 +22,9 @@ assist with encryption through an application key, and a file-based keychain rep
   - SRG-APP-000243-MAPP-000050 Severity-CAT II: The mobile application must not share working memory with other applications or processes.
   - SRG-APP-999999-MAPP-000067 Severity-CAT II: The mobile application must clear or overwrite memory blocks used to process sensitive data.
   - SRG-APP-000128-MAPP-000028 Severity-CAT II: The mobile application must not change the file permissions of any files other than those dedicated to its own operation.
+3. Files available in cleartext on disk
+  - CWE-313: Cleartext Storage in a File or on Disk
+  - SRG-APP-999999-MAPP-000067 Severity-CAT II: The mobile application must clear or overwrite memory blocks used to process sensitive data.
 
 
 ## Installation
@@ -130,6 +133,14 @@ It also has methods like:
     
 These methods pass the data through the Crypto Manager to perform encryption or decryption using the application shared key. It is important to note that the account service and account names are *not* stored encrypted in either case.
 
+## File Shredding
+
+`IMSShred.h` contains a function `shred()` that will shred files on disk. It also contains two functions geared specifically towards dynamic libraries:
+
+    void* dlVolatileOpen(NSString* path);
+    void dlVolatileClose(void* handle);
+    
+These functions can be used in place of the standard dlopen() and dlclose() to securely open a dylib and to shred it after it has been closed.
 
 ## License
 

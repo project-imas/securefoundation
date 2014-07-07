@@ -20,6 +20,7 @@
 		3B98C7A7163092760070BD54 /* IMSCryptoManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B98C7A6163092760070BD54 /* IMSCryptoManager.m */; };
 		3BAABBEE1639B555009D3543 /* IMSCryptoUtils.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3B8935AB162CA792003750B6 /* IMSCryptoUtils.h */; };
 		3BAABBEF1639B555009D3543 /* IMSCryptoManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3B98C7A5163092760070BD54 /* IMSCryptoManager.h */; };
+		B46C5352196AD8A50068FCE0 /* IMSShred.m in Sources */ = {isa = PBXBuildFile; fileRef = B46C5351196AD8A50068FCE0 /* IMSShred.m */; };
 		FE731DF4177A1B4900BAB7B3 /* Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = FE731DF3177A1B4900BAB7B3 /* Base64.m */; };
 		FE731DF5177A23C600BAB7B3 /* Base64.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = FE731DF2177A1B4900BAB7B3 /* Base64.h */; };
 		FEDBEDCE17E397F600BBC6C5 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B7F1674167147F600A9B236 /* Security.framework */; };
@@ -68,6 +69,8 @@
 		3B98C7A6163092760070BD54 /* IMSCryptoManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMSCryptoManager.m; sourceTree = "<group>"; };
 		3BC64071166FC3D5006E4E1B /* README.md */ = {isa = PBXFileReference; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; wrapsLines = 1; };
 		4885E53516E92147000A99F4 /* IMSKeys.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IMSKeys.h; sourceTree = "<group>"; };
+		B46C5350196AD8A50068FCE0 /* IMSShred.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMSShred.h; sourceTree = "<group>"; };
+		B46C5351196AD8A50068FCE0 /* IMSShred.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMSShred.m; sourceTree = "<group>"; };
 		FE008F2A17E3AC63007B01B2 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		FE731DF2177A1B4900BAB7B3 /* Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Base64.h; sourceTree = "<group>"; };
 		FE731DF3177A1B4900BAB7B3 /* Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Base64.m; sourceTree = "<group>"; };
@@ -134,6 +137,8 @@
 				FE731DF3177A1B4900BAB7B3 /* Base64.m */,
 				3B893583162C92F1003750B6 /* SecureFoundation-Prefix.pch */,
 				3B893584162C92F1003750B6 /* SecureFoundation.h */,
+				B46C5350196AD8A50068FCE0 /* IMSShred.h */,
+				B46C5351196AD8A50068FCE0 /* IMSShred.m */,
 				3B8935A7162C93C6003750B6 /* IMSKeychain.h */,
 				3B8935A8162C93C6003750B6 /* IMSKeychain.m */,
 				3B8935AB162CA792003750B6 /* IMSCryptoUtils.h */,
@@ -244,6 +249,7 @@
 			files = (
 				3B8935A9162C93C6003750B6 /* IMSKeychain.m in Sources */,
 				3B8935AD162CA792003750B6 /* IMSCryptoUtils.m in Sources */,
+				B46C5352196AD8A50068FCE0 /* IMSShred.m in Sources */,
 				3B98C7A7163092760070BD54 /* IMSCryptoManager.m in Sources */,
 				FE731DF4177A1B4900BAB7B3 /* Base64.m in Sources */,
 			);
