@@ -16,6 +16,7 @@
 		3B98C7A7163092760070BD54 /* IMSCryptoManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B98C7A6163092760070BD54 /* IMSCryptoManager.m */; };
 		3BAABBEE1639B555009D3543 /* IMSCryptoUtils.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3B8935AB162CA792003750B6 /* IMSCryptoUtils.h */; };
 		3BAABBEF1639B555009D3543 /* IMSCryptoManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3B98C7A5163092760070BD54 /* IMSCryptoManager.h */; };
+		B43123AC196B23D800EE6362 /* IMSShred.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B46C5350196AD8A50068FCE0 /* IMSShred.h */; };
 		B46C5352196AD8A50068FCE0 /* IMSShred.m in Sources */ = {isa = PBXBuildFile; fileRef = B46C5351196AD8A50068FCE0 /* IMSShred.m */; };
 		FE731DF4177A1B4900BAB7B3 /* Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = FE731DF3177A1B4900BAB7B3 /* Base64.m */; };
 		FE731DF5177A23C600BAB7B3 /* Base64.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = FE731DF2177A1B4900BAB7B3 /* Base64.h */; };
@@ -28,6 +29,7 @@
 			dstPath = "include/${PRODUCT_NAME}";
 			dstSubfolderSpec = 16;
 			files = (
+				B43123AC196B23D800EE6362 /* IMSShred.h in CopyFiles */,
 				FE731DF5177A23C600BAB7B3 /* Base64.h in CopyFiles */,
 				3BAABBEE1639B555009D3543 /* IMSCryptoUtils.h in CopyFiles */,
 				3BAABBEF1639B555009D3543 /* IMSCryptoManager.h in CopyFiles */,
@@ -238,6 +240,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SecureFoundation/SecureFoundation-Prefix.pch";
 				HEADER_SEARCH_PATHS = "";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/UnitTestApp/SFUnitTest/SFUnitTestTests",
+				);
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -252,6 +258,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SecureFoundation/SecureFoundation-Prefix.pch";
 				HEADER_SEARCH_PATHS = "";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/UnitTestApp/SFUnitTest/SFUnitTestTests",
+				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;

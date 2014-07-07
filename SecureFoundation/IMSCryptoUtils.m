@@ -126,7 +126,6 @@ void *IMSCryptoUtilsC_EncryptData(u_int8_t *plaintext, int length, u_int8_t *key
     
     NSData *data = IMSCryptoUtilsSimpleEncryptData(plaintextData, keyData, ivData);
     if(data) {
-        NSLog(@">>return");
         return (u_int8_t *)[data bytes];
     }
     
@@ -157,7 +156,6 @@ void *IMSCryptoUtilsC_DecryptData(u_int8_t *ciphertext, int length, u_int8_t *ke
     
     NSData *data = IMSCryptoUtilsSimpleDecryptData(ciphertextData, keyData, ivData);
     if(data) {
-        NSLog(@">>Return2");
         return (u_int8_t *)[data bytes];
     }
     

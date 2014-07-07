@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B43123AE196B242400EE6362 /* IMSShredFilesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B43123AD196B242400EE6362 /* IMSShredFilesTests.m */; };
+		B43123B2196B2B4400EE6362 /* imas_app_check.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B43123B1196B2B4400EE6362 /* imas_app_check.dylib */; };
+		B43123B3196B2B4E00EE6362 /* imas_app_check.dylib in Resources */ = {isa = PBXBuildFile; fileRef = B43123B1196B2B4400EE6362 /* imas_app_check.dylib */; };
+		B43123B4196B34E200EE6362 /* imas_app_check.dylib in Resources */ = {isa = PBXBuildFile; fileRef = B43123B1196B2B4400EE6362 /* imas_app_check.dylib */; };
 		FE008F7C17E3B0C0007B01B2 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE008F7B17E3B0C0007B01B2 /* UIKit.framework */; };
 		FE008F7E17E3B0C0007B01B2 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE008F7D17E3B0C0007B01B2 /* Foundation.framework */; };
 		FE008F8017E3B0C0007B01B2 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE008F7F17E3B0C0007B01B2 /* CoreGraphics.framework */; };
@@ -33,13 +37,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		3ED69CED196B1D060080DCBF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = FEDB709717E3B1D400FF5786 /* SecureFoundation.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 3B89358C162C92F1003750B6;
-			remoteInfo = SecureFoundationTests;
-		};
 		B4E6310C196AE6C000E52F40 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FEDB709717E3B1D400FF5786 /* SecureFoundation.xcodeproj */;
@@ -61,13 +58,6 @@
 			remoteGlobalIDString = 3B89357C162C92F1003750B6;
 			remoteInfo = SecureFoundation;
 		};
-		FEDB709F17E3B1D400FF5786 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = FEDB709717E3B1D400FF5786 /* SecureFoundation.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3B89358D162C92F1003750B6;
-			remoteInfo = SecureFoundationTests;
-		};
 		FEDB70A317E3B24500FF5786 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FEDB709717E3B1D400FF5786 /* SecureFoundation.xcodeproj */;
@@ -78,6 +68,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B43123AD196B242400EE6362 /* IMSShredFilesTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMSShredFilesTests.m; sourceTree = "<group>"; };
+		B43123B1196B2B4400EE6362 /* imas_app_check.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = imas_app_check.dylib; sourceTree = "<group>"; };
 		FE008F7817E3B0C0007B01B2 /* SFUnitTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SFUnitTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FE008F7B17E3B0C0007B01B2 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		FE008F7D17E3B0C0007B01B2 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -130,6 +122,7 @@
 				FE008FA617E3B0C0007B01B2 /* SenTestingKit.framework in Frameworks */,
 				FE008FA717E3B0C0007B01B2 /* UIKit.framework in Frameworks */,
 				FE008FA817E3B0C0007B01B2 /* Foundation.framework in Frameworks */,
+				B43123B2196B2B4400EE6362 /* imas_app_check.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -201,6 +194,8 @@
 		FE008FAB17E3B0C0007B01B2 /* SFUnitTestTests */ = {
 			isa = PBXGroup;
 			children = (
+				B43123B1196B2B4400EE6362 /* imas_app_check.dylib */,
+				B43123AD196B242400EE6362 /* IMSShredFilesTests.m */,
 				FE008FB117E3B0C0007B01B2 /* SFUnitTestTests.h */,
 				FEDB70A117E3B1FC00FF5786 /* IMSCryptoUtilsTests.m */,
 				FEB8569317EB4DB700793E07 /* IMSKeychainTests.m */,
@@ -223,7 +218,6 @@
 			isa = PBXGroup;
 			children = (
 				FEDB709E17E3B1D400FF5786 /* libSecureFoundation.a */,
-				FEDB70A017E3B1D400FF5786 /* SecureFoundationTests.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -242,7 +236,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				3ED69CEE196B1D060080DCBF /* PBXTargetDependency */,
 				FEDB70A417E3B24500FF5786 /* PBXTargetDependency */,
 			);
 			name = SFUnitTest;
@@ -313,13 +306,6 @@
 			remoteRef = FEDB709D17E3B1D400FF5786 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		FEDB70A017E3B1D400FF5786 /* SecureFoundationTests.octest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = SecureFoundationTests.octest;
-			remoteRef = FEDB709F17E3B1D400FF5786 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -327,6 +313,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B43123B4196B34E200EE6362 /* imas_app_check.dylib in Resources */,
 				FE008F8617E3B0C0007B01B2 /* InfoPlist.strings in Resources */,
 				FE008F8E17E3B0C0007B01B2 /* Default.png in Resources */,
 				FE008F9017E3B0C0007B01B2 /* Default@2x.png in Resources */,
@@ -340,6 +327,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B43123B3196B2B4E00EE6362 /* imas_app_check.dylib in Resources */,
 				FE008FB017E3B0C0007B01B2 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -378,6 +366,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B43123AE196B242400EE6362 /* IMSShredFilesTests.m in Sources */,
 				FE008FB317E3B0C0007B01B2 /* SFUnitTestTests.m in Sources */,
 				FEDB70A217E3B1FC00FF5786 /* IMSCryptoUtilsTests.m in Sources */,
 				FEB8569417EB4DB700793E07 /* IMSKeychainTests.m in Sources */,
@@ -387,11 +376,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		3ED69CEE196B1D060080DCBF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = SecureFoundationTests;
-			targetProxy = 3ED69CED196B1D060080DCBF /* PBXContainerItemProxy */;
-		};
 		B4E6310D196AE6C000E52F40 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = SecureFoundation;
@@ -535,6 +519,10 @@
 				GCC_PREFIX_HEADER = "SFUnitTest/SFUnitTest-Prefix.pch";
 				HEADER_SEARCH_PATHS = "$(OPENSSL_SRC)/include";
 				INFOPLIST_FILE = "SFUnitTestTests/SFUnitTestTests-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/SFUnitTestTests",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = octest;
@@ -553,6 +541,10 @@
 				GCC_PREFIX_HEADER = "SFUnitTest/SFUnitTest-Prefix.pch";
 				HEADER_SEARCH_PATHS = "$(OPENSSL_SRC)/include";
 				INFOPLIST_FILE = "SFUnitTestTests/SFUnitTestTests-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/SFUnitTestTests",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = octest;
