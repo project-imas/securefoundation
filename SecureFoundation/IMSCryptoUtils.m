@@ -147,7 +147,10 @@ void *IMSCryptoUtilsC_DecryptData(u_int8_t *ciphertext, int length, u_int8_t *ke
     //*****************************************
     //*****************************************
     //** Apple Crypto
-    
+    int remainder = length % 16;
+    // Round up to block size and then add one more block
+    length = length + 32 - remainder;
+
     NSData *ciphertextData = [NSData dataWithBytes:ciphertext length:length];
     NSData *keyData = [NSData dataWithBytes:key length:kCCKeySizeAES256];
     NSData *ivData = [NSData dataWithBytes:iv length:kCCKeySizeAES128];
@@ -265,7 +268,7 @@ NSData *IMSCryptoUtilsSimpleDecryptData(NSData *ciphertext, NSData *key, NSData 
             &plaintext_len);
     
     // create buffer
-    void *plaintext = malloc(plaintext_len);
+    void *plaintext = malloc(32 + plaintext_len);
     if (plaintext == nil)
     { return nil; }
     
