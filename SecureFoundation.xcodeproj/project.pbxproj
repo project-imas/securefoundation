@@ -10,31 +10,16 @@
 		3B7F1677167147FE00A9B236 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B7F1674167147F600A9B236 /* Security.framework */; };
 		3B893580162C92F1003750B6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B89357F162C92F1003750B6 /* Foundation.framework */; };
 		3B893585162C92F1003750B6 /* SecureFoundation.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3B893584162C92F1003750B6 /* SecureFoundation.h */; };
-		3B89358F162C92F1003750B6 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B89358E162C92F1003750B6 /* SenTestingKit.framework */; };
-		3B893592162C92F1003750B6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B89357F162C92F1003750B6 /* Foundation.framework */; };
-		3B893595162C92F1003750B6 /* libSecureFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B89357C162C92F1003750B6 /* libSecureFoundation.a */; };
 		3B8935A9162C93C6003750B6 /* IMSKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B8935A8162C93C6003750B6 /* IMSKeychain.m */; };
 		3B8935AA162C93E1003750B6 /* IMSKeychain.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3B8935A7162C93C6003750B6 /* IMSKeychain.h */; };
 		3B8935AD162CA792003750B6 /* IMSCryptoUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B8935AC162CA792003750B6 /* IMSCryptoUtils.m */; };
-		3B8935AE162CA792003750B6 /* IMSCryptoUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B8935AC162CA792003750B6 /* IMSCryptoUtils.m */; };
 		3B98C7A7163092760070BD54 /* IMSCryptoManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B98C7A6163092760070BD54 /* IMSCryptoManager.m */; };
 		3BAABBEE1639B555009D3543 /* IMSCryptoUtils.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3B8935AB162CA792003750B6 /* IMSCryptoUtils.h */; };
 		3BAABBEF1639B555009D3543 /* IMSCryptoManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3B98C7A5163092760070BD54 /* IMSCryptoManager.h */; };
 		B46C5352196AD8A50068FCE0 /* IMSShred.m in Sources */ = {isa = PBXBuildFile; fileRef = B46C5351196AD8A50068FCE0 /* IMSShred.m */; };
 		FE731DF4177A1B4900BAB7B3 /* Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = FE731DF3177A1B4900BAB7B3 /* Base64.m */; };
 		FE731DF5177A23C600BAB7B3 /* Base64.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = FE731DF2177A1B4900BAB7B3 /* Base64.h */; };
-		FEDBEDCE17E397F600BBC6C5 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B7F1674167147F600A9B236 /* Security.framework */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		3B893593162C92F1003750B6 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3B893573162C92F1003750B6 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 3B89357B162C92F1003750B6;
-			remoteInfo = SecureFoundation;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		3B89357A162C92F1003750B6 /* CopyFiles */ = {
@@ -59,7 +44,6 @@
 		3B89357F162C92F1003750B6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		3B893583162C92F1003750B6 /* SecureFoundation-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SecureFoundation-Prefix.pch"; sourceTree = "<group>"; };
 		3B893584162C92F1003750B6 /* SecureFoundation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SecureFoundation.h; sourceTree = "<group>"; };
-		3B89358D162C92F1003750B6 /* SecureFoundationTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SecureFoundationTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B89358E162C92F1003750B6 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		3B8935A7162C93C6003750B6 /* IMSKeychain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMSKeychain.h; sourceTree = "<group>"; };
 		3B8935A8162C93C6003750B6 /* IMSKeychain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMSKeychain.m; sourceTree = "<group>"; };
@@ -86,17 +70,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		3B893589162C92F1003750B6 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				FEDBEDCE17E397F600BBC6C5 /* Security.framework in Frameworks */,
-				3B89358F162C92F1003750B6 /* SenTestingKit.framework in Frameworks */,
-				3B893592162C92F1003750B6 /* Foundation.framework in Frameworks */,
-				3B893595162C92F1003750B6 /* libSecureFoundation.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -114,7 +87,6 @@
 			isa = PBXGroup;
 			children = (
 				3B89357C162C92F1003750B6 /* libSecureFoundation.a */,
-				3B89358D162C92F1003750B6 /* SecureFoundationTests.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -170,25 +142,6 @@
 			productReference = 3B89357C162C92F1003750B6 /* libSecureFoundation.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		3B89358C162C92F1003750B6 /* SecureFoundationTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 3B8935A4162C92F1003750B6 /* Build configuration list for PBXNativeTarget "SecureFoundationTests" */;
-			buildPhases = (
-				3B893588162C92F1003750B6 /* Sources */,
-				3B893589162C92F1003750B6 /* Frameworks */,
-				3B89358A162C92F1003750B6 /* Resources */,
-				3B89358B162C92F1003750B6 /* ShellScript */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				3B893594162C92F1003750B6 /* PBXTargetDependency */,
-			);
-			name = SecureFoundationTests;
-			productName = SecureFoundationTests;
-			productReference = 3B89358D162C92F1003750B6 /* SecureFoundationTests.octest */;
-			productType = "com.apple.product-type.bundle";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -211,36 +164,9 @@
 			projectRoot = "";
 			targets = (
 				3B89357B162C92F1003750B6 /* SecureFoundation */,
-				3B89358C162C92F1003750B6 /* SecureFoundationTests */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXResourcesBuildPhase section */
-		3B89358A162C92F1003750B6 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		3B89358B162C92F1003750B6 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		3B893578162C92F1003750B6 /* Sources */ = {
@@ -255,23 +181,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		3B893588162C92F1003750B6 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				3B8935AE162CA792003750B6 /* IMSCryptoUtils.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		3B893594162C92F1003750B6 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 3B89357B162C92F1003750B6 /* SecureFoundation */;
-			targetProxy = 3B893593162C92F1003750B6 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		3B89359F162C92F1003750B6 /* Debug */ = {
@@ -348,40 +258,6 @@
 			};
 			name = Release;
 		};
-		3B8935A5162C92F1003750B6 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
-					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "SecureFoundation/SecureFoundation-Prefix.pch";
-				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)";
-				INFOPLIST_FILE = "SecureFoundationTests/SecureFoundationTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = "";
-				WRAPPER_EXTENSION = octest;
-			};
-			name = Debug;
-		};
-		3B8935A6162C92F1003750B6 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
-					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "SecureFoundation/SecureFoundation-Prefix.pch";
-				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)";
-				INFOPLIST_FILE = "SecureFoundationTests/SecureFoundationTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = "";
-				WRAPPER_EXTENSION = octest;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -399,15 +275,6 @@
 			buildConfigurations = (
 				3B8935A2162C92F1003750B6 /* Debug */,
 				3B8935A3162C92F1003750B6 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		3B8935A4162C92F1003750B6 /* Build configuration list for PBXNativeTarget "SecureFoundationTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				3B8935A5162C92F1003750B6 /* Debug */,
-				3B8935A6162C92F1003750B6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

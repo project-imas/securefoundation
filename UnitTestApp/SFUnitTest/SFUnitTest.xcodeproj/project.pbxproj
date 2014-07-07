@@ -33,6 +33,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		3ED69CED196B1D060080DCBF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FEDB709717E3B1D400FF5786 /* SecureFoundation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 3B89358C162C92F1003750B6;
+			remoteInfo = SecureFoundationTests;
+		};
 		B4E6310C196AE6C000E52F40 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FEDB709717E3B1D400FF5786 /* SecureFoundation.xcodeproj */;
@@ -235,6 +242,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				3ED69CEE196B1D060080DCBF /* PBXTargetDependency */,
 				FEDB70A417E3B24500FF5786 /* PBXTargetDependency */,
 			);
 			name = SFUnitTest;
@@ -379,6 +387,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		3ED69CEE196B1D060080DCBF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = SecureFoundationTests;
+			targetProxy = 3ED69CED196B1D060080DCBF /* PBXContainerItemProxy */;
+		};
 		B4E6310D196AE6C000E52F40 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = SecureFoundation;
