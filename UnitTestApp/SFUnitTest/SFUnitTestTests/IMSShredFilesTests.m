@@ -7,6 +7,7 @@
 //
 
 #import <SenTestingKit/SenTestingKit.h>
+#import <SecureFoundation/SecureFoundation.h>
 
 @interface IMSShredFilesTests : SenTestCase
 
@@ -26,9 +27,50 @@
     [super tearDown];
 }
 
-- (void)testExample
+- (void)testShredMethod
 {
-    STFail(@"No implementation for \"%s\"", __PRETTY_FUNCTION__);
+    NSData *data = IMSCryptoUtilsPseudoRandomData(16);
+    NSString *path = @"/tmp/testShred";
+    [data writeToFile:path atomically:YES];
+    shred(path,16,10,NO);
+    NSFileHandle *handle = [NSFileHandle fileHandleForReadingAtPath:path];
+    NSData *shreddedData = [handle readDataOfLength:16];
+    STAssertFalse([data isEqualToData:shreddedData], @"Shredded data is equal to original data");
+    NSError *error = nil;
+    [[NSFileManager defaultManager] removeItemAtPath:path error:&error];
+}
+
+- (void) testDLVolatileOpenAndClose
+{
+    // Path setup
+    NSString *fileName = @"imas_app_check.dylib";
+    NSString *docLib = [NSString stringWithFormat:@"%@/%@",[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject],fileName];
+    NSString *bundleLib = [NSString stringWithFormat:@"%@/%@", [[NSBundle mainBundle] resourcePath],fileName ];
+    
+    NSError *error = nil;
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    if ([fileManager fileExistsAtPath:docLib] == YES) {
+        [fileManager removeItemAtPath:docLib error:&error];
+    }
+    [fileManager copyItemAtPath:bundleLib toPath:docLib error:&error];
+    NSLog(@"%@",error);
+    STAssertNil(error, @"Dylib was not copied");
+    
+    void *libHandle = dlVolatileOpen(docLib);
+    BOOL open = true;
+    if(libHandle == nil) open = false;
+    STAssertTrue(open, @"Dylib was not opened");
+    
+    void (*helloWorld)(NSString* f) = dlsym(libHandle, "helloWorld");
+    BOOL run = true;
+    if(helloWorld == nil) run = false;
+    STAssertTrue(run, @"Dylib function failed");
+    
+    [NSThread sleepForTimeInterval:20];
+    
+    NSLog(@"Volatile dlclose");
+    dlVolatileClose(libHandle);
+    STAssertFalse([[fileManager contentsAtPath:docLib] isEqualToData:[fileManager contentsAtPath:bundleLib]], @"File was not shredded after close");
 }
 
 @end
