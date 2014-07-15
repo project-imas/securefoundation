@@ -12,6 +12,8 @@
 
 extern inline void shred(NSString* path, int size, int passes, BOOL addEOF);
 
+extern inline void shredHelper(NSFileHandle *handle, int size, int subsize);
+
 extern inline void* dlVolatileOpen(NSString* path);
 
 extern inline void dlVolatileClose(void* handle);

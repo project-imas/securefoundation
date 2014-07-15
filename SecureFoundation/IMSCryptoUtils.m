@@ -51,9 +51,12 @@ int8_t IMSChecksum(NSData *data) {
 //**
 NSData *IMSCryptoUtilsPseudoRandomData(size_t length) {
     if (length) {
-        uint8_t *bytes = malloc(length);
-        arc4random_buf(bytes, length);
-        return [NSData dataWithBytesNoCopy:bytes length:length];
+        NSMutableData* ret = [NSMutableData dataWithCapacity:length];
+        for (int i = 0; i < length/4; i++) {
+            u_int32_t randomBits = arc4random();
+            [ret appendBytes:(void *)&randomBits length:4];
+        }
+        return ret;
     }
     return nil;
 }

@@ -1,3 +1,5 @@
+
+
 //
 //  Shred.m
 //  shred-files
@@ -7,7 +9,6 @@
 //
 
 #import "SecureFoundation.h"
-#import "IMSShred.h"
 
 static NSMutableDictionary* fileSizes;
 static NSMutableDictionary* filePaths;
@@ -22,24 +23,40 @@ NSData* randomNSData(int size) {
     return ret;
 }
 
+/*
+ generate and write data in manageable chunks of size "subsize"
+ */
+
+void shredHelper(NSFileHandle *handle, int size, int subsize) {
+    for(int i = 0; i+subsize <= size; i+=subsize) {
+        @autoreleasepool {
+            NSData *garbage = randomNSData(subsize);
+            [handle writeData:garbage];
+        }
+    }
+    if(size % subsize != 0) {
+        [handle writeData:randomNSData(size % subsize)];
+    }
+}
+
 void shred(NSString* path, int size, int passes, BOOL addEOF) {
     if (passes <= 0) return;
-    NSData* garbage;
-    if(addEOF) {
-        // EOF is 0xffffffff in iOS
-        // which is 4 bytes
-        unsigned char bytes[] = { 0xFF, 0xFF, 0xFF, 0xFF};
-
-        NSMutableData *garbageTmp = [NSMutableData dataWithData: randomNSData(size - 4)];
-        [garbageTmp appendData: [NSData dataWithBytes:bytes length:4]];
-        garbage = [NSData dataWithData: garbageTmp];
-    } else {
-        garbage = randomNSData(size);
+    int subsize = 4096; // page size
+    if (size < subsize) subsize = size;
+    
+    for(int i = 0; i < passes; i++) {
+        NSFileHandle *handle = [NSFileHandle fileHandleForUpdatingAtPath:path];
+        if (addEOF) { // EOF is 0xffffffff in iOS, which is 4 bytes
+            shredHelper(handle, size, subsize);
+            unsigned char bytes[] = { 0xFF, 0xFF, 0xFF, 0xFF};
+            [handle seekToFileOffset:([handle seekToEndOfFile] - 4)];
+            [handle writeData:[NSData dataWithBytes:bytes length:4]];
+        }
+        else {
+            shredHelper(handle, size, subsize);
+        }
+        [handle closeFile];
     }
-    
-    [garbage writeToFile:path atomically:NO];
-    
-    shred(path, size, passes - 1, addEOF);
 }
 
 void* dlVolatileOpen(NSString* path) {
