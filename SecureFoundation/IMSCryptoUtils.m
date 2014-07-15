@@ -368,7 +368,7 @@ id IMSCryptoUtilsDecryptPlistObject(NSData *data, NSData *key) {
 //**
 NSData *IMSHashData_MD5(NSData *data) {
     void *buffer = malloc(CC_MD5_DIGEST_LENGTH);
-    CC_MD5([data bytes], [data length], buffer);
+    CC_MD5([data bytes], (unsigned int)[data length], buffer);
     return [NSData dataWithBytesNoCopy:buffer length:CC_MD5_DIGEST_LENGTH];
 }
 
@@ -396,7 +396,7 @@ NSData *IMSHashPlistObject_MD5(id object) {
 NSData *IMSHashData_SHA256(NSData *data) {
 
     void *buffer = malloc(CC_SHA256_DIGEST_LENGTH);
-    CC_SHA256([data bytes], [data length], buffer);
+    CC_SHA256([data bytes], (unsigned int)[data length], buffer);
     return [NSData dataWithBytesNoCopy:buffer length:CC_SHA256_DIGEST_LENGTH];
 }
 
