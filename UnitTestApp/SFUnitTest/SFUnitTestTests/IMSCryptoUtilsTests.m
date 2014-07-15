@@ -179,14 +179,10 @@ int8_t IMSChecksum(NSData *data);
     NSData *cipherD = [NSData dataWithBytesNoCopy:cipherB length:len freeWhenDone:NO];
     
     u_int8_t *plainB  = IMSCryptoUtilsC_DecryptData(cipherB, len, [key bytes], [iv bytes]);
-    NSData *plainD = [NSData dataWithBytesNoCopy:plainB length:50 freeWhenDone:YES];
+    NSData *plainD = [NSData dataWithBytesNoCopy:plainB length:50 freeWhenDone:NO];
     NSData *dataD  = [NSData dataWithBytesNoCopy:data   length:50 freeWhenDone:YES];
     STAssertTrue([dataD isEqualToData:plainD], @"The data should be equal");
     STAssertFalse([plainD isEqualToData:cipherD], @"The data should not be equal");
-    
-    free(cipherB);
-
-    
 }
 
 

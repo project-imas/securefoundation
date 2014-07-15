@@ -24,7 +24,7 @@ NSData* randomNSData(int size) {
 }
 
 /*
- generate and write data in manageable chunks of size "subsize"
+ generate and write data in manageable chunks of size "subsize" to avoid running out of memory
  */
 
 void shredHelper(NSFileHandle *handle, int size, int subsize) {

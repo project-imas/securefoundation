@@ -49,82 +49,64 @@ BOOL isDataDifferent(NSData *origData, NSFileHandle *handle, int size, int subsi
 
 - (void)testShredMethod
 {
+    NSError *error = nil;
+    int passes = 3;
+#if !(TARGET_IPHONE_SIMULATOR)
+    NSLog(@"started");
+    NSString *fileName = @"testShredFile"; // name of file to be shredded
+    NSString *path = [NSString stringWithFormat:@"%@/%@",[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject],fileName];
+    NSString *bundleLib = [NSString stringWithFormat:@"%@/%@", [[NSBundle mainBundle] resourcePath],fileName];
+    NSLog(@"bundleLib: %@, path: %@",bundleLib,path);
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    if (![fileManager fileExistsAtPath:path])
+        [fileManager copyItemAtPath:bundleLib toPath:path error:&error];
+    if(error)
+        NSLog(@"ERROR: %@",error);
+    NSLog(@"file copied");
+    NSFileHandle *handle = [NSFileHandle fileHandleForUpdatingAtPath:path];
+    unsigned long long fileSize = [[[NSFileManager defaultManager] attributesOfItemAtPath:path error:nil] fileSize];
+    int len = (int)fileSize;
+    NSData *origData = [NSData dataWithContentsOfFile:path];
+#else
     int len = 5000;
-    int passes = 5;
     NSString *path = @"/tmp/testShred";
-    
-    NSMutableData* data = [NSMutableData dataWithCapacity:len];
+    NSMutableData *origData = [NSMutableData dataWithCapacity:len];
     for( unsigned int i = 0 ; i < len/4 ; i++ )
     {
         @autoreleasepool {
             u_int32_t randomBits = arc4random();
-            [data appendBytes:(void*)&randomBits length:4];
+            [origData appendBytes:(void*)&randomBits length:4];
         }
     }
-    [data writeToFile:path atomically:NO];
+    [origData writeToFile:path atomically:NO];
     NSFileHandle *handle = [NSFileHandle fileHandleForReadingAtPath:path];
+#endif
     
     // without EOF
+    NSLog(@"about to shred");
     shred(path,len,passes,NO);
-    
-    // pass to helper function in case of large file size
-    STAssertTrue(isDataDifferent(data, handle, len, 16), @"Shredded data (no EOF) is equal to previous data");
-    
-    // with EOF
-    shred(path,len,passes,YES); // test that EOF marker has been added
-    [handle seekToFileOffset:[handle seekToEndOfFile]-4];
-    NSData *EOFMarker = [handle readDataOfLength:4];
-    unsigned char bytes[] = {0xFF, 0xFF, 0xFF, 0xFF};
-    STAssertTrue([EOFMarker isEqualToData:[NSData dataWithBytes:bytes length:4]], @"EOF marker was not added");
-    
-    STAssertTrue(isDataDifferent(data, handle, len, 16), @"Shredded data (with EOF) is equal to previous data");
-    
-    NSError *error = nil;
-    [[NSFileManager defaultManager] removeItemAtPath:path error:&error];
-    [handle closeFile];
-}
-
-/*
-- (void)testShredOnDevice
-{
-    NSError *error = nil;
-    NSString *fileName = @"testShredFile";
-    NSString *docLib = [NSString stringWithFormat:@"%@/%@",[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject],fileName];
-    NSString *bundleLib = [NSString stringWithFormat:@"%@/%@", [[NSBundle mainBundle] resourcePath],fileName];
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    if (![fileManager fileExistsAtPath:docLib])
-        [fileManager copyItemAtPath:bundleLib toPath:docLib error:&error];
-    NSFileHandle *handle = [NSFileHandle fileHandleForUpdatingAtPath:docLib];
-    unsigned long long fileSize = [[[NSFileManager defaultManager] attributesOfItemAtPath:docLib error:nil] fileSize];
-    int len = (int)fileSize;
-    int passes = 2;
-    
-    NSData *origData = [NSData dataWithContentsOfFile:docLib];
-    
-    // test with no EOF added
-    shred(docLib,len,passes,NO);
-    [handle seekToFileOffset:0];
+    NSLog(@"shred 1");
     STAssertTrue(isDataDifferent(origData, handle, len, 16), @"Shredded data (no EOF) is equal to previous data");
     
-    // test with EOF
-    shred(docLib,len,passes,YES);
-    // also test that EOF marker has been added
+    // with EOF
+    NSLog(@"about to shred 2");
+    shred(path,len,passes,YES);
+    NSLog(@"shred 2");
+    STAssertTrue(isDataDifferent(origData, handle, len, 16), @"Shredded data (with EOF) is equal to previous data");
+    // test that EOF marker has been added
     [handle seekToFileOffset:[handle seekToEndOfFile]-4];
     NSData *EOFMarker = [handle readDataOfLength:4];
     unsigned char bytes[] = {0xFF, 0xFF, 0xFF, 0xFF};
     STAssertTrue([EOFMarker isEqualToData:[NSData dataWithBytes:bytes length:4]], @"EOF marker was not added");
     
-    [handle seekToFileOffset:0];
-    NSData *shreddedDataWithEOF = [handle readDataOfLength:len];
-    STAssertTrue(isDataDifferent(shreddedDataWithEOF, handle, len, 16), @"Shredded data (with EOF) is equal to previous data");
-    
     error = nil;
-    [[NSFileManager defaultManager] removeItemAtPath:docLib error:&error];
+    [[NSFileManager defaultManager] removeItemAtPath:path error:&error];
+    NSLog(@"file deleted");
     [handle closeFile];
 }
- */
 
 // note: dylib was compiled for iOS 7 -- this test won't run on iOS 6
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_6_0 && !(TARGET_IPHONE_SIMULATOR)
 - (void) testDLVolatileOpenAndClose
 {
     // Path setup
@@ -138,7 +120,8 @@ BOOL isDataDifferent(NSData *origData, NSFileHandle *handle, int size, int subsi
         [fileManager removeItemAtPath:docLib error:&error];
     }
     [fileManager copyItemAtPath:bundleLib toPath:docLib error:&error];
-    NSLog(@"%@",error);
+    if(error)
+        NSLog(@"ERROR: %@",error);
     STAssertNil(error, @"Dylib was not copied");
     
     void *libHandle = dlVolatileOpen(docLib);
@@ -157,5 +140,6 @@ BOOL isDataDifferent(NSData *origData, NSFileHandle *handle, int size, int subsi
     dlVolatileClose(libHandle);
     STAssertFalse([[fileManager contentsAtPath:docLib] isEqualToData:[fileManager contentsAtPath:bundleLib]], @"File was not shredded after close");
 }
+#endif
 
 @end
