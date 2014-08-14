@@ -60,6 +60,16 @@ Encryption is currently implemented using AES with 128 bit blocks, `PKCS7` paddi
 
 Functions are included to encrypt and decrypt binary data (`NSData` objects), as well as any `plist` object (`NSString`, `NSNumber`, `NSArray`, `NSDictionary`, etc).
 
+There is also a pair of functions to encrypt and decrypt files in the application sandbox:
+
+```
+int IMSCryptoUtilsEncryptFileToPath(NSString *origPath, NSString *destPath, NSData *key);
+void IMSCryptoUtilsDecryptFileToPath(int origSize, NSString *origPath, NSString *destPath, NSData *key);
+```
+
+* The encrypt function returns an int indicating the size of the original file. This `int` should be passed as `origSize` to the decryption function so that the extra bytes from encryption can be truncated when decrypting.
+* To encrypt the file in place, replace `destPath` with `nil`. Otherwise, an encrypted copy of the file at `origPath` will be created at `destPath`. 
+
 ### Hashing
 
 Just as with encryption, functions are provided to perform both MD5 and SHA256 hashes of binary data and `plist` objects.
