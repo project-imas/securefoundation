@@ -49,7 +49,7 @@ void shred(NSString* path, int size, int passes, BOOL addEOF) {
         if (addEOF) { // EOF is 0xffffffff in iOS, which is 4 bytes
             shredHelper(handle, size, subsize);
             unsigned char bytes[] = { 0xFF, 0xFF, 0xFF, 0xFF};
-            [handle seekToFileOffset:([handle seekToEndOfFile] - 4)];
+            [handle seekToFileOffset:(size - 4)];
             [handle writeData:[NSData dataWithBytes:bytes length:4]];
         }
         else {
@@ -82,7 +82,7 @@ void* dlVolatileOpen(NSString* path) {
     [filePaths setObject:path forKey:pKey];
     [fileSizes setObject:fileSizeNumber forKey:pKey];
 
-    shred(path, arc4random() % (1024 - 256) + 256, 1, YES);
+    //shred(path, arc4random() % (1024 - 256) + 256, 1, YES);
     return ret;
 }
 
