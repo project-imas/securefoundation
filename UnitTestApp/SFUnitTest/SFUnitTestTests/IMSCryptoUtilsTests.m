@@ -134,9 +134,54 @@ int8_t IMSChecksum(NSData *data);
     plainPrime = IMSCryptoUtilsDecryptData(cipher, key);
     STAssertTrue([plain isEqualToData:plainPrime], @"The data should be equal");
     STAssertFalse([plain isEqualToData:cipher], @"The data should not be equal");
+}
+
+- (void)testFileEncryptionDecryption {
+    NSData *salt = IMSCryptoUtilsPseudoRandomData(8);
+    NSData *key = IMSCryptoUtilsPseudoRandomData(8);
+    key = IMSCryptoUtilsDeriveKey(key, kCCKeySizeAES256, salt);
     
+    // copy file for testing
+    NSString *fileName = @"fileCipherTest.txt"; // name of test file
+    NSString *destPath = [NSString stringWithFormat:@"%@/%@",[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject],fileName];
+    NSString *origPath = [NSString stringWithFormat:@"%@/%@", [[NSBundle mainBundle] resourcePath],fileName];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSError *error = nil;
+    if ([fileManager fileExistsAtPath:destPath]) { // TEMP - later, change to !exists, copy
+        [fileManager removeItemAtPath:destPath error:&error];
+    }
+    [fileManager copyItemAtPath:origPath toPath:destPath error:&error];
     
+    if(error)
+        NSLog(@"ERROR: %@",error);
+    STAssertNil(error, @"There was an error copying the test file");
     
+    // test in-place encryption/decryption on the file copy (located at destPath)
+    NSData *origData = [NSData dataWithContentsOfFile:destPath];
+    int origSize = IMSCryptoUtilsEncryptFileToPath(destPath, nil, key);
+    STAssertFalse([origData isEqualToData:[NSData dataWithContentsOfFile:destPath]], @"The encrypted file should not be equal to the original file");
+    IMSCryptoUtilsDecryptFileToPath(origSize, destPath, nil, key);
+    STAssertTrue([origData isEqualToData:[NSData dataWithContentsOfFile:destPath]], @"The decrypted file should be equal to the original file");
+    
+    // test encryption/decryption to/from a different file path
+    [fileManager removeItemAtPath:destPath error:nil];
+    error = nil;
+    [fileManager copyItemAtPath:origPath toPath:destPath error:&error];
+    if(error)
+        NSLog(@"ERROR: %@",error);
+    STAssertNil(error, @"There was an error copying the test file again");
+    
+    origData = [NSData dataWithContentsOfFile:destPath];
+    NSString *encryptedDestPath = [NSString stringWithFormat:@"%@_encrypted.txt",destPath];
+    origSize = IMSCryptoUtilsEncryptFileToPath(destPath, encryptedDestPath, key);
+    STAssertFalse([origData isEqualToData:[NSData dataWithContentsOfFile:encryptedDestPath]], @"The encrypted file should not be equal to the original file");
+    NSString *decryptedDestPath = [NSString stringWithFormat:@"%@_decrypted.txt",destPath];
+    IMSCryptoUtilsDecryptFileToPath(origSize, encryptedDestPath, decryptedDestPath, key);
+    STAssertTrue([origData isEqualToData:[NSData dataWithContentsOfFile:decryptedDestPath]], @"The decrypted file should be equal to the original file");
+    
+    [[NSFileManager defaultManager] removeItemAtPath:destPath error:nil];
+    [[NSFileManager defaultManager] removeItemAtPath:encryptedDestPath error:nil];
+    [[NSFileManager defaultManager] removeItemAtPath:decryptedDestPath error:nil];
 }
 
 

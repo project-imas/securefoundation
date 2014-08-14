@@ -107,6 +107,74 @@ NSData *IMSCryptoUtilsDeriveKey(NSData *key, size_t length, NSData *salt) {
     return nil;
 }
 
+//**********************
+//**********************
+//** Encrypt file in sandbox
+//** (either in place or to a separate location)
+int IMSCryptoUtilsEncryptFileToPath(NSString *origPath, NSString *destPath, NSData *key) {
+    NSDictionary *fileAttr = [[NSFileManager defaultManager] attributesOfItemAtPath:origPath error:nil];
+    int size = (int)[fileAttr fileSize];
+    
+    NSFileHandle *handle = [NSFileHandle fileHandleForUpdatingAtPath:origPath];
+    NSFileHandle *writeHandle;
+    if (destPath) {
+        writeHandle = [NSFileHandle fileHandleForWritingAtPath:destPath];
+        if (!writeHandle) {
+            [[NSFileManager defaultManager] createFileAtPath:destPath contents:nil attributes:nil];
+            writeHandle = [NSFileHandle fileHandleForWritingAtPath:destPath];
+        }
+    }
+    NSData *fileChunk = [handle readDataOfLength:size]; // TODO does it auto advance?
+    NSData *encryptedData = IMSCryptoUtilsEncryptData(fileChunk, key);
+    
+    if (!destPath) {
+        [handle seekToFileOffset:0];
+        [handle writeData:encryptedData];
+    } else { // write encrypted file to to destPath
+        [writeHandle writeData:encryptedData];
+    }
+    
+    [handle closeFile];
+    if (destPath)
+        [writeHandle closeFile];
+    
+    return size;
+}
+
+//**********************
+//**********************
+//** Decrypt file in sandbox
+//** (either in place or to a separate location)
+void IMSCryptoUtilsDecryptFileToPath(int origSize, NSString *origPath, NSString *destPath, NSData *key) {
+    NSDictionary *fileAttr = [[NSFileManager defaultManager] attributesOfItemAtPath:origPath error:nil];
+    int size = (int)[fileAttr fileSize];
+    
+    NSFileHandle *handle = [NSFileHandle fileHandleForUpdatingAtPath:origPath];
+    NSFileHandle *writeHandle;
+    if (destPath) {
+        writeHandle = [NSFileHandle fileHandleForWritingAtPath:destPath];
+        if (!writeHandle) {
+            [[NSFileManager defaultManager] createFileAtPath:destPath contents:nil attributes:nil];
+            writeHandle = [NSFileHandle fileHandleForWritingAtPath:destPath];
+        }
+    }
+    
+    NSData *fileChunk = [handle readDataOfLength:size];
+    NSData *decryptedData = IMSCryptoUtilsDecryptData(fileChunk, key);
+    
+    if (!destPath) {
+        [handle seekToFileOffset:0];
+        [handle writeData:decryptedData];
+        [handle truncateFileAtOffset:origSize];
+    } else { // write encrypted file to to destPath
+        [writeHandle writeData:decryptedData];
+        [writeHandle truncateFileAtOffset:origSize];
+    }
+    
+    [handle closeFile];
+    if (destPath)
+        [writeHandle closeFile];
+}
 
 
 //**********************
