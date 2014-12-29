@@ -28,7 +28,7 @@ assist with encryption through an application key, a file-based keychain replace
 
 
 ## Installation
-- Add SecureFoundation as a submodule to your project. `git submodule add https://github.com/mitre-imas/securefoundation.git vendor/securefoundation`
+- Add SecureFoundation as a submodule to your project. `git submodule add https://github.com/project-imas/securefoundation.git vendor/securefoundation`
 - Add the "SecureFoundation" Xcode project as a subproject in your project
 - Add "libSecureFoundation.a" as a target dependency and to the "Link Binary With Libraries" build phase
 - Import SecureFoundation in your source files `#import <SecureFoundation/SecureFoundation.h>`
