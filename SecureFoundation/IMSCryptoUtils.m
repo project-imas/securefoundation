@@ -151,7 +151,7 @@ int IMSCryptoUtilsEncryptFileToPath(NSString *origPath, NSString *destPath, NSDa
 //**********************
 //** Decrypt file in sandbox
 //** (either in place or to a separate location)
-void IMSCryptoUtilsDecryptFileToPath(int origSize, NSString *origPath, NSString *destPath, NSData *key) {
+int IMSCryptoUtilsDecryptFileToPath(int origSize, NSString *origPath, NSString *destPath, NSData *key) {
     NSDictionary *fileAttr = [[NSFileManager defaultManager] attributesOfItemAtPath:origPath error:nil];
     int size = (int)[fileAttr fileSize];
     
@@ -170,7 +170,7 @@ void IMSCryptoUtilsDecryptFileToPath(int origSize, NSString *origPath, NSString 
     
     if (!decryptedData) {
         NSLog(@"Decryption of file %@ failed", origPath);
-        return;
+        return -1;
     }
     
     if (!destPath) {
@@ -185,6 +185,7 @@ void IMSCryptoUtilsDecryptFileToPath(int origSize, NSString *origPath, NSString 
     [handle closeFile];
     if (destPath)
         [writeHandle closeFile];
+    return 0;
 }
 
 

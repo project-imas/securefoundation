@@ -50,7 +50,7 @@ NSData *IMSCryptoUtilsDeriveKey(NSData *key, size_t length, NSData *salt);
  the extra bytes from encryption can be truncated when decrypting.
  */
 int IMSCryptoUtilsEncryptFileToPath(NSString *origPath, NSString *destPath, NSData *key);
-void IMSCryptoUtilsDecryptFileToPath(int origSize, NSString *origPath, NSString *destPath, NSData *key);
+int IMSCryptoUtilsDecryptFileToPath(int origSize, NSString *origPath, NSString *destPath, NSData *key);
 
 /*
  
