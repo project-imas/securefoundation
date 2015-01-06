@@ -111,8 +111,14 @@ NSData *IMSCryptoUtilsDeriveKey(NSData *key, size_t length, NSData *salt) {
 //**********************
 //** Encrypt file in sandbox
 //** (either in place or to a separate location)
+//** If error, returns -1 instead of file size
 int IMSCryptoUtilsEncryptFileToPath(NSString *origPath, NSString *destPath, NSData *key) {
-    NSDictionary *fileAttr = [[NSFileManager defaultManager] attributesOfItemAtPath:origPath error:nil];
+    NSError *err = nil;
+    NSDictionary *fileAttr = [[NSFileManager defaultManager] attributesOfItemAtPath:origPath error:&err];
+    if (err) {
+        NSLog(@"Error reading file %@: %@", origPath, err);
+        return -1;
+    }
     int size = (int)[fileAttr fileSize];
     
     NSFileHandle *handle = [NSFileHandle fileHandleForUpdatingAtPath:origPath];
@@ -161,6 +167,11 @@ void IMSCryptoUtilsDecryptFileToPath(int origSize, NSString *origPath, NSString 
     
     NSData *fileChunk = [handle readDataOfLength:size];
     NSData *decryptedData = IMSCryptoUtilsDecryptData(fileChunk, key);
+    
+    if (!decryptedData) {
+        NSLog(@"Decryption of file %@ failed", origPath);
+        return;
+    }
     
     if (!destPath) {
         [handle seekToFileOffset:0];
