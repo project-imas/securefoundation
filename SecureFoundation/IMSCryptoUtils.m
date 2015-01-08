@@ -144,14 +144,14 @@ int IMSCryptoUtilsEncryptFileToPath(NSString *origPath, NSString *destPath, NSDa
     if (destPath)
         [writeHandle closeFile];
     
-    return size;
+    return 0;
 }
 
 //**********************
 //**********************
 //** Decrypt file in sandbox
 //** (either in place or to a separate location)
-int IMSCryptoUtilsDecryptFileToPath(int origSize, NSString *origPath, NSString *destPath, NSData *key) {
+int IMSCryptoUtilsDecryptFileToPath(NSString *origPath, NSString *destPath, NSData *key) {
     NSDictionary *fileAttr = [[NSFileManager defaultManager] attributesOfItemAtPath:origPath error:nil];
     int size = (int)[fileAttr fileSize];
     
@@ -167,6 +167,7 @@ int IMSCryptoUtilsDecryptFileToPath(int origSize, NSString *origPath, NSString *
     
     NSData *fileChunk = [handle readDataOfLength:size];
     NSData *decryptedData = IMSCryptoUtilsDecryptData(fileChunk, key);
+    int decryptDataSize = (int)decryptedData.length;
     
     if (!decryptedData) {
         NSLog(@"Decryption of file %@ failed", origPath);
@@ -176,10 +177,12 @@ int IMSCryptoUtilsDecryptFileToPath(int origSize, NSString *origPath, NSString *
     if (!destPath) {
         [handle seekToFileOffset:0];
         [handle writeData:decryptedData];
-        [handle truncateFileAtOffset:origSize];
+//        [handle truncateFileAtOffset:origSize];
+        [handle truncateFileAtOffset:decryptDataSize];
     } else { // write encrypted file to to destPath
         [writeHandle writeData:decryptedData];
-        [writeHandle truncateFileAtOffset:origSize];
+//        [writeHandle truncateFileAtOffset:origSize];
+        [writeHandle truncateFileAtOffset:decryptDataSize];
     }
     
     [handle closeFile];

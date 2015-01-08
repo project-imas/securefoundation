@@ -67,7 +67,7 @@ int IMSCryptoUtilsEncryptFileToPath(NSString *origPath, NSString *destPath, NSDa
 void IMSCryptoUtilsDecryptFileToPath(int origSize, NSString *origPath, NSString *destPath, NSData *key);
 ```
 
-* The encrypt function returns an int indicating the size of the original file. This `int` should be passed as `origSize` to the decryption function so that the extra bytes from encryption can be truncated when decrypting. If there is an error, this function returns -1.
+* The encryption and decryption functions return 0 if the operation succeeds, and -1 otherwise.
 * To encrypt the file in place, replace `destPath` with `nil`. Otherwise, an encrypted copy of the file at `origPath` will be created at `destPath`. 
 
 ### Hashing

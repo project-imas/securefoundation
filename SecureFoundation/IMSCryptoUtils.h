@@ -46,11 +46,10 @@ NSData *IMSCryptoUtilsDeriveKey(NSData *key, size_t length, NSData *salt);
 /*
  Encrypt/decrypt files in sandbox. If destPath is nil, the file is encrypted in place.
  Otherwise, an encrypted copy of the file at origPath is created at destPath.
- The encrypt function returns an int indicating the size of the original file, so that
- the extra bytes from encryption can be truncated when decrypting.
+ Functions return 0 if operation was successful and -1 otherwise.
  */
 int IMSCryptoUtilsEncryptFileToPath(NSString *origPath, NSString *destPath, NSData *key);
-int IMSCryptoUtilsDecryptFileToPath(int origSize, NSString *origPath, NSString *destPath, NSData *key);
+int IMSCryptoUtilsDecryptFileToPath(NSString *origPath, NSString *destPath, NSData *key);
 
 /*
  
