@@ -21,3 +21,6 @@ profile
 .rake_tasks
 build.output
 pkg
+
+# Swift Package Manager
+.build/
